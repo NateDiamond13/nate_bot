@@ -8,7 +8,9 @@ use events::EventWatcher;
 use prelude::{CommandData, Error, Result};
 use utils::EnvVariables;
 
-use poise::{builtins, Framework, FrameworkOptions, PrefixFrameworkOptions};
+use poise::{
+    builtins, Context, Framework, FrameworkOptions, PrefixContext, PrefixFrameworkOptions,
+};
 use serenity::prelude::{Client, GatewayIntents};
 
 #[tokio::main]
@@ -26,6 +28,17 @@ async fn main() -> Result<()> {
         prefix_options: PrefixFrameworkOptions {
             prefix: Some(command_prefix),
             ..Default::default()
+        },
+        // Logs which commands are executed and by whom
+        pre_command: |ctx| {
+            Box::pin(async move {
+                if let Context::Prefix(PrefixContext { msg, .. }) = ctx {
+                    println!(
+                        "User \"{}\" executed command: [\"{}\"]",
+                        msg.author.name, msg.content
+                    );
+                }
+            })
         },
         // Ignore commands from bots
         command_check: Some(|ctx| Box::pin(async move { Ok(!ctx.author().bot) })),
