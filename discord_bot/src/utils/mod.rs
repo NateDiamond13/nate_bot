@@ -1,8 +1,20 @@
-use serenity::model::channel::Message;
-use serenity::prelude::Context;
+use crate::prelude::{Error, Result};
+use dotenv::dotenv;
+use std::env;
 
-pub async fn send_message(ctx: &Context, msg: &Message, content: &str) {
-    if let Err(why) = msg.channel_id.say(&ctx.http, content).await {
-        println!("Error sending message: {why:?}");
+pub struct EnvVariables {
+    pub discord_token: String,
+}
+
+pub fn load_env() -> Result<EnvVariables> {
+    if dotenv().is_err() {
+        println!("No .env file found. Attempting to load environment...");
     }
+    let discord_token = load_var("DISCORD_TOKEN")?;
+
+    Ok(EnvVariables { discord_token })
+}
+
+fn load_var(key: &str) -> Result<String> {
+    env::var(key).map_err(|_| Error::MissingVar(key.to_string()))
 }
