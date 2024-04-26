@@ -3,3 +3,5 @@ services:
     build:
       context: .
       dockerfile: ./docker/client/Dockerfile
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
