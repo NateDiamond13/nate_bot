@@ -6,24 +6,25 @@ mod utils;
 
 use events::EventWatcher;
 use prelude::{CommandData, Error, Result};
+use utils::EnvVariables;
 
 use poise::{builtins, Framework, FrameworkOptions, PrefixFrameworkOptions};
 use serenity::prelude::{Client, GatewayIntents};
 
-const COMMAND_PREFIX: &str = "!";
-const SHARD_COUNT: u32 = 2;
-
 #[tokio::main]
 async fn main() -> Result<()> {
     // Load bot token from the environment
-    let env_vars = utils::load_env()?;
-    let token = env_vars.discord_token;
+    let EnvVariables {
+        command_prefix,
+        discord_token,
+        shard_count,
+    } = utils::load_env()?;
 
     // Set up poise framework with options
     let options = FrameworkOptions {
         commands: vec![commands::help(), commands::ping(), commands::roll()],
         prefix_options: PrefixFrameworkOptions {
-            prefix: Some(COMMAND_PREFIX.into()),
+            prefix: Some(command_prefix),
             ..Default::default()
         },
         // Ignore commands from bots
@@ -48,15 +49,13 @@ async fn main() -> Result<()> {
 
     // Create a new instance of the Client, logging in as a bot
     println!("Starting bot...");
-    let mut client = Client::builder(token, intents)
+    let mut client = Client::builder(discord_token, intents)
         .framework(framework)
-        .event_handler(EventWatcher {
-            shard_count: SHARD_COUNT,
-        })
+        .event_handler(EventWatcher { shard_count })
         .await?;
 
     // Start listening for events by starting a limited number of shards
-    if let Err(why) = client.start_shards(SHARD_COUNT).await {
+    if let Err(why) = client.start_shards(shard_count).await {
         println!("Client error: {why:?}");
     }
 
