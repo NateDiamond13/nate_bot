@@ -23,10 +23,14 @@ pub async fn roll(
     #[description = "A positive number or multi-dice roll (XdY => 1d6, 2d20, etc.)"]
     custom_roll: Vec<String>,
 ) -> Result<()> {
-    let prefix = ctx.prefix();
     let parse_result = parse_roll_args(custom_roll);
     if parse_result.is_err() {
-        ctx.say(format!("Argument for {prefix}roll command must be either a number (6, 8, etc.) or in XdY format (1d6, 2d20, etc.) where X <= {MAX_ROLLS}")).await?;
+        let prefix = ctx.prefix();
+        ctx.say(format!(
+            "Argument for {prefix}roll command must be either a number (6, 8, etc.) or \
+            in XdY format (1d6, 2d20, etc.) where 1 <= X <= {MAX_ROLLS}, Y >= 1"
+        ))
+        .await?;
         return Ok(());
     }
 

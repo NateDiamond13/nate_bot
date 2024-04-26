@@ -11,7 +11,7 @@ use poise::{builtins, Framework, FrameworkOptions, PrefixFrameworkOptions};
 use serenity::prelude::{Client, GatewayIntents};
 
 const COMMAND_PREFIX: &str = "!";
-const SHARD_COUNT: u32 = 1;
+const SHARD_COUNT: u32 = 2;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -50,7 +50,9 @@ async fn main() -> Result<()> {
     println!("Starting bot...");
     let mut client = Client::builder(token, intents)
         .framework(framework)
-        .event_handler(EventWatcher)
+        .event_handler(EventWatcher {
+            shard_count: SHARD_COUNT,
+        })
         .await?;
 
     // Start listening for events by starting a limited number of shards
