@@ -1,5 +1,6 @@
 use crate::prelude::{Error, Result};
-use dotenv::dotenv;
+
+use dotenvy::dotenv;
 use std::env;
 
 pub struct EnvVariables {

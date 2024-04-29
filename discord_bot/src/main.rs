@@ -4,12 +4,12 @@ mod events;
 mod prelude;
 mod utils;
 
-use events::EventWatcher;
 use prelude::{CommandData, Error, Result};
 use utils::EnvVariables;
 
 use poise::{
-    builtins, Context, Framework, FrameworkOptions, PrefixContext, PrefixFrameworkOptions,
+    builtins, ApplicationContext, Context, Framework, FrameworkOptions, PrefixContext,
+    PrefixFrameworkOptions,
 };
 use serenity::prelude::{Client, GatewayIntents};
 
@@ -24,7 +24,13 @@ async fn main() -> Result<()> {
 
     // Set up poise framework with options
     let options = FrameworkOptions {
-        commands: vec![commands::help(), commands::ping(), commands::roll()],
+        commands: vec![
+            commands::help(),
+            commands::ping(),
+            commands::roles(),
+            commands::roll(),
+        ],
+        // Allows prefix commands to be executed
         prefix_options: PrefixFrameworkOptions {
             prefix: Some(command_prefix),
             ..Default::default()
@@ -32,31 +38,49 @@ async fn main() -> Result<()> {
         // Logs which commands are executed and by whom
         pre_command: |ctx| {
             Box::pin(async move {
-                if let Context::Prefix(PrefixContext { msg, .. }) = ctx {
-                    println!(
-                        "User \"{}\" executed command: [\"{}\"]",
-                        msg.author.name, msg.content
-                    );
+                match ctx {
+                    Context::Prefix(PrefixContext { msg, .. }) => {
+                        println!(
+                            "User \"{}\" executed prefix command: [\"{}\"]",
+                            msg.author.name, msg.content
+                        );
+                    }
+                    Context::Application(ApplicationContext {
+                        interaction,
+                        command,
+                        ..
+                    }) => {
+                        println!(
+                            "User \"{}\" executed slash command: [\"/{}\"]",
+                            interaction.user.name, command.qualified_name
+                        );
+                    }
                 }
             })
         },
         // Ignore commands from bots
         command_check: Some(|ctx| Box::pin(async move { Ok(!ctx.author().bot) })),
+        // Handle events
+        event_handler: |ctx, event, framework, data| {
+            Box::pin(events::event_handler(ctx, event, framework, data))
+        },
         ..Default::default()
     };
     let framework: Framework<CommandData, Error> = Framework::builder()
         // Register built-in commands to Discord Integrations page
-        .setup(|ctx, _ready, framework| {
+        .setup(move |ctx, _ready, framework| {
             Box::pin(async move {
                 builtins::register_globally(ctx, &framework.options().commands).await?;
-                Ok(CommandData)
+                Ok(CommandData { shard_count })
             })
         })
         .options(options)
         .build();
 
     // Set gateway intents, which decides what events the bot will be notified about
-    let intents = GatewayIntents::GUILD_MESSAGES
+    let intents = GatewayIntents::GUILD_MEMBERS
+        | GatewayIntents::GUILD_MESSAGES
+        | GatewayIntents::GUILD_MESSAGE_REACTIONS
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;
 
@@ -64,7 +88,6 @@ async fn main() -> Result<()> {
     println!("Starting bot...");
     let mut client = Client::builder(discord_token, intents)
         .framework(framework)
-        .event_handler(EventWatcher { shard_count })
         .await?;
 
     // Start listening for events by starting a limited number of shards

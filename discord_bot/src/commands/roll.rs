@@ -8,129 +8,161 @@ use serenity::builder::{CreateEmbed, CreateMessage};
 
 const MAX_ROLLS: u32 = 50;
 const DEFAULT_ROLL: u32 = 100;
+const EMBED_COLOR: u32 = 0x00FFBA;
 
-#[derive(Debug)]
-enum ParsedRoll {
-    Default,
-    Number(u32),
-    Dice(u32, u32),
+struct DiceRoll {
+    pub count: u32,
+    pub sides: u32,
 }
 
-/// Roll some dice.
-#[command(prefix_command, slash_command)]
-pub async fn roll(
+/// Roll a single dice (default: 100).
+#[command(
+    prefix_command,
+    slash_command,
+    category = "Roll",
+    subcommands("number_roll", "dice_roll")
+)]
+pub async fn roll(ctx: Context<'_>) -> Result<()> {
+    let author_mention = ctx.author().mention().to_string();
+    let response = format_simple_roll(author_mention, DEFAULT_ROLL);
+    ctx.say(response).await?;
+    Ok(())
+}
+
+/// Roll a single dice (number > 0).
+#[command(prefix_command, slash_command, category = "Roll", rename = "num")]
+pub async fn number_roll(
     ctx: Context<'_>,
-    #[description = "A positive number or multi-dice roll (XdY => 1d6, 2d20, etc.)"]
-    custom_roll: Vec<String>,
+    #[description = "A positive integer"]
+    #[min = 1]
+    number: u32,
 ) -> Result<()> {
-    let parse_result = parse_roll_args(custom_roll);
-    if parse_result.is_err() {
-        let prefix = ctx.prefix();
-        ctx.say(format!(
-            "Argument for {prefix}roll command must be either a number (6, 8, etc.) or \
-            in XdY format (1d6, 2d20, etc.) where 1 <= X <= {MAX_ROLLS}, Y >= 1"
-        ))
-        .await?;
+    if number < 1 {
+        ctx.say("Argument must be a positive integer").await?;
         return Ok(());
     }
 
     let author_mention = ctx.author().mention().to_string();
-    match parse_result.unwrap() {
-        ParsedRoll::Default => {
-            let response = format_simple_roll(author_mention, DEFAULT_ROLL);
-            ctx.say(response).await?;
-        }
-        ParsedRoll::Number(num) => {
-            let response = format_simple_roll(author_mention, num);
-            ctx.say(response).await?;
-        }
-        ParsedRoll::Dice(count, sides) => {
-            let response = format_dice_roll(author_mention, count, sides);
-            ctx.channel_id().send_message(ctx, response).await?;
-        }
-    }
+    let response = format_simple_roll(author_mention, number);
+    ctx.say(response).await?;
     Ok(())
 }
 
-fn parse_roll_args(args: Vec<String>) -> Result<ParsedRoll> {
-    if args.is_empty() {
-        return Ok(ParsedRoll::Default);
-    } else if args.len() > 1 {
-        return Err(Error::CommandArgParse);
-    }
+/// Roll at least one dice (dice format: XdY).
+#[command(prefix_command, slash_command, category = "Roll", rename = "dice")]
+pub async fn dice_roll(
+    ctx: Context<'_>,
+    #[description = "A multi-dice roll in form XdY (e.g. 1d6, 2d20, etc.)"] dice: String,
+) -> Result<()> {
+    let roll = match parse_dice_string(dice) {
+        Ok(val) => val,
+        Err(_) => {
+            ctx.say(format!(
+                "Argument must be in form XdY (1d6, 2d20, etc.) where 1 <= X <= {MAX_ROLLS}, Y >= 1"
+            ))
+            .await?;
+            return Ok(());
+        }
+    };
 
-    if let Ok(val) = args[0].parse() {
-        return Ok(ParsedRoll::Number(val));
-    }
-
-    let re = Regex::new(r"^([0-9]+)d([0-9]+)$")?;
-    let (_, [count, sides]) = re
-        .captures(&args[0])
-        .ok_or_else(|| Error::CommandArgParse)?
-        .extract();
-
-    let count: u32 = count.parse().map_err(|_| Error::CommandArgParse)?;
-    let sides: u32 = sides.parse().map_err(|_| Error::CommandArgParse)?;
-
-    if count <= MAX_ROLLS {
-        return Ok(ParsedRoll::Dice(count, sides));
-    }
-
-    Err(Error::CommandArgParse)
+    let author_mention = ctx.author().mention().to_string();
+    let response = format_dice_roll(author_mention, roll);
+    ctx.channel_id().send_message(ctx, response).await?;
+    Ok(())
 }
 
 fn format_simple_roll(author: String, max_roll: u32) -> String {
-    let roll = thread_rng().gen_range(1..max_roll);
+    let roll = if max_roll > 1 {
+        thread_rng().gen_range(1..max_roll)
+    } else {
+        1
+    };
     format!("{author} rolls a {roll} (1-{max_roll})")
 }
 
-fn format_dice_roll(author: String, count: u32, sides: u32) -> CreateMessage {
+fn format_dice_roll(author: String, roll: DiceRoll) -> CreateMessage {
+    let DiceRoll { count, sides } = roll;
+
     let mut rolls = Vec::new();
     for _ in 0..count {
         rolls.push(thread_rng().gen_range(1..sides));
     }
     let total: u32 = rolls.iter().sum();
 
-    let embed = CreateEmbed::new().description(format!(
-        "**Result**: {count}d{sides} -> {rolls:?}\n**Total**: {total}"
-    ));
+    let embed = CreateEmbed::new()
+        .description(format!(
+            "**Result**: {count}d{sides} -> {rolls:?}\n**Total**: {total}"
+        ))
+        .color(EMBED_COLOR);
     CreateMessage::new()
         .content(format!("{author} :game_die: **{total}**"))
         .embed(embed)
 }
 
+fn parse_dice_string(dice_string: impl Into<String>) -> Result<DiceRoll> {
+    let dice = dice_string.into();
+    let re = Regex::new(r"^([0-9]+)d([0-9]+)$")?;
+    let (_, [count, sides]) = re
+        .captures(&dice)
+        .ok_or_else(|| Error::CommandArgParse)?
+        .extract();
+
+    let count: u32 = count.parse().map_err(|_| Error::CommandArgParse)?;
+    let sides: u32 = sides.parse().map_err(|_| Error::CommandArgParse)?;
+
+    if count > MAX_ROLLS {
+        return Err(Error::CommandArgParse);
+    }
+    Ok(DiceRoll { count, sides })
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::commands::roll::{parse_roll_args, ParsedRoll};
+    use crate::commands::roll::{parse_dice_string, DiceRoll};
     use crate::prelude::Error;
 
     #[test]
-    fn parse_good_roll() {
-        let v1 = vec![];
-        assert!(matches!(parse_roll_args(v1), Ok(ParsedRoll::Default)));
+    fn parse_good_dice() {
+        let v1 = String::from("1d6");
+        assert!(matches!(
+            parse_dice_string(v1),
+            Ok(DiceRoll { count: 1, sides: 6 })
+        ));
 
-        let v2 = vec!["50".to_string()];
-        assert!(matches!(parse_roll_args(v2), Ok(ParsedRoll::Number(50))));
+        let v2 = String::from("2d20");
+        assert!(matches!(
+            parse_dice_string(v2),
+            Ok(DiceRoll {
+                count: 2,
+                sides: 20
+            })
+        ));
 
-        let v3 = vec!["2d6".to_string()];
-        assert!(matches!(parse_roll_args(v3), Ok(ParsedRoll::Dice(2, 6))));
+        let v3 = String::from("50d1000");
+        assert!(matches!(
+            parse_dice_string(v3),
+            Ok(DiceRoll {
+                count: 50,
+                sides: 1000
+            })
+        ));
     }
 
     #[test]
-    fn parse_bad_roll() {
-        let v1 = vec!["50".to_string(), "100".to_string()];
-        assert!(matches!(parse_roll_args(v1), Err(Error::CommandArgParse)));
+    fn parse_bad_dice() {
+        let v1 = String::from("16");
+        assert!(matches!(parse_dice_string(v1), Err(Error::CommandArgParse)));
 
-        let v2 = vec!["50x".to_string()];
-        assert!(matches!(parse_roll_args(v2), Err(Error::CommandArgParse)));
+        let v2 = String::from("");
+        assert!(matches!(parse_dice_string(v2), Err(Error::CommandArgParse)));
 
-        let v3 = vec!["-100".to_string()];
-        assert!(matches!(parse_roll_args(v3), Err(Error::CommandArgParse)));
+        let v3 = String::from("60d1000");
+        assert!(matches!(parse_dice_string(v3), Err(Error::CommandArgParse)));
 
-        let v4 = vec!["100000000000000000".to_string()];
-        assert!(matches!(parse_roll_args(v4), Err(Error::CommandArgParse)));
+        let v4 = String::from("1d100000000000");
+        assert!(matches!(parse_dice_string(v4), Err(Error::CommandArgParse)));
 
-        let v5 = vec!["70d100".to_string()];
-        assert!(matches!(parse_roll_args(v5), Err(Error::CommandArgParse)));
+        let v5 = String::from("-10d40");
+        assert!(matches!(parse_dice_string(v5), Err(Error::CommandArgParse)));
     }
 }

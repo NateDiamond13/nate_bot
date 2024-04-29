@@ -16,6 +16,7 @@ pub async fn help(
         builtins::HelpConfiguration {
             extra_text_at_bottom: format!("Type {prefix}help command for more info on a command.")
                 .as_str(),
+            show_subcommands: true,
             ..Default::default()
         },
     )

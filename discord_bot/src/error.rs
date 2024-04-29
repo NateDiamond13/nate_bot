@@ -11,6 +11,9 @@ pub enum Error {
     #[error("Could not parse valid command arguments")]
     CommandArgParse,
 
+    #[error("Could not toggle role for user")]
+    ToggleRoleFailure,
+
     #[error(transparent)]
     IO(#[from] std::io::Error),
 

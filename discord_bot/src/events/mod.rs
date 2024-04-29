@@ -1,21 +1,30 @@
-use serenity::async_trait;
-use serenity::model::gateway::Ready;
-use serenity::prelude::{Context, EventHandler};
+mod ready;
+mod roles;
+pub use roles::{ROLE_CHANNEL, ROLE_REACTION};
 
-pub struct EventWatcher {
-    pub shard_count: u32,
-}
+use crate::prelude::{CommandData, Error, Result};
 
-#[async_trait]
-impl EventHandler for EventWatcher {
-    async fn ready(&self, ctx: Context, ready: Ready) {
-        if self.shard_count == 1 {
-            println!("{} is connected!", ready.user.name);
-        } else {
-            println!(
-                "{} (Shard: {} of {}) is connected!",
-                ready.user.name, ctx.shard_id, self.shard_count
-            );
+use poise::FrameworkContext;
+use serenity::all::FullEvent;
+use serenity::prelude::Context;
+
+pub async fn event_handler(
+    ctx: &Context,
+    event: &FullEvent,
+    _framework: FrameworkContext<'_, CommandData, Error>,
+    data: &CommandData,
+) -> Result<()> {
+    match event {
+        FullEvent::Ready { data_about_bot } => {
+            ready::handle_ready(ctx, data_about_bot, data)?;
         }
+        FullEvent::ReactionAdd { add_reaction } => {
+            roles::handle_reaction_add(ctx, add_reaction).await?;
+        }
+        FullEvent::ReactionRemove { removed_reaction } => {
+            roles::handle_reaction_remove(ctx, removed_reaction).await?;
+        }
+        _ => {}
     }
+    Ok(())
 }
