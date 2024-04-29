@@ -11,6 +11,7 @@ use poise::{
     builtins, ApplicationContext, Context, Framework, FrameworkOptions, PrefixContext,
     PrefixFrameworkOptions,
 };
+use serenity::all::ActivityData;
 use serenity::prelude::{Client, GatewayIntents};
 
 #[tokio::main]
@@ -18,6 +19,7 @@ async fn main() -> Result<()> {
     // Load bot token from the environment
     let EnvVariables {
         command_prefix,
+        custom_status,
         discord_token,
         shard_count,
     } = utils::load_env()?;
@@ -88,6 +90,7 @@ async fn main() -> Result<()> {
     println!("Starting bot...");
     let mut client = Client::builder(discord_token, intents)
         .framework(framework)
+        .activity(ActivityData::custom(custom_status))
         .await?;
 
     // Start listening for events by starting a limited number of shards

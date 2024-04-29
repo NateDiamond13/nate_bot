@@ -91,7 +91,6 @@ fn parse_for_role(message_str: impl Into<String>) -> Result<String> {
         .captures(&msg)
         .ok_or_else(|| Error::ToggleRoleFailure)?
         .extract();
-
     Ok(role_name.to_string())
 }
 
