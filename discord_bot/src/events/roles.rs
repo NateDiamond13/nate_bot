@@ -58,7 +58,6 @@ async fn toggle_user_role(
 
     // Check if role exists in guild
     let guild_id = channel.guild_id;
-    dbg!(guild_id);
     let guild = guild_id.to_partial_guild(&ctx.http).await?;
     let role = guild
         .role_by_name(&role_name)
