@@ -1,6 +1,6 @@
-# Nate Bot (Rust)
+# NateBot (Rust)
 
-Nate Bot for Discord rewritten in Rust
+NateBot for Discord rewritten in Rust
 
 ## Useful Commands
 
