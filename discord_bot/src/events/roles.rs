@@ -31,19 +31,19 @@ async fn toggle_user_role(
     }
 
     // Check if user is a bot
-    let user = reaction.user(&ctx.http).await?;
+    let user = reaction.user(ctx).await?;
     if user.bot {
         return Ok(());
     }
 
     // Check if message is from this bot
-    let message = reaction.message(&ctx.http).await?;
-    if !message.is_own(&ctx.cache) {
+    let message = reaction.message(ctx).await?;
+    if !message.is_own(ctx) {
         return Ok(());
     }
 
     // Check if reaction was in the correct channel
-    let channel = match reaction.channel(&ctx.http).await? {
+    let channel = match reaction.channel(ctx).await? {
         Channel::Guild(guild_channel) => guild_channel,
         _ => {
             return Ok(());
@@ -58,24 +58,24 @@ async fn toggle_user_role(
 
     // Check if role exists in guild
     let guild_id = channel.guild_id;
-    let guild = guild_id.to_partial_guild(&ctx.http).await?;
+    let guild = guild_id.to_partial_guild(ctx).await?;
     let role = guild
         .role_by_name(&role_name)
         .ok_or_else(|| Error::ToggleRoleFailure)?;
 
     // Check if user already has role
-    let has_role = user.has_role(&ctx.http, guild_id, role).await?;
-    let member = guild.member(&ctx.http, user.id).await?;
+    let has_role = user.has_role(ctx, guild_id, role).await?;
+    let member = guild.member(ctx, user.id).await?;
 
     // Toggle role for user
     if add_role && !has_role {
-        member.add_role(&ctx.http, role).await?;
+        member.add_role(ctx, role).await?;
         println!(
             "Added user '{}' to role '{}' in guild '{}'",
             user.name, role.name, guild.name
         );
     } else if !add_role && has_role {
-        member.remove_role(&ctx.http, role).await?;
+        member.remove_role(ctx, role).await?;
         println!(
             "Removed user '{}' from role '{}' in guild '{}'",
             user.name, role.name, guild.name

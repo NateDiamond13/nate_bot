@@ -36,7 +36,7 @@ pub async fn handle_voice_state_update(
     };
     let audit_logs = member
         .guild_id
-        .audit_logs(&ctx.http, Some(action_type), None, None, Some(1))
+        .audit_logs(ctx, Some(action_type), None, None, Some(1))
         .await?;
 
     // Check if entry was created in the last second
@@ -53,7 +53,7 @@ pub async fn handle_voice_state_update(
     }
 
     // Get user and channel info to print out
-    let user = entry.user_id.to_user(&ctx.http).await?;
+    let user = entry.user_id.to_user(ctx).await?;
     let old_channel_name = get_channel_name(old_state, ctx).await?;
 
     match action_type {
