@@ -14,6 +14,9 @@ pub enum Error {
     #[error("Could not toggle role for user")]
     ToggleRoleFailure,
 
+    #[error("Could not find valid voice channel")]
+    InvalidVoiceChannel,
+
     #[error(transparent)]
     IO(#[from] std::io::Error),
 

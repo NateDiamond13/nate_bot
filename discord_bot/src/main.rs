@@ -13,6 +13,7 @@ use poise::{
 };
 use serenity::all::ActivityData;
 use serenity::prelude::{Client, GatewayIntents};
+use songbird::SerenityInit;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -80,7 +81,10 @@ async fn main() -> Result<()> {
         .build();
 
     // Set gateway intents, which decides what events the bot will be notified about
-    let intents = GatewayIntents::GUILD_MEMBERS
+    let intents = GatewayIntents::GUILDS
+        | GatewayIntents::GUILD_MODERATION
+        | GatewayIntents::GUILD_MEMBERS
+        | GatewayIntents::GUILD_VOICE_STATES
         | GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::GUILD_MESSAGE_REACTIONS
         | GatewayIntents::DIRECT_MESSAGES
@@ -90,6 +94,7 @@ async fn main() -> Result<()> {
     println!("Starting bot...");
     let mut client = Client::builder(discord_token, intents)
         .framework(framework)
+        .register_songbird()
         .activity(ActivityData::custom(custom_status))
         .await?;
 

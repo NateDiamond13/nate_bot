@@ -1,3 +1,4 @@
+mod audit;
 mod ready;
 mod roles;
 pub use roles::{ROLE_CHANNEL, ROLE_REACTION};
@@ -23,6 +24,9 @@ pub async fn event_handler(
         }
         FullEvent::ReactionRemove { removed_reaction } => {
             roles::handle_reaction_remove(ctx, removed_reaction).await?;
+        }
+        FullEvent::VoiceStateUpdate { old, new } => {
+            audit::handle_voice_state_update(ctx, old, new).await?;
         }
         _ => {}
     }

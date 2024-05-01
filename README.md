@@ -15,8 +15,11 @@ NateBot for Discord rewritten in Rust
 1. `docker-compose build` to build the Docker image
 2. `docker run --env-file .env --rm nate-bot-rust-client` to run the Docker container
 
-## TODO
+## Notes
+
+- Cmake is required to build the `songbird` crate on Windows
+
+### TODO
 
 - Purge command
 - Reactions (random George)
-- Audits (moved channels, disconnected users)

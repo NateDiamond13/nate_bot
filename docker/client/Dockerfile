@@ -1,6 +1,9 @@
 # Rust slim base image
 FROM rust:1.77-slim-buster as builder
 
+# Install dependencies for songbird
+RUN apt-get update && apt-get install -y ffmpeg youtube-dl cmake
+
 # Create a new empty shell project
 RUN USER=root cargo new --bin discord_bot
 WORKDIR /discord_bot
