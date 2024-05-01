@@ -30,6 +30,7 @@ async fn main() -> Result<()> {
         commands: vec![
             commands::help(),
             commands::ping(),
+            commands::purge(),
             commands::roles(),
             commands::roll(),
         ],

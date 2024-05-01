@@ -21,5 +21,4 @@ NateBot for Discord rewritten in Rust
 
 ### TODO
 
-- Purge command
 - Reactions (random George)
