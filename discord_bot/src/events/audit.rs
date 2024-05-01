@@ -1,6 +1,7 @@
 use crate::prelude::{Error, Result};
 use crate::utils;
 
+use chrono::Utc;
 use serenity::all::{Channel, GuildChannel, VoiceState};
 use serenity::model::guild::audit_log::{Action, MemberAction};
 use serenity::prelude::Context;
@@ -39,16 +40,22 @@ pub async fn handle_voice_state_update(
         .audit_logs(ctx, Some(action_type), None, None, Some(1))
         .await?;
 
-    // Check if entry was created in the last second
+    // Check if user did this to themselves
     let entry = match audit_logs.entries.first() {
         Some(entry) => entry,
         None => {
             return Ok(());
         }
     };
+    if entry.user_id == member.user.id {
+        return Ok(());
+    }
+
+    // Check if entry was created in the last second
     let entry_time = entry.id.created_at().time();
-    let current_time = chrono::Utc::now().time();
-    if current_time.signed_duration_since(entry_time).num_seconds() >= 1 {
+    let current_time = Utc::now().time();
+    let time_diff = (current_time - entry_time).num_seconds();
+    if !(0..2).contains(&time_diff) {
         return Ok(());
     }
 
