@@ -1,5 +1,5 @@
 # Rust slim base image
-FROM rust:1.77-slim-buster as builder
+FROM rust:1.78-slim-buster as builder
 
 # Install dependencies for songbird
 RUN apt-get update && apt-get install -y ffmpeg youtube-dl cmake

@@ -22,3 +22,4 @@ NateBot for Discord rewritten in Rust
 ### TODO
 
 - Music Stuff?
+- Lottery
