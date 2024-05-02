@@ -21,4 +21,4 @@ NateBot for Discord rewritten in Rust
 
 ### TODO
 
-- Reactions (random George)
+- Music Stuff?
