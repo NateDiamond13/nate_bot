@@ -1,0 +1,53 @@
+use crate::prelude::{CommandData, Result};
+
+use rand::seq::{IteratorRandom, SliceRandom};
+use rand::{thread_rng, Rng};
+use serenity::all::Message;
+use serenity::prelude::Context;
+use std::cmp;
+
+const REACTION_COUNT_MIN: usize = 5;
+const REACTION_COUNT_MAX: usize = 20;
+const REACTION_ODDS: u32 = 50;
+
+pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData) -> Result<()> {
+    // Check if message author is a target
+    let user_id: u64 = u64::from(message.author.id);
+    if !data.reaction_target_ids.contains(&user_id) {
+        return Ok(());
+    }
+
+    // Check if message passes reaction odds
+    if thread_rng().gen_range(0..REACTION_ODDS) != 0 {
+        return Ok(());
+    }
+
+    // Get all the custom emojis from the current guild
+    let emojis = match message.guild_id {
+        Some(guild_id) => guild_id.emojis(ctx).await?,
+        None => {
+            return Ok(());
+        }
+    };
+
+    // Choose how many emojis to react with
+    let min_count = cmp::min(emojis.len(), REACTION_COUNT_MIN);
+    let max_count = cmp::min(emojis.len(), REACTION_COUNT_MAX);
+    let emoji_count = thread_rng().gen_range(min_count..=max_count);
+    let mut choices = emojis
+        .iter()
+        .choose_multiple(&mut thread_rng(), emoji_count);
+    choices.shuffle(&mut thread_rng());
+
+    println!(
+        "Reacting to a message from '{}' with {} emoji(s) - Odds: 1/{}",
+        message.author.name, emoji_count, REACTION_ODDS
+    );
+
+    // React to the message with the chosen emojis
+    for choice in choices {
+        message.react(ctx, choice.clone()).await?;
+    }
+
+    Ok(())
+}

@@ -73,7 +73,7 @@ pub async fn purge(
 
     // Handle silent (s) flag
     let response = format!(
-        "User {} purged {} message(s) containing \"{}\" from channel '{}'",
+        "User '{}' purged {} message(s) containing \"{}\" from channel '{}'",
         ctx.author().name,
         message_ids.len(),
         text,

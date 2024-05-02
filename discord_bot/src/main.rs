@@ -22,6 +22,7 @@ async fn main() -> Result<()> {
         command_prefix,
         custom_status,
         discord_token,
+        reaction_target_ids,
         shard_count,
     } = utils::load_env()?;
 
@@ -75,7 +76,10 @@ async fn main() -> Result<()> {
         .setup(move |ctx, _ready, framework| {
             Box::pin(async move {
                 builtins::register_globally(ctx, &framework.options().commands).await?;
-                Ok(CommandData { shard_count })
+                Ok(CommandData {
+                    shard_count,
+                    reaction_target_ids,
+                })
             })
         })
         .options(options)

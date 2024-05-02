@@ -7,6 +7,7 @@ pub struct EnvVariables {
     pub command_prefix: String,
     pub custom_status: String,
     pub discord_token: String,
+    pub reaction_target_ids: Vec<u64>,
     pub shard_count: u32,
 }
 
@@ -18,6 +19,7 @@ pub fn load_env() -> Result<EnvVariables> {
         command_prefix: load_var_string("COMMAND_PREFIX")?,
         custom_status: load_var_string("CUSTOM_STATUS")?,
         discord_token: load_var_string("DISCORD_TOKEN")?,
+        reaction_target_ids: load_vec_u64("REACTION_TARGET_IDS")?,
         shard_count: load_var_u32("SHARD_COUNT", 1, 10)?,
     })
 }
@@ -35,4 +37,16 @@ fn load_var_u32(key: &str, min: u32, max: u32) -> Result<u32> {
         return Err(Error::InvalidRangeVar(key.to_string(), min, max));
     }
     Ok(value)
+}
+
+fn load_vec_u64(key: &str) -> Result<Vec<u64>> {
+    let var_string = env::var(key).map_err(|_| Error::MissingVar(key.to_string()))?;
+    let results: Vec<u64> = var_string
+        .split(',')
+        .filter_map(|s| match s.trim().parse() {
+            Ok(res) => Some(res),
+            Err(_) => None,
+        })
+        .collect();
+    Ok(results)
 }

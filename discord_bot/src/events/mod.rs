@@ -1,4 +1,5 @@
 mod audit;
+mod reactions;
 mod ready;
 mod roles;
 pub use roles::{ROLE_CHANNEL, ROLE_REACTION};
@@ -27,6 +28,9 @@ pub async fn event_handler(
         }
         FullEvent::VoiceStateUpdate { old, new } => {
             audit::handle_voice_state_update(ctx, old, new).await?;
+        }
+        FullEvent::Message { new_message } => {
+            reactions::handle_message(ctx, new_message, data).await?;
         }
         _ => {}
     }
