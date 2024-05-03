@@ -8,6 +8,7 @@ pub struct EnvVariables {
     pub custom_status: String,
     pub discord_token: String,
     pub reaction_target_ids: Vec<u64>,
+    pub reaction_target_odds: u32,
     pub shard_count: u32,
 }
 
@@ -20,6 +21,7 @@ pub fn load_env() -> Result<EnvVariables> {
         custom_status: load_var_string("CUSTOM_STATUS")?,
         discord_token: load_var_string("DISCORD_TOKEN")?,
         reaction_target_ids: load_vec_u64("REACTION_TARGET_IDS")?,
+        reaction_target_odds: load_var_u32("REACTION_TARGET_ODDS", 1, u32::MAX)?,
         shard_count: load_var_u32("SHARD_COUNT", 1, 10)?,
     })
 }

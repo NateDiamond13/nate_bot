@@ -8,7 +8,6 @@ use std::cmp;
 
 const REACTION_COUNT_MIN: usize = 5;
 const REACTION_COUNT_MAX: usize = 20;
-const REACTION_ODDS: u32 = 50;
 
 pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData) -> Result<()> {
     // Check if message author is a target
@@ -18,7 +17,7 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
     }
 
     // Check if message passes reaction odds
-    if thread_rng().gen_range(0..REACTION_ODDS) != 0 {
+    if thread_rng().gen_range(0..data.reaction_target_odds) != 0 {
         return Ok(());
     }
 
@@ -41,7 +40,7 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
 
     println!(
         "Reacting to a message from '{}' with {} emoji(s) - Odds: 1/{}",
-        message.author.name, emoji_count, REACTION_ODDS
+        message.author.name, emoji_count, data.reaction_target_odds
     );
 
     // React to the message with the chosen emojis

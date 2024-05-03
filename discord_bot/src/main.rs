@@ -23,6 +23,7 @@ async fn main() -> Result<()> {
         custom_status,
         discord_token,
         reaction_target_ids,
+        reaction_target_odds,
         shard_count,
     } = utils::load_env()?;
 
@@ -79,6 +80,7 @@ async fn main() -> Result<()> {
                 Ok(CommandData {
                     shard_count,
                     reaction_target_ids,
+                    reaction_target_odds,
                 })
             })
         })
