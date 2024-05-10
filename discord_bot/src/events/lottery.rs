@@ -17,8 +17,16 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
         return Ok(());
     }
 
+    // Get the current guild
+    let guild_str = match message.guild_id {
+        Some(guild_id) => guild_id.to_string(),
+        None => {
+            return Ok(());
+        }
+    };
+
     // Get a random picture
-    let Some(picture) = pictures::get_random(&data.pool, Some(false)).await else {
+    let Some(picture) = pictures::get_random(&data.pool, &guild_str, Some(false)).await else {
         return Ok(());
     };
 

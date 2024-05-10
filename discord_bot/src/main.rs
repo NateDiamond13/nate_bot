@@ -103,6 +103,5 @@ async fn main() -> Result<()> {
     if let Err(why) = client.start_shards(env_vars.shard_count).await {
         println!("Client error: {why:?}");
     }
-
     Ok(())
 }

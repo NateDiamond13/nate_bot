@@ -7,10 +7,11 @@ CREATE TABLE store (
 
 CREATE TABLE pictures (
     name TEXT NOT NULL,
+    guild_id TEXT NOT NULL,
     url TEXT NOT NULL,
     added_by_user TEXT NOT NULL,
     is_nsfw BOOLEAN NOT NULL DEFAULT False,
     created_at TIMESTAMP NOT NULL DEFAULT now(),
 
-    PRIMARY KEY (name)
+    PRIMARY KEY (name, guild_id)
 );
