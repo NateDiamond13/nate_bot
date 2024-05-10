@@ -1,6 +1,9 @@
 mod help;
 pub use help::help;
 
+mod pictures;
+pub use pictures::pictures;
+
 mod ping;
 pub use ping::ping;
 

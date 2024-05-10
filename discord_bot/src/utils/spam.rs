@@ -10,12 +10,9 @@ pub async fn post_to_spam_channel(
     guild_id: GuildId,
 ) -> Result<()> {
     let partial_guild = guild_id.to_partial_guild(ctx).await?;
-    let channel_id = match partial_guild.channel_id_from_name(ctx, SPAM_CHANNEL_NAME) {
-        Some(id) => id,
-        None => {
-            println!("-> Could not find spam channel: \"{SPAM_CHANNEL_NAME}\"");
-            return Ok(());
-        }
+    let Some(channel_id) = partial_guild.channel_id_from_name(ctx, SPAM_CHANNEL_NAME) else {
+        println!("-> Could not find spam channel: \"{SPAM_CHANNEL_NAME}\"");
+        return Ok(());
     };
 
     channel_id.say(ctx, text).await?;

@@ -87,11 +87,8 @@ pub async fn handle_voice_state_update(
 }
 
 async fn get_channel_name(voice_state: &VoiceState, context: &Context) -> Result<String> {
-    let channel_id = match voice_state.channel_id {
-        Some(id) => id,
-        None => {
-            return Err(Error::InvalidVoiceChannel);
-        }
+    let Some(channel_id) = voice_state.channel_id else {
+        return Err(Error::InvalidVoiceChannel);
     };
     match channel_id.to_channel(&context.http).await {
         Ok(Channel::Guild(GuildChannel { name, .. })) => Ok(name),

@@ -43,11 +43,8 @@ async fn toggle_user_role(
     }
 
     // Check if reaction was in the correct channel
-    let channel = match reaction.channel(ctx).await? {
-        Channel::Guild(guild_channel) => guild_channel,
-        _ => {
-            return Ok(());
-        }
+    let Channel::Guild(channel) = reaction.channel(ctx).await? else {
+        return Ok(());
     };
     if channel.name() != ROLE_CHANNEL {
         return Ok(());

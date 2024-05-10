@@ -51,12 +51,9 @@ pub async fn new_role(
         return Ok(());
     }
 
-    let guild = match ctx.partial_guild().await {
-        Some(guild) => guild,
-        None => {
-            ctx.say("Could not find guild").await?;
-            return Ok(());
-        }
+    let Some(guild) = ctx.partial_guild().await else {
+        ctx.say("Could not find guild").await?;
+        return Ok(());
     };
 
     if guild.role_by_name(&role).is_some() {
@@ -90,12 +87,9 @@ pub async fn post_role(
         return Ok(());
     }
 
-    let guild = match ctx.partial_guild().await {
-        Some(guild) => guild,
-        None => {
-            ctx.say("Could not find guild").await?;
-            return Ok(());
-        }
+    let Some(guild) = ctx.partial_guild().await else {
+        ctx.say("Could not find guild").await?;
+        return Ok(());
     };
 
     let role_name = role.name;

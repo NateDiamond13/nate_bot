@@ -1,10 +1,10 @@
 use crate::prelude::{Context, Error, Result};
 
-use poise::command;
+use poise::{command, CreateReply};
 use rand::{thread_rng, Rng};
 use regex::Regex;
 use serenity::all::Mentionable;
-use serenity::builder::{CreateEmbed, CreateMessage};
+use serenity::builder::CreateEmbed;
 
 const MAX_ROLLS: u32 = 50;
 const DEFAULT_ROLL: u32 = 100;
@@ -54,20 +54,17 @@ pub async fn dice_roll(
     ctx: Context<'_>,
     #[description = "A multi-dice roll in form XdY (e.g. 1d6, 2d20, etc.)"] dice: String,
 ) -> Result<()> {
-    let roll = match parse_dice_string(dice) {
-        Ok(val) => val,
-        Err(_) => {
-            ctx.say(format!(
-                "Argument must be in form XdY (1d6, 2d20, etc.) where 1 <= X <= {MAX_ROLLS}, Y >= 1"
-            ))
-            .await?;
-            return Ok(());
-        }
+    let Ok(roll) = parse_dice_string(dice) else {
+        ctx.say(format!(
+            "Argument must be in form XdY (1d6, 2d20, etc.) where 1 <= X <= {MAX_ROLLS}, Y >= 1"
+        ))
+        .await?;
+        return Ok(());
     };
 
     let author_mention = ctx.author().mention().to_string();
     let response = format_dice_roll(author_mention, roll);
-    ctx.channel_id().send_message(ctx, response).await?;
+    ctx.send(response).await?;
     Ok(())
 }
 
@@ -80,7 +77,7 @@ fn format_simple_roll(author: String, max_roll: u32) -> String {
     format!("{author} rolls a {roll} (1-{max_roll})")
 }
 
-fn format_dice_roll(author: String, roll: DiceRoll) -> CreateMessage {
+fn format_dice_roll(author: String, roll: DiceRoll) -> CreateReply {
     let DiceRoll { count, sides } = roll;
 
     let mut rolls = Vec::new();
@@ -94,7 +91,7 @@ fn format_dice_roll(author: String, roll: DiceRoll) -> CreateMessage {
             "**Result**: {count}d{sides} -> {rolls:?}\n**Total**: {total}"
         ))
         .color(EMBED_COLOR);
-    CreateMessage::new()
+    CreateReply::default()
         .content(format!("{author} :game_die: **{total}**"))
         .embed(embed)
 }

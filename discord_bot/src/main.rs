@@ -1,11 +1,11 @@
 mod commands;
+mod db;
 mod error;
 mod events;
 mod prelude;
 mod utils;
 
 use prelude::{CommandData, Error, Result};
-use utils::EnvVariables;
 
 use poise::{
     builtins, ApplicationContext, Context, Framework, FrameworkOptions, PrefixContext,
@@ -18,27 +18,25 @@ use songbird::SerenityInit;
 #[tokio::main]
 async fn main() -> Result<()> {
     // Load bot token from the environment
-    let EnvVariables {
-        command_prefix,
-        custom_status,
-        discord_token,
-        reaction_target_ids,
-        reaction_target_odds,
-        shard_count,
-    } = utils::load_env()?;
+    let env_vars = utils::load_env()?;
+    let env = env_vars.clone();
+
+    // Set up database connection pool
+    let pool = db::get_connection_pool(&env_vars.database_url).await?;
 
     // Set up poise framework with options
     let options = FrameworkOptions {
         commands: vec![
             commands::help(),
             commands::ping(),
+            commands::pictures(),
             commands::purge(),
             commands::roles(),
             commands::roll(),
         ],
         // Allows prefix commands to be executed
         prefix_options: PrefixFrameworkOptions {
-            prefix: Some(command_prefix),
+            prefix: Some(env_vars.command_prefix),
             ..Default::default()
         },
         // Logs which commands are executed and by whom
@@ -77,11 +75,13 @@ async fn main() -> Result<()> {
         .setup(move |ctx, _ready, framework| {
             Box::pin(async move {
                 builtins::register_globally(ctx, &framework.options().commands).await?;
-                Ok(CommandData {
-                    shard_count,
-                    reaction_target_ids,
-                    reaction_target_odds,
-                })
+                builtins::register_in_guild(
+                    ctx,
+                    &framework.options().commands,
+                    serenity::all::GuildId::new(334204875980144641),
+                )
+                .await?;
+                Ok(CommandData { env, pool })
             })
         })
         .options(options)
@@ -99,14 +99,14 @@ async fn main() -> Result<()> {
 
     // Create a new instance of the Client, logging in as a bot
     println!("Starting bot...");
-    let mut client = Client::builder(discord_token, intents)
+    let mut client = Client::builder(env_vars.discord_token, intents)
         .framework(framework)
         .register_songbird()
-        .activity(ActivityData::custom(custom_status))
+        .activity(ActivityData::custom(env_vars.custom_status))
         .await?;
 
     // Start listening for events by starting a limited number of shards
-    if let Err(why) = client.start_shards(shard_count).await {
+    if let Err(why) = client.start_shards(env_vars.shard_count).await {
         println!("Client error: {why:?}");
     }
 

@@ -13,23 +13,21 @@ const REACTION_COUNT_MAX: usize = 20;
 pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData) -> Result<()> {
     // Check if message author is a target
     let user_id: u64 = u64::from(message.author.id);
-    if !data.reaction_target_ids.contains(&user_id) {
+    if !data.env.reaction_target_ids.contains(&user_id) {
         return Ok(());
     }
 
     // Check if message passes reaction odds
     let mut rng = StdRng::from_entropy();
-    if rng.gen_range(0..data.reaction_target_odds) != 0 {
+    if rng.gen_range(0..data.env.reaction_target_odds) != 0 {
         return Ok(());
     }
 
     // Get all the custom emojis from the current guild
-    let emojis = match message.guild_id {
-        Some(guild_id) => guild_id.emojis(ctx).await?,
-        None => {
-            return Ok(());
-        }
+    let Some(guild_id) = message.guild_id else {
+        return Ok(());
     };
+    let emojis = guild_id.emojis(ctx).await?;
 
     // Choose how many emojis to react with
     let min_count = cmp::min(emojis.len(), REACTION_COUNT_MIN);
@@ -40,7 +38,7 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
 
     println!(
         "Reacting to a message from '{}' with {} emoji(s) - Odds: 1/{}",
-        message.author.name, emoji_count, data.reaction_target_odds
+        message.author.name, emoji_count, data.env.reaction_target_odds
     );
 
     // React to the message with the chosen emojis

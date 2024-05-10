@@ -25,4 +25,7 @@ pub enum Error {
 
     #[error(transparent)]
     Serenity(#[from] serenity::Error),
+
+    #[error(transparent)]
+    SQLx(#[from] sqlx::Error),
 }
