@@ -75,12 +75,6 @@ async fn main() -> Result<()> {
         .setup(move |ctx, _ready, framework| {
             Box::pin(async move {
                 builtins::register_globally(ctx, &framework.options().commands).await?;
-                builtins::register_in_guild(
-                    ctx,
-                    &framework.options().commands,
-                    serenity::all::GuildId::new(334204875980144641),
-                )
-                .await?;
                 Ok(CommandData { env, pool })
             })
         })
