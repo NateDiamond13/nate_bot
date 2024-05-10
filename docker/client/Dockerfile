@@ -12,6 +12,10 @@ WORKDIR /discord_bot
 COPY ./discord_bot/Cargo.lock ./Cargo.lock
 COPY ./discord_bot/Cargo.toml ./Cargo.toml
 
+# Include database url in build for SQLx
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
 # Build dependencies to cache them (remove default project source code)
 RUN cargo build --release
 RUN rm src/*.rs
