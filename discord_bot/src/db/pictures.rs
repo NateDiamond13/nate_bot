@@ -83,14 +83,17 @@ pub async fn get_random(
 }
 
 pub async fn insert(conn: &PgPool, create_pic: &CreatePicture) -> Result<()> {
-    query("INSERT INTO pictures (name, guild_id, url, added_by_user, is_nsfw) VALUES ($1, $2, $3, $4, $5);")
-        .bind(&create_pic.name)
-        .bind(&create_pic.guild_id)
-        .bind(&create_pic.url)
-        .bind(&create_pic.added_by_user)
-        .bind(create_pic.is_nsfw)
-        .execute(conn)
-        .await?;
+    query(
+        "INSERT INTO pictures (name, guild_id, url, added_by_user, is_nsfw)
+        VALUES ($1, $2, $3, $4, $5);",
+    )
+    .bind(&create_pic.name)
+    .bind(&create_pic.guild_id)
+    .bind(&create_pic.url)
+    .bind(&create_pic.added_by_user)
+    .bind(create_pic.is_nsfw)
+    .execute(conn)
+    .await?;
     Ok(())
 }
 
@@ -99,10 +102,13 @@ pub async fn remove(
     name: impl Into<String>,
     guild_id: impl Into<String>,
 ) -> Result<()> {
-    query("DELETE FROM pictures WHERE name = $1 AND guild_id = $2;")
-        .bind(name.into())
-        .bind(guild_id.into())
-        .execute(conn)
-        .await?;
+    query(
+        "DELETE FROM pictures
+        WHERE name = $1 AND guild_id = $2;",
+    )
+    .bind(name.into())
+    .bind(guild_id.into())
+    .execute(conn)
+    .await?;
     Ok(())
 }
