@@ -167,15 +167,17 @@ pub async fn pic_remove(ctx: Context<'_>, name: String) -> Result<()> {
         return Ok(());
     };
 
-    // Get the user
-    let author = ctx.author();
-    let Some(member) = &author.member else {
-        ctx.say("Guild member not found.").await?;
-        return Ok(());
+    // Get the member
+    let member = match ctx.author_member().await {
+        Some(cow_member) => cow_member.into_owned(),
+        None => {
+            ctx.say("Guild member not found.").await?;
+            return Ok(());
+        }
     };
 
     // Check user permissions
-    if author.id.to_string() != existing_pic.added_by_user
+    if member.user.id.to_string() != existing_pic.added_by_user
         && (member.permissions.is_none() || !member.permissions.unwrap().administrator())
     {
         ctx.say(format!(
