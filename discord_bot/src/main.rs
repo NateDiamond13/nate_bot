@@ -83,8 +83,8 @@ async fn main() -> Result<()> {
 
     // Set gateway intents, which decides what events the bot will be notified about
     let intents = GatewayIntents::GUILDS
-        | GatewayIntents::GUILD_MODERATION
         | GatewayIntents::GUILD_MEMBERS
+        | GatewayIntents::GUILD_MODERATION
         | GatewayIntents::GUILD_VOICE_STATES
         | GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::GUILD_MESSAGE_REACTIONS
