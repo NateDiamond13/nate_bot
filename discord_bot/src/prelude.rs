@@ -19,7 +19,6 @@ pub struct EnvVariables {
     pub lottery_odds: u32,
     pub reaction_target_ids: Vec<u64>,
     pub reaction_target_odds: u32,
-    pub shard_count: u32,
 }
 
 pub type Context<'a> = poise::Context<'a, CommandData, Error>;

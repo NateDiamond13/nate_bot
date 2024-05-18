@@ -19,7 +19,7 @@ pub async fn event_handler(
 ) -> Result<()> {
     match event {
         FullEvent::Ready { data_about_bot } => {
-            ready::handle_ready(ctx, data_about_bot, data)?;
+            ready::handle_ready(ctx, data_about_bot)?;
         }
         FullEvent::ReactionAdd { add_reaction } => {
             roles::handle_reaction_add(ctx, add_reaction).await?;

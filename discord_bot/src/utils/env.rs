@@ -15,7 +15,6 @@ pub fn load_env() -> Result<EnvVariables> {
         lottery_odds: load_var_u32("LOTTERY_ODDS", 1, u32::MAX)?,
         reaction_target_ids: load_vec_u64("REACTION_TARGET_IDS")?,
         reaction_target_odds: load_var_u32("REACTION_TARGET_ODDS", 1, u32::MAX)?,
-        shard_count: load_var_u32("SHARD_COUNT", 1, 10)?,
     })
 }
 

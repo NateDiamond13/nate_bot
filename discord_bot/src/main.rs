@@ -99,8 +99,8 @@ async fn main() -> Result<()> {
         .activity(ActivityData::custom(env_vars.custom_status))
         .await?;
 
-    // Start listening for events by starting a limited number of shards
-    if let Err(why) = client.start_shards(env_vars.shard_count).await {
+    // Start listening for events with an automatically determined number of shards
+    if let Err(why) = client.start_autosharded().await {
         println!("Client error: {why:?}");
     }
     Ok(())
