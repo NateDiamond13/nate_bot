@@ -18,15 +18,29 @@ pub async fn play(
 
     // Check if valid YouTube url
     if !utils::youtube::is_valid_url(&url) {
-        update_reply(ctx, reply_msg, "Could not find requested video.").await?;
+        update_reply(ctx, reply_msg, "Could not find requested url.").await?;
         return Ok(());
     }
 
     // Attempt download from url
     let Ok(video_input) = utils::youtube::download_video(&url, ctx.data()).await else {
-        update_reply(ctx, reply_msg, "Error occurred while downloading video.").await?;
+        update_reply(ctx, reply_msg, "Error occurred while downloading from url.").await?;
         return Ok(());
     };
+
+    // Check if video is too long
+    match video_input.info.video_details.length_seconds.parse::<u32>() {
+        Ok(num_seconds) => {
+            if num_seconds > 7200 {
+                update_reply(ctx, reply_msg, "Cannot queue sounds longer than 2 hours.").await?;
+                return Ok(());
+            }
+        }
+        Err(_) => {
+            update_reply(ctx, reply_msg, "Error occurred while downloading from url.").await?;
+            return Ok(());
+        }
+    }
 
     // Join the voice channel
     utils::join_voice_channel(ctx).await?;
@@ -119,7 +133,7 @@ pub async fn stop(ctx: Context<'_>) -> Result<()> {
         let handler = call.lock().await;
         let queue = handler.queue();
         ctx.say(format!(
-            "Playback stopped, clearing {} item{} in queue.",
+            "Playback stopped, clearing {} sound{} in queue.",
             queue.len(),
             if queue.len() > 1 { "s" } else { "" }
         ))
