@@ -2,10 +2,32 @@ pub mod youtube;
 
 use crate::prelude::{Context, Error, Result};
 
-use serenity::all::ChannelId;
-use songbird::Call;
+use serenity::{
+    all::{ChannelId, GuildId},
+    async_trait,
+};
+use songbird::{Call, Event, EventContext, EventHandler, Songbird, TrackEvent};
 use std::sync::Arc;
 use tokio::sync::Mutex;
+
+struct SoundEndNotifier {
+    manager: Arc<Songbird>,
+    guild_id: GuildId,
+}
+
+#[async_trait]
+impl EventHandler for SoundEndNotifier {
+    async fn act(&self, _ctx: &EventContext<'_>) -> Option<Event> {
+        let call = self.manager.get(self.guild_id)?;
+        if call.lock().await.queue().is_empty() {
+            if let Err(e) = self.manager.remove(self.guild_id).await {
+                println!("Error while sound ends: {e}");
+            }
+        }
+
+        None
+    }
+}
 
 pub async fn get_call(ctx: Context<'_>) -> Result<Option<Arc<Mutex<Call>>>> {
     // Get songbird manager and guild_id
@@ -18,7 +40,7 @@ pub async fn get_call(ctx: Context<'_>) -> Result<Option<Arc<Mutex<Call>>>> {
     Ok(manager.get(guild_id))
 }
 
-pub async fn join_voice_channel(ctx: Context<'_>) -> Result<Arc<Mutex<Call>>> {
+pub async fn join_voice_channel(ctx: Context<'_>) -> Result<()> {
     // Get songbird manager
     let manager = songbird::get(poise::Context::serenity_context(ctx))
         .await
@@ -26,9 +48,9 @@ pub async fn join_voice_channel(ctx: Context<'_>) -> Result<Arc<Mutex<Call>>> {
 
     // Check if already in a call
     let guild_id = ctx.guild_id().ok_or(Error::InvalidGuild)?;
-    if let Some(call) = manager.get(guild_id) {
+    if manager.get(guild_id).is_some() {
         println!("Attempting to join, but already in a call.");
-        return Ok(call);
+        return Ok(());
     }
 
     // Get the id of the voice channel
@@ -43,8 +65,16 @@ pub async fn join_voice_channel(ctx: Context<'_>) -> Result<Arc<Mutex<Call>>> {
         .ok_or(Error::InvalidVoiceChannel)?;
 
     // Join the voice channel
-    let success = manager.join(guild_id, channel_id).await?;
-    Ok(success)
+    let handle_lock = manager.join(guild_id, channel_id).await?;
+
+    // Add event handler to leave voice channel when queue is empty
+    let mut handle = handle_lock.lock().await;
+    handle.add_global_event(
+        Event::Track(TrackEvent::End),
+        SoundEndNotifier { manager, guild_id },
+    );
+
+    Ok(())
 }
 
 pub async fn leave_voice_channel(ctx: Context<'_>) -> Result<()> {
