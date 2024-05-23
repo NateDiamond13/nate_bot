@@ -2,7 +2,7 @@ mod utils;
 
 use crate::prelude::{Context, Result};
 
-use poise::command;
+use poise::{command, CreateReply, ReplyHandle};
 
 /// Queue sound from given YouTube url
 #[command(prefix_command, slash_command, guild_only, category = "Music")]
@@ -14,9 +14,17 @@ pub async fn play(
     #[description = "(Force): Set this flag to clear the queue before playing the sound."]
     force: bool,
 ) -> Result<()> {
+    let reply_msg = ctx.say("Attempting to queue sound...").await?;
+
+    // Check if valid YouTube url
+    if !utils::youtube::is_valid_url(&url) {
+        update_reply(ctx, reply_msg, "Could not find requested video.").await?;
+        return Ok(());
+    }
+
     // Attempt download from url
     let Ok(video_input) = utils::youtube::download_video(&url, ctx.data()).await else {
-        ctx.say("Could not find requested video.").await?;
+        update_reply(ctx, reply_msg, "Error occurred while downloading video.").await?;
         return Ok(());
     };
 
@@ -25,7 +33,7 @@ pub async fn play(
 
     // Get call handler
     let Some(call) = utils::get_call(ctx).await? else {
-        ctx.say("Bot could not join voice channel.").await?;
+        update_reply(ctx, reply_msg, "Bot could not join voice channel.").await?;
         return Ok(());
     };
     let mut handler = call.lock().await;
@@ -37,8 +45,12 @@ pub async fn play(
     if handler.queue().len() < max_sounds {
         handler.enqueue_input(video_input.input).await;
     } else {
-        ctx.say(format!("Maximum sounds ({max_sounds}) already in queue."))
-            .await?;
+        update_reply(
+            ctx,
+            reply_msg,
+            format!("Maximum sounds ({max_sounds}) already in queue."),
+        )
+        .await?;
         return Ok(());
     }
 
@@ -49,8 +61,12 @@ pub async fn play(
     };
 
     let video_url = video_input.info.video_details.video_url;
-    ctx.say(format!("Adding to queue{}: {}", queue_str, video_url))
-        .await?;
+    update_reply(
+        ctx,
+        reply_msg,
+        format!("Added to queue{}: {}", queue_str, video_url),
+    )
+    .await?;
     Ok(())
 }
 
@@ -113,5 +129,16 @@ pub async fn stop(ctx: Context<'_>) -> Result<()> {
 
     // Leave the voice channel
     utils::leave_voice_channel(ctx).await?;
+    Ok(())
+}
+
+async fn update_reply<'a>(
+    ctx: Context<'_>,
+    reply: ReplyHandle<'a>,
+    content: impl Into<String>,
+) -> Result<()> {
+    reply
+        .edit(ctx, CreateReply::default().content(content.into()))
+        .await?;
     Ok(())
 }

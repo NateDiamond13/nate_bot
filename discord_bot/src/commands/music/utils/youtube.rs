@@ -25,3 +25,7 @@ pub async fn download_video(url: impl Into<String>, data: &CommandData) -> Resul
         info,
     })
 }
+
+pub fn is_valid_url(url: &str) -> bool {
+    rusty_ytdl::get_video_id(url).is_some()
+}
