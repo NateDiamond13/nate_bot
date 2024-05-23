@@ -1,5 +1,6 @@
 mod audit;
 mod lottery;
+mod music;
 mod reactions;
 mod ready;
 mod roles;
@@ -29,6 +30,7 @@ pub async fn event_handler(
         }
         FullEvent::VoiceStateUpdate { old, new } => {
             audit::handle_voice_state_update(ctx, old, new).await?;
+            music::handle_voice_state_update(ctx, old, new).await?;
         }
         FullEvent::Message { new_message } => {
             lottery::handle_message(ctx, new_message, data).await?;

@@ -17,6 +17,9 @@ pub enum Error {
     #[error("Could not find valid voice channel")]
     InvalidVoiceChannel,
 
+    #[error("Could not find valid guild")]
+    InvalidGuild,
+
     #[error(transparent)]
     IO(#[from] std::io::Error),
 
@@ -24,7 +27,13 @@ pub enum Error {
     Regex(#[from] regex::Error),
 
     #[error(transparent)]
+    RustyYTDL(#[from] rusty_ytdl::VideoError),
+
+    #[error(transparent)]
     Serenity(#[from] serenity::Error),
+
+    #[error(transparent)]
+    SongbirdJoin(#[from] songbird::error::JoinError),
 
     #[error(transparent)]
     SQLx(#[from] sqlx::Error),

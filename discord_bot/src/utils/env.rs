@@ -13,6 +13,7 @@ pub fn load_env() -> Result<EnvVariables> {
         database_url: load_var_string("DATABASE_URL")?,
         discord_token: load_var_string("DISCORD_TOKEN")?,
         lottery_odds: load_var_u32("LOTTERY_ODDS", 1, u32::MAX)?,
+        queue_max_sounds: load_var_usize("QUEUE_MAX_SOUNDS")?,
         reaction_target_ids: load_vec_u64("REACTION_TARGET_IDS")?,
         reaction_target_odds: load_var_u32("REACTION_TARGET_ODDS", 1, u32::MAX)?,
     })
@@ -20,6 +21,14 @@ pub fn load_env() -> Result<EnvVariables> {
 
 fn load_var_string(key: &str) -> Result<String> {
     env::var(key).map_err(|_| Error::MissingVar(key.to_string()))
+}
+
+fn load_var_usize(key: &str) -> Result<usize> {
+    let value: usize = env::var(key)
+        .map_err(|_| Error::MissingVar(key.to_string()))?
+        .parse()
+        .map_err(|_| Error::MissingVar(key.to_string()))?;
+    Ok(value)
 }
 
 fn load_var_u32(key: &str, min: u32, max: u32) -> Result<u32> {

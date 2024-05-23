@@ -5,7 +5,7 @@ mod events;
 mod prelude;
 mod utils;
 
-use prelude::{CommandData, Error, Result};
+use prelude::{CommandData, Error, HttpClient, Result};
 
 use poise::{
     builtins, ApplicationContext, Context, Framework, FrameworkOptions, PrefixContext,
@@ -24,6 +24,9 @@ async fn main() -> Result<()> {
     // Set up database connection pool
     let pool = db::get_connection_pool(&env_vars.database_url).await?;
 
+    // Set up http client for songbird
+    let http_client = HttpClient::new();
+
     // Set up poise framework with options
     let options = FrameworkOptions {
         commands: vec![
@@ -33,6 +36,9 @@ async fn main() -> Result<()> {
             commands::purge(),
             commands::roles(),
             commands::roll(),
+            commands::music::play(),
+            commands::music::skip(),
+            commands::music::stop(),
         ],
         // Allows prefix commands to be executed
         prefix_options: PrefixFrameworkOptions {
@@ -75,7 +81,11 @@ async fn main() -> Result<()> {
         .setup(move |ctx, _ready, framework| {
             Box::pin(async move {
                 builtins::register_globally(ctx, &framework.options().commands).await?;
-                Ok(CommandData { env, pool })
+                Ok(CommandData {
+                    env,
+                    pool,
+                    http_client,
+                })
             })
         })
         .options(options)

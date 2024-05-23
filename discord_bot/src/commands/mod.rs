@@ -15,3 +15,5 @@ pub use roles::roles;
 
 mod roll;
 pub use roll::roll;
+
+pub mod music;
