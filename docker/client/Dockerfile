@@ -2,7 +2,7 @@
 FROM rust:1.78-slim-buster as builder
 
 # Install dependencies for songbird
-RUN apt-get update && apt-get install -y ffmpeg cmake pkg-config libssl-dev
+RUN apt-get update && apt-get install -y cmake pkg-config libssl-dev
 
 # Create a new empty shell project
 RUN USER=root cargo new --bin discord_bot
@@ -27,7 +27,7 @@ RUN cargo build --release
 
 # Copy binary to a slim image
 FROM debian:buster-slim AS runner
-RUN apt-get update && apt-get install -y ffmpeg cmake pkg-config libssl-dev
+RUN apt-get update && apt-get install -y cmake pkg-config libssl-dev
 COPY --from=builder /discord_bot/target/release/discord_bot .
 
 # Run command

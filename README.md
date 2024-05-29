@@ -9,6 +9,7 @@ NateBot for Discord rewritten in Rust
 1. `cargo build` to build the project
 2. `cargo run` to run the project
 3. `cargo test` to run the tests
+4. `cargo update` to update dependencies
 
 ### Docker
 
@@ -25,7 +26,3 @@ NateBot for Discord rewritten in Rust
 ## Notes
 
 - Cmake is required to build the `songbird` crate on Windows
-
-### TODO
-
-- Music Stuff?
