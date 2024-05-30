@@ -20,8 +20,14 @@ pub enum Error {
     #[error("Could not find valid guild")]
     InvalidGuild,
 
+    #[error("Could not parse valid video details")]
+    VideoDetailParse,
+
     #[error(transparent)]
     IO(#[from] std::io::Error),
+
+    #[error(transparent)]
+    ParseInt(#[from] std::num::ParseIntError),
 
     #[error(transparent)]
     Regex(#[from] regex::Error),
@@ -31,6 +37,9 @@ pub enum Error {
 
     #[error(transparent)]
     Serenity(#[from] serenity::Error),
+
+    #[error(transparent)]
+    SongbirdAudioStream(#[from] songbird::input::AudioStreamError),
 
     #[error(transparent)]
     SongbirdJoin(#[from] songbird::error::JoinError),

@@ -1,5 +1,4 @@
-mod utils;
-
+use crate::commands::utils;
 use crate::prelude::{Context, Result};
 
 use poise::{command, CreateReply, ReplyHandle};
@@ -15,31 +14,21 @@ pub async fn play(
     force: bool,
 ) -> Result<()> {
     let reply_msg = ctx.say("Attempting to queue sound...").await?;
-
-    // Check if valid YouTube url
-    if !utils::youtube::is_valid_url(&url) {
-        update_reply(ctx, reply_msg, "Could not find requested url.").await?;
-        return Ok(());
-    }
+    println!(
+        "User '{}' adding sound to queue: {}",
+        ctx.author().name,
+        url
+    );
 
     // Attempt download from url
-    let Ok(video_input) = utils::youtube::download_video(&url, ctx.data()).await else {
+    let Ok(video_details) = utils::get_video_details(&url, ctx.data()).await else {
         update_reply(ctx, reply_msg, "Error occurred while downloading from url.").await?;
         return Ok(());
     };
 
-    // Check if video is too long
-    match video_input.info.video_details.length_seconds.parse::<u32>() {
-        Ok(num_seconds) => {
-            if num_seconds > 7200 {
-                update_reply(ctx, reply_msg, "Cannot queue sounds longer than 2 hours.").await?;
-                return Ok(());
-            }
-        }
-        Err(_) => {
-            update_reply(ctx, reply_msg, "Error occurred while downloading from url.").await?;
-            return Ok(());
-        }
+    if video_details.num_seconds > 7200 {
+        update_reply(ctx, reply_msg, "Cannot queue sounds longer than 2 hours.").await?;
+        return Ok(());
     }
 
     // Join the voice channel
@@ -57,7 +46,7 @@ pub async fn play(
 
     let max_sounds = ctx.data().env.queue_max_sounds;
     if handler.queue().len() < max_sounds {
-        handler.enqueue_input(video_input.input).await;
+        handler.enqueue_input(video_details.input).await;
     } else {
         update_reply(
             ctx,
@@ -74,11 +63,10 @@ pub async fn play(
         _ => "".to_string(),
     };
 
-    let video_url = video_input.info.video_details.video_url;
     update_reply(
         ctx,
         reply_msg,
-        format!("Added to queue{}: {}", queue_str, video_url),
+        format!("Added to queue{}: {}", queue_str, video_details.source_url),
     )
     .await?;
     Ok(())

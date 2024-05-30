@@ -1,4 +1,5 @@
-pub mod youtube;
+mod videos;
+pub use videos::get_video_details;
 
 use crate::prelude::{Context, Error, Result};
 

@@ -1,8 +1,8 @@
-# Rust slim base image
-FROM rust:1.78-slim-buster as builder
+# Rust alpine base image
+FROM rust:1.78-alpine3.20 as builder
 
 # Install dependencies for songbird
-RUN apt-get update && apt-get install -y cmake pkg-config libssl-dev
+RUN apk add --update alpine-sdk cmake pkgconfig libressl-dev
 
 # Create a new empty shell project
 RUN USER=root cargo new --bin discord_bot
@@ -25,9 +25,9 @@ COPY ./discord_bot/src ./src
 RUN rm ./target/release/deps/discord_bot*
 RUN cargo build --release
 
-# Copy binary to a slim image
-FROM debian:buster-slim AS runner
-RUN apt-get update && apt-get install -y cmake pkg-config libssl-dev
+# Copy binary to an alpine image
+FROM alpine:3.20 AS runner
+RUN apk add --update yt-dlp
 COPY --from=builder /discord_bot/target/release/discord_bot .
 
 # Run command
