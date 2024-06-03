@@ -98,9 +98,9 @@ dependencies = [
 
 [[package]]
 name = "async-compression"
-version = "0.4.10"
+version = "0.4.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9c90a406b4495d129f00461241616194cb8a032c8d1c53c657f0961d5f8e0498"
+checksum = "cd066d0b4ef8ecb03a55319dc13aa6910616d0f44008a045bb1835af830abff5"
 dependencies = [
  "flate2",
  "futures-core",
@@ -490,9 +490,9 @@ checksum = "67ba02a97a2bd10f4b59b25c7973101c79642302776489e030cd13cdab09ed15"
 
 [[package]]
 name = "command_attr"
-version = "0.5.1"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "32f08c85a02e066b7b4f7dcb60eee6ae0793ef7d6452a3547d1f19665df070a9"
+checksum = "88da8d7e9fe6f30d8e3fcf72d0f84102b49de70fece952633e8439e89bdc7631"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2480,9 +2480,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.84"
+version = "1.0.85"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec96c6a92621310b51366f1e28d05ef11489516e93be030060e5fc12024a49d6"
+checksum = "22244ce15aa966053a896d1accb3a6e68469b97c7f33f284b99f0d576879fc23"
 dependencies = [
  "unicode-ident",
 ]
@@ -3222,6 +3222,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_cow"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64e84ce5596a72f0c4c60759a10ff8c22d5eaf227b0dc2789c8746193309058b"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "serde_derive"
 version = "1.0.203"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3279,13 +3288,13 @@ dependencies = [
 
 [[package]]
 name = "serenity"
-version = "0.12.1"
+version = "0.12.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c64da29158bb55d70677cacd4f4f8eab1acef005fb830d9c3bea411b090e96a9"
+checksum = "880a04106592d0a8f5bdacb1d935889bfbccb4a14f7074984d9cd857235d34ac"
 dependencies = [
  "arrayvec",
  "async-trait",
- "base64 0.21.7",
+ "base64 0.22.1",
  "bitflags 2.5.0",
  "bytes",
  "chrono",
@@ -3301,6 +3310,7 @@ dependencies = [
  "reqwest 0.11.27",
  "secrecy",
  "serde",
+ "serde_cow",
  "serde_json",
  "static_assertions",
  "time",
@@ -4181,9 +4191,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.37.0"
+version = "1.38.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1adbebffeca75fcfd058afa480fb6c0b81e165a0323f9c9d39c9697e37c46787"
+checksum = "ba4f4a02a7a80d6f274636f0aa95c7e383b912d41fe721a31f29e29698585a4a"
 dependencies = [
  "backtrace",
  "bytes",
@@ -4199,9 +4209,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-macros"
-version = "2.2.0"
+version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b8a1e28f2deaa14e508979454cb3a223b10b938b45af148bc0986de36f1923b"
+checksum = "5f5ae998a069d4b5aba8ee9dad856af7d520c3699e6159b185c2acd48155d39a"
 dependencies = [
  "proc-macro2",
  "quote",

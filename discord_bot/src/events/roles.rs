@@ -38,7 +38,7 @@ async fn toggle_user_role(
 
     // Check if message is from this bot
     let message = reaction.message(ctx).await?;
-    if !message.is_own(ctx) {
+    if message.author.id != ctx.cache.current_user().id {
         return Ok(());
     }
 
