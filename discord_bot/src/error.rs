@@ -23,6 +23,9 @@ pub enum Error {
     #[error("Could not parse valid video details")]
     VideoDetailParse,
 
+    #[error("Could not find video")]
+    VideoNotFound,
+
     #[error(transparent)]
     IO(#[from] std::io::Error),
 

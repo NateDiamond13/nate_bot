@@ -7,7 +7,7 @@ use poise::{command, CreateReply, ReplyHandle};
 #[command(prefix_command, slash_command, guild_only, category = "Music")]
 pub async fn play(
     ctx: Context<'_>,
-    url: String,
+    #[description = "Url of video or string of text to search for"] url_or_search: String,
     #[flag]
     #[rename = "f"]
     #[description = "(Force): Set this flag to clear the queue before playing the sound."]
@@ -15,13 +15,13 @@ pub async fn play(
 ) -> Result<()> {
     let reply_msg = ctx.say("Attempting to queue sound...").await?;
     println!(
-        "User '{}' adding sound to queue: {}",
+        "User '{}' adding sound to queue: '{}'",
         ctx.author().name,
-        url
+        url_or_search
     );
 
-    // Attempt download from url
-    let Ok(video_details) = utils::get_video_details(&url, ctx.data()).await else {
+    // Attempt download from url or search string
+    let Ok(video_details) = utils::get_video_details(&url_or_search, ctx.data()).await else {
         update_reply(ctx, reply_msg, "Error occurred while downloading from url.").await?;
         return Ok(());
     };
