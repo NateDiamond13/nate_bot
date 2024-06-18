@@ -10,7 +10,7 @@ chrono = "0.4.38"
 dotenvy = "0.15.7"
 poise = "0.6.1"
 rand = "0.8.5"
-regex = "1.10.4"
+regex = "1.10.5"
 reqwest = "0.11.27"
 rusty_ytdl = { version = "0.7.2", features = ["rustls-tls"] }
 serenity = "0.12.2"

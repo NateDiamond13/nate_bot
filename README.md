@@ -26,3 +26,5 @@ NateBot for Discord rewritten in Rust
 ## Notes
 
 - Cmake is required to build the `songbird` crate on Windows
+- TODOs:
+  - Add search for play command
