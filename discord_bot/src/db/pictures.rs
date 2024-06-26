@@ -3,6 +3,7 @@ use crate::prelude::Result;
 use chrono::NaiveDateTime;
 use sqlx::{query, query_as, FromRow, PgPool};
 
+#[allow(dead_code)]
 #[derive(Debug, FromRow)]
 pub struct Picture {
     pub name: String,

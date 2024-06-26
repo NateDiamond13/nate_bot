@@ -1,5 +1,5 @@
 # Rust alpine base image
-FROM rust:1.78-alpine3.20 as builder
+FROM rust:1.79-alpine3.20 as builder
 
 # Install dependencies for songbird
 RUN apk add --update alpine-sdk cmake pkgconfig libressl-dev
