@@ -17,6 +17,11 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
         return Ok(());
     }
 
+    println!(
+        "Lottery won by '{}' - Odds: 1/{}",
+        message.author.name, data.env.lottery_odds
+    );
+
     // Get the current guild
     let guild_str = match message.guild_id {
         Some(guild_id) => guild_id.to_string(),
