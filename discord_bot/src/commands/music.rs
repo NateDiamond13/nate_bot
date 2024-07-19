@@ -21,9 +21,16 @@ pub async fn play(
     );
 
     // Attempt download from url or search string
-    let Ok(video_details) = utils::get_video_details(&url_or_search, ctx.data()).await else {
-        update_reply(ctx, reply_msg, "Error occurred while downloading from url.").await?;
-        return Ok(());
+    let video_details = match utils::get_video_details(&url_or_search, ctx.data()).await {
+        Ok(details) => details,
+        Err(err) => {
+            println!("Error while getting video details from '{url_or_search}': {err:?}");
+            println!("{:?}", ctx);
+            let response =
+                format!("Error occurred while getting video details for \"{url_or_search}\".");
+            update_reply(ctx, reply_msg, response).await?;
+            return Ok(());
+        }
     };
 
     if video_details.num_seconds > 7200 {

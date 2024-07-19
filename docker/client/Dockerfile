@@ -1,16 +1,16 @@
 # Rust alpine base image
-FROM rust:1.79-alpine3.20 as builder
+FROM rust:1.79-alpine3.20 AS builder
 
 # Install dependencies for songbird
-RUN apk add --update alpine-sdk cmake pkgconfig libressl-dev
+RUN apk add --no-cache alpine-sdk cmake pkgconfig libressl-dev
 
 # Create a new empty shell project
 RUN USER=root cargo new --bin discord_bot
 WORKDIR /discord_bot
 
 # Copy manifests
-COPY ./discord_bot/Cargo.lock ./Cargo.lock
-COPY ./discord_bot/Cargo.toml ./Cargo.toml
+COPY ./discord_bot/Cargo.lock .
+COPY ./discord_bot/Cargo.toml .
 
 # Include database url in build for SQLx
 ARG DATABASE_URL
@@ -27,7 +27,7 @@ RUN cargo build --release
 
 # Copy binary to an alpine image
 FROM alpine:3.20 AS runner
-RUN apk add --update yt-dlp
+RUN apk add --no-cache yt-dlp
 COPY --from=builder /discord_bot/target/release/discord_bot .
 
 # Run command
