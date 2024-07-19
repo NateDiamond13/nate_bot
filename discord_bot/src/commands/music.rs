@@ -1,5 +1,5 @@
 use crate::commands::utils;
-use crate::prelude::{Context, Result};
+use crate::prelude::{Context, Error, Result};
 
 use poise::{command, CreateReply, ReplyHandle};
 
@@ -24,27 +24,49 @@ pub async fn play(
     let video_details = match utils::get_video_details(&url_or_search, ctx.data()).await {
         Ok(details) => details,
         Err(err) => {
-            println!("Error while getting video details from '{url_or_search}': {err:?}");
-            println!("{:?}", ctx);
             let response =
                 format!("Error occurred while getting video details for \"{url_or_search}\".");
+            println!("{response}");
             update_reply(ctx, reply_msg, response).await?;
-            return Ok(());
+            return Err(err);
         }
     };
 
     if video_details.num_seconds > 7200 {
-        update_reply(ctx, reply_msg, "Cannot queue sounds longer than 2 hours.").await?;
+        let response = "Cannot queue sounds longer than 2 hours.";
+        println!("{response}");
+        update_reply(ctx, reply_msg, response).await?;
         return Ok(());
     }
 
     // Join the voice channel
-    utils::join_voice_channel(ctx).await?;
+    match utils::join_voice_channel(ctx).await {
+        Ok(()) => {}
+        Err(Error::InvalidVoiceChannel) => {
+            let response = "User is not currently in a voice channel.";
+            println!("{response}");
+            update_reply(ctx, reply_msg, response).await?;
+            return Ok(());
+        }
+        Err(err) => {
+            update_reply(ctx, reply_msg, "Bot could not join voice channel.").await?;
+            return Err(err);
+        }
+    };
 
     // Get call handler
-    let Some(call) = utils::get_call(ctx).await? else {
-        update_reply(ctx, reply_msg, "Bot could not join voice channel.").await?;
-        return Ok(());
+    let call = match utils::get_call(ctx).await {
+        Ok(Some(call)) => call,
+        Ok(None) => {
+            let response = "Could not find current voice channel.";
+            println!("{response}");
+            update_reply(ctx, reply_msg, response).await?;
+            return Ok(());
+        }
+        Err(err) => {
+            update_reply(ctx, reply_msg, "Bot could not join voice channel.").await?;
+            return Err(err);
+        }
     };
     let mut handler = call.lock().await;
     if force {
@@ -55,12 +77,9 @@ pub async fn play(
     if handler.queue().len() < max_sounds {
         handler.enqueue_input(video_details.input).await;
     } else {
-        update_reply(
-            ctx,
-            reply_msg,
-            format!("Maximum sounds ({max_sounds}) already in queue."),
-        )
-        .await?;
+        let response = format!("Maximum sounds ({max_sounds}) already in queue.");
+        println!("{response}");
+        update_reply(ctx, reply_msg, response).await?;
         return Ok(());
     }
 
