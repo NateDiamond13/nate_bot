@@ -63,7 +63,8 @@ pub async fn get_random(
             Picture,
             "SELECT * FROM pictures
             WHERE guild_id = $1 AND is_nsfw = $2
-            ORDER BY random() LIMIT 1;",
+            ORDER BY random()
+            LIMIT 1;",
             guild_id.into(),
             flag_nsfw
         )
@@ -74,7 +75,8 @@ pub async fn get_random(
             Picture,
             "SELECT * FROM pictures
             WHERE guild_id = $1
-            ORDER BY random() LIMIT 1;",
+            ORDER BY random()
+            LIMIT 1;",
             guild_id.into()
         )
         .fetch_one(conn)

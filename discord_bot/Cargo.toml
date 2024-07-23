@@ -15,8 +15,8 @@ reqwest = "0.11.27"
 rusty_ytdl = { version = "0.7.3", features = ["rustls-tls"] }
 serenity = "0.12.2"
 songbird = { version = "0.4.2", features = ["builtin-queue"] }
-sqlx = { version = "0.7.4", features = [ "chrono", "postgres", "runtime-tokio", "tls-rustls" ] }
+sqlx = { version = "0.8.0", features = [ "chrono", "postgres", "runtime-tokio", "tls-rustls" ] }
 symphonia = { version = "0.5.4", features = ["all-codecs", "all-formats"] }
 thiserror = "1.0.63"
-tokio = { version = "1.38.1", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.39.0", features = ["macros", "rt-multi-thread"] }
 url = "2.5.2"
