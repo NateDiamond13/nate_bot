@@ -6,6 +6,7 @@ services:
       args:
         - DATABASE_URL=${DATABASE_URL}
     environment:
+      - AUDIT_ENABLED_SERVERS=${AUDIT_ENABLED_SERVERS}
       - COMMAND_PREFIX=${COMMAND_PREFIX}
       - CUSTOM_STATUS=${CUSTOM_STATUS}
       - DATABASE_URL=${DATABASE_URL}
