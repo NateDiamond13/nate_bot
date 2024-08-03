@@ -29,7 +29,7 @@ pub async fn event_handler(
             roles::handle_reaction_remove(ctx, removed_reaction).await?;
         }
         FullEvent::VoiceStateUpdate { old, new } => {
-            audit::handle_voice_state_update(ctx, old, new).await?;
+            audit::handle_voice_state_update(ctx, old, new, data).await?;
             music::handle_voice_state_update(ctx, old, new).await?;
         }
         FullEvent::Message { new_message } => {

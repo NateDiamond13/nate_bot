@@ -15,6 +15,7 @@ pub struct CommandData {
 
 #[derive(Debug, Clone)]
 pub struct EnvVariables {
+    pub audit_enabled_servers: Vec<u64>,
     pub command_prefix: String,
     pub custom_status: String,
     pub database_url: String,

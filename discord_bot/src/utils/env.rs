@@ -8,6 +8,7 @@ pub fn load_env() -> Result<EnvVariables> {
         println!("No .env file found. Attempting to load environment...");
     }
     Ok(EnvVariables {
+        audit_enabled_servers: load_vec_u64("AUDIT_ENABLED_SERVERS")?,
         command_prefix: load_var_string("COMMAND_PREFIX")?,
         custom_status: load_var_string("CUSTOM_STATUS")?,
         database_url: load_var_string("DATABASE_URL")?,

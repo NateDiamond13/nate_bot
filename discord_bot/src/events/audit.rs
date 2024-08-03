@@ -1,4 +1,4 @@
-use crate::prelude::{Error, Result};
+use crate::prelude::{CommandData, Error, Result};
 use crate::utils;
 
 use chrono::Utc;
@@ -10,6 +10,7 @@ pub async fn handle_voice_state_update(
     ctx: &Context,
     old_state: &Option<VoiceState>,
     new_state: &VoiceState,
+    data: &CommandData,
 ) -> Result<()> {
     // Ignore user joining a voice channel
     let old_state = match old_state {
@@ -18,6 +19,18 @@ pub async fn handle_voice_state_update(
             return Ok(());
         }
     };
+
+    // Ignore if server does not have audits enabled
+    match old_state.guild_id {
+        Some(guild_id) => {
+            if !data.env.audit_enabled_servers.contains(&guild_id.into()) {
+                return Ok(());
+            }
+        }
+        None => {
+            return Ok(());
+        }
+    }
 
     // Ignore events from bots
     let member = match &new_state.member {
