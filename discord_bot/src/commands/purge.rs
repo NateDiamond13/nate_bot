@@ -3,6 +3,7 @@ use crate::{
     utils,
 };
 
+use chrono::Utc;
 use poise::{command, PrefixContext};
 use serenity::all::{GetMessages, Message};
 
@@ -57,9 +58,11 @@ pub async fn purge(
         message_filter = GetMessages::new().limit(PURGE_LIMIT);
     }
 
+    // Get messages less than 14 days old that contain the given text
     let messages_to_delete = channel.messages(ctx, message_filter).await?;
     let message_ids = messages_to_delete
         .iter()
+        .filter(|&msg| -msg.timestamp.signed_duration_since(Utc::now()).num_days() < 14)
         .filter(|&msg| msg.content.to_lowercase().contains(&text_lower))
         .collect::<Vec<&Message>>();
     channel.delete_messages(ctx, &message_ids).await?;

@@ -32,6 +32,13 @@ pub async fn play(
         }
     };
 
+    if !video_details.input.is_playable() {
+        let response = format!("Could not play sound: {url_or_search}");
+        println!("{response}");
+        update_reply(ctx, reply_msg, response).await?;
+        return Ok(());
+    }
+
     if video_details.num_seconds > 7200 {
         let response = "Cannot queue sounds longer than 2 hours.";
         println!("{response}");
@@ -84,17 +91,12 @@ pub async fn play(
     }
 
     // Get current length of queue
-    let queue_str = match handler.queue().len() {
-        n if n > 1 => format!(" ({n})"),
-        _ => "".to_string(),
+    let response = match handler.queue().len() {
+        n if n > 1 => format!("Added to queue ({}): {}", n, video_details.source_url),
+        _ => format!("Playing sound: {}", video_details.source_url),
     };
 
-    update_reply(
-        ctx,
-        reply_msg,
-        format!("Added to queue{}: {}", queue_str, video_details.source_url),
-    )
-    .await?;
+    update_reply(ctx, reply_msg, response).await?;
     Ok(())
 }
 
