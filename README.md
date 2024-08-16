@@ -1,6 +1,6 @@
 # NateBot (Rust)
 
-NateBot for Discord rewritten in Rust
+NateBot for Discord, written in Rust
 
 ## Useful Commands
 
@@ -13,8 +13,9 @@ NateBot for Discord rewritten in Rust
 
 ### Docker
 
-1. `docker-compose build` to build the Docker image
-2. `docker run --env-file .env --rm nate-bot-rust-client` to run the Docker container
+1. `docker compose build` to build the image
+2. `docker run --env-file .env --rm nate-bot-rust-client` to run the container
+3. `docker buildx prune` to clear build cache
 
 ### SQLx
 
@@ -25,4 +26,4 @@ NateBot for Discord rewritten in Rust
 
 ## Notes
 
-- Visual Studio Build Tools and cmake are required to build the `songbird` crate on Windows
+    - Visual Studio Build Tools and cmake are required to build the `songbird` crate on Windows

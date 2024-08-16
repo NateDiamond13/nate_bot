@@ -6,17 +6,27 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-chrono = "0.4.38"
-dotenvy = "0.15.7"
-poise = "0.6.1"
-rand = "0.8.5"
-regex = "1.10.6"
-reqwest = "0.11.27"
-rusty_ytdl = { version = "0.7.3", features = ["rustls-tls"] }
-serenity = "0.12.2"
-songbird = { version = "0.4.3", features = ["builtin-queue"] }
-sqlx = { version = "0.8.0", features = [ "chrono", "postgres", "runtime-tokio", "tls-rustls" ] }
-symphonia = { version = "0.5.4", features = ["all-codecs", "all-formats"] }
-thiserror = "1.0.63"
-tokio = { version = "1.39.2", features = ["macros", "rt-multi-thread"] }
-url = "2.5.2"
+chrono = "=0.4.38"
+dotenvy = "=0.15.7"
+poise = "=0.6.1"
+rand = "=0.8.5"
+regex = "=1.10.6"
+reqwest_old = { version = "=0.11.27", package = "reqwest", default-features = false, features = [
+    "cookies",
+    "json",
+    "multipart",
+    "rustls-tls",
+] }
+rusty_ytdl = { version = "=0.7.4", features = ["rustls-tls"] }
+serenity = "=0.12.1"
+songbird = { version = "=0.4.1", features = ["builtin-queue"] }
+sqlx = { version = "=0.8.0", features = [
+    "chrono",
+    "postgres",
+    "runtime-tokio",
+    "tls-rustls",
+] }
+symphonia = { version = "=0.5.4", features = ["all-codecs", "all-formats"] }
+thiserror = "=1.0.63"
+tokio = { version = "=1.39.2", features = ["macros", "rt-multi-thread"] }
+url = "=2.5.2"
