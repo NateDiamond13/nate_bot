@@ -5,15 +5,17 @@ mod events;
 mod prelude;
 mod utils;
 
-use prelude::{CommandData, Error, HttpClient, Result};
+use std::sync::Arc;
 
+use prelude::{CommandData, HttpClient, Result};
+
+use poise::serenity_prelude::ClientBuilder;
 use poise::{
-    builtins, ApplicationContext, Context, Framework, FrameworkOptions, PrefixContext,
-    PrefixFrameworkOptions,
+    ApplicationContext, Context, Framework, FrameworkOptions, PrefixContext, PrefixFrameworkOptions,
 };
 use serenity::all::ActivityData;
-use serenity::prelude::{Client, GatewayIntents};
-use songbird::SerenityInit;
+use serenity::prelude::GatewayIntents;
+use songbird::Songbird;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -24,8 +26,16 @@ async fn main() -> Result<()> {
     // Set up database connection pool
     let pool = db::get_connection_pool(&env_vars.database_url).await?;
 
-    // Set up http client for songbird
+    // Set up http client and manager for songbird
     let http_client = HttpClient::new();
+    let songbird_manager = songbird::Songbird::serenity();
+
+    let data = Arc::new(CommandData {
+        env,
+        pool,
+        http_client,
+        songbird_manager,
+    });
 
     // Set up poise framework with options
     let options = FrameworkOptions {
@@ -42,7 +52,7 @@ async fn main() -> Result<()> {
         ],
         // Allows prefix commands to be executed
         prefix_options: PrefixFrameworkOptions {
-            prefix: Some(env_vars.command_prefix),
+            prefix: Some(env_vars.command_prefix.into()),
             ..Default::default()
         },
         // Logs which commands are executed and by whom
@@ -73,27 +83,15 @@ async fn main() -> Result<()> {
             Box::pin(async move { println!("Error occurred during command: {:#?}", err) })
         },
         // Ignore commands from bots
-        command_check: Some(|ctx| Box::pin(async move { Ok(!ctx.author().bot) })),
+        command_check: Some(|ctx| Box::pin(async move { Ok(!ctx.author().bot()) })),
         // Handle events
-        event_handler: |ctx, event, framework, data| {
-            Box::pin(events::event_handler(ctx, event, framework, data))
+        event_handler: |framework_context, event| {
+            Box::pin(events::event_handler(framework_context, event))
         },
         ..Default::default()
     };
-    let framework: Framework<CommandData, Error> = Framework::builder()
-        // Register built-in commands to Discord Integrations page
-        .setup(move |ctx, _ready, framework| {
-            Box::pin(async move {
-                builtins::register_globally(ctx, &framework.options().commands).await?;
-                Ok(CommandData {
-                    env,
-                    pool,
-                    http_client,
-                })
-            })
-        })
-        .options(options)
-        .build();
+
+    let framework = Framework::new(options);
 
     // Set gateway intents, which decides what events the bot will be notified about
     let intents = GatewayIntents::GUILDS
@@ -107,10 +105,11 @@ async fn main() -> Result<()> {
 
     // Create a new instance of the Client, logging in as a bot
     println!("Starting bot...");
-    let mut client = Client::builder(env_vars.discord_token, intents)
+    let mut client = ClientBuilder::new(&env_vars.discord_token, intents)
+        .voice_manager::<Songbird>(data.songbird_manager.clone())
         .framework(framework)
-        .register_songbird()
         .activity(ActivityData::custom(env_vars.custom_status))
+        .data(data)
         .await?;
 
     // Start listening for events with an automatically determined number of shards

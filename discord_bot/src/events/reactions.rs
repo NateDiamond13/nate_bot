@@ -3,7 +3,7 @@ use crate::prelude::{CommandData, Result};
 use rand::rngs::StdRng;
 use rand::seq::{IteratorRandom, SliceRandom};
 use rand::{Rng, SeedableRng};
-use serenity::all::Message;
+use serenity::all::{CacheHttp, Message};
 use serenity::prelude::Context;
 use std::cmp;
 
@@ -27,7 +27,7 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
     let Some(guild_id) = message.guild_id else {
         return Ok(());
     };
-    let emojis = guild_id.emojis(ctx).await?;
+    let emojis = guild_id.emojis(ctx.http()).await?;
 
     // Choose how many emojis to react with
     let min_count = cmp::min(emojis.len(), REACTION_COUNT_MIN);
@@ -43,7 +43,7 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
 
     // React to the message with the chosen emojis
     for choice in choices {
-        message.react(ctx, choice.clone()).await?;
+        message.react(ctx.http(), choice.clone()).await?;
     }
 
     Ok(())

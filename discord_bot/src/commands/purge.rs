@@ -5,7 +5,7 @@ use crate::{
 
 use chrono::Utc;
 use poise::{command, PrefixContext};
-use serenity::all::{GetMessages, Message};
+use serenity::all::{GetMessages, MessageId};
 
 const MIN_TEXT_LENGTH: usize = 3;
 const PURGE_LIMIT: u8 = 100;
@@ -22,12 +22,6 @@ pub async fn purge(
     #[description = "String of text to search for in previous messages"]
     #[min_length = 3]
     text: String,
-    #[flag]
-    #[description = "(Silent): Set this flag to suppress the output message"]
-    s: bool,
-    #[flag]
-    #[description = "(Delete): Set this flag to delete the original message (prefix command only)"]
-    d: bool,
 ) -> Result<()> {
     if text.len() < MIN_TEXT_LENGTH {
         ctx.say(format!(
@@ -53,28 +47,27 @@ pub async fn purge(
 
     let message_filter;
     if let Some(msg) = current_message {
-        message_filter = GetMessages::new().limit(PURGE_LIMIT).before(msg);
+        message_filter = GetMessages::new().limit(PURGE_LIMIT).before(msg.id);
     } else {
         message_filter = GetMessages::new().limit(PURGE_LIMIT);
     }
 
     // Get messages less than 14 days old that contain the given text
-    let messages_to_delete = channel.messages(ctx, message_filter).await?;
+    let messages_to_delete = channel.messages(ctx.http(), message_filter).await?;
     let message_ids = messages_to_delete
         .iter()
         .filter(|&msg| -msg.timestamp.signed_duration_since(Utc::now()).num_days() < 14)
         .filter(|&msg| msg.content.to_lowercase().contains(&text_lower))
-        .collect::<Vec<&Message>>();
-    channel.delete_messages(ctx, &message_ids).await?;
+        .map(|msg| msg.id)
+        .collect::<Vec<MessageId>>();
+    channel
+        .delete_messages(
+            ctx.http(),
+            message_ids.as_slice(),
+            Some("Removed by purge command"),
+        )
+        .await?;
 
-    // Handle delete (d) flag
-    if d {
-        if let Some(msg) = current_message {
-            msg.delete(ctx).await?;
-        }
-    }
-
-    // Handle silent (s) flag
     let response = format!(
         "User '{}' purged {} message(s) containing \"{}\" from channel '{}'",
         ctx.author().name,
@@ -83,10 +76,8 @@ pub async fn purge(
         channel.name
     );
     println!("{response}");
-    if !s {
-        if let Some(guild_id) = ctx.guild_id() {
-            utils::post_to_spam_channel(response, ctx.serenity_context(), guild_id).await?;
-        }
+    if let Some(guild_id) = ctx.guild_id() {
+        utils::post_to_spam_channel(response, ctx.serenity_context(), guild_id).await?;
     }
 
     Ok(())

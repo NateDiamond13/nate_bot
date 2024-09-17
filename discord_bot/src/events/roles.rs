@@ -1,11 +1,12 @@
 use crate::prelude::{Error, Result};
 
 use regex::Regex;
-use serenity::all::{Channel, Reaction, ReactionType};
+use serenity::all::{CacheHttp, Channel, Reaction, ReactionType};
 use serenity::prelude::Context;
+use serenity::small_fixed_array::FixedString;
 
 pub const ROLE_CHANNEL: &str = "roles";
-pub const ROLE_REACTION: char = '👍';
+pub const ROLE_REACTION: &str = "👍";
 
 pub async fn handle_reaction_add(ctx: &Context, event: &Reaction) -> Result<()> {
     if let Err(error) = toggle_user_role(ctx, event, true).await {
@@ -26,13 +27,13 @@ async fn toggle_user_role(
     reaction: &Reaction,
     add_role: bool,
 ) -> core::result::Result<(), Box<dyn std::error::Error>> {
-    if reaction.emoji != ReactionType::Unicode(ROLE_REACTION.to_string()) {
+    if reaction.emoji != ReactionType::Unicode(FixedString::from_static_trunc(ROLE_REACTION)) {
         return Ok(());
     }
 
     // Check if user is a bot
     let user = reaction.user(ctx).await?;
-    if user.bot {
+    if user.bot() {
         return Ok(());
     }
 
@@ -46,7 +47,7 @@ async fn toggle_user_role(
     let Channel::Guild(channel) = reaction.channel(ctx).await? else {
         return Ok(());
     };
-    if channel.name() != ROLE_CHANNEL {
+    if channel.name != ROLE_CHANNEL {
         return Ok(());
     }
 
@@ -61,18 +62,22 @@ async fn toggle_user_role(
         .ok_or_else(|| Error::ToggleRoleFailure)?;
 
     // Check if user already has role
-    let has_role = user.has_role(ctx, guild_id, role).await?;
+    let has_role = user.has_role(ctx, guild_id, role.id).await?;
     let member = guild.member(ctx, user.id).await?;
 
     // Toggle role for user
     if add_role && !has_role {
-        member.add_role(ctx, role).await?;
+        member
+            .add_role(ctx.http(), role.id, Some("Added by roles handler"))
+            .await?;
         println!(
             "Added user '{}' to role '{}' in guild '{}'",
             user.name, role.name, guild.name
         );
     } else if !add_role && has_role {
-        member.remove_role(ctx, role).await?;
+        member
+            .remove_role(ctx.http(), role.id, Some("Removed by roles handler"))
+            .await?;
         println!(
             "Removed user '{}' from role '{}' in guild '{}'",
             user.name, role.name, guild.name

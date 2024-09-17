@@ -2,8 +2,9 @@ use crate::events::{ROLE_CHANNEL, ROLE_REACTION};
 use crate::prelude::{Context, Result};
 
 use poise::command;
-use serenity::all::EditRole;
+use serenity::all::{EditRole, ReactionType};
 use serenity::model::guild;
+use serenity::small_fixed_array::FixedString;
 
 const MIN_ROLE_LENGTH: usize = 3;
 
@@ -62,7 +63,7 @@ pub async fn new_role(
     }
 
     let builder = EditRole::new().name(&role).mentionable(true);
-    match guild.create_role(ctx, builder).await {
+    match guild.create_role(ctx.http(), builder).await {
         Ok(role) => {
             create_role_message(ctx, role.name).await?;
         }
@@ -115,10 +116,11 @@ async fn create_role_message(ctx: Context<'_>, role_name: impl Into<String>) -> 
             role_name.into()
         ))
         .await?;
+    let reaction = ReactionType::Unicode(FixedString::from_static_trunc(ROLE_REACTION));
     reply_handle
         .message()
         .await?
-        .react(ctx, ROLE_REACTION)
+        .react(ctx.http(), reaction)
         .await?;
     Ok(())
 }

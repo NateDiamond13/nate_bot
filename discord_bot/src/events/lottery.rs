@@ -3,12 +3,12 @@ use crate::prelude::{CommandData, Result};
 
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
-use serenity::all::{CreateEmbed, CreateMessage, Mentionable, Message};
+use serenity::all::{CacheHttp, CreateEmbed, CreateMessage, Mentionable, Message};
 use serenity::prelude::Context;
 
 pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData) -> Result<()> {
     // Check if author is a bot
-    if message.author.bot {
+    if message.author.bot() {
         return Ok(());
     }
 
@@ -47,6 +47,9 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
             message.author.mention(),
             data.env.lottery_odds
         ));
-    message.channel_id.send_message(ctx, response).await?;
+    message
+        .channel_id
+        .send_message(ctx.http(), response)
+        .await?;
     Ok(())
 }

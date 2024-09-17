@@ -63,7 +63,7 @@ pub async fn dice_roll(
     };
 
     let author_mention = ctx.author().mention().to_string();
-    let response = format_dice_roll(author_mention, roll);
+    let response = format_dice_roll(author_mention, &roll);
     ctx.send(response).await?;
     Ok(())
 }
@@ -77,8 +77,8 @@ fn format_simple_roll(author: String, max_roll: u32) -> String {
     format!("{author} rolls a {roll} (1-{max_roll})")
 }
 
-fn format_dice_roll(author: String, roll: DiceRoll) -> CreateReply {
-    let DiceRoll { count, sides } = roll;
+fn format_dice_roll(author: String, roll: &DiceRoll) -> CreateReply {
+    let &DiceRoll { count, sides } = roll;
 
     let mut rolls = Vec::new();
     for _ in 0..count {

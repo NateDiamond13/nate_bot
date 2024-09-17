@@ -10,14 +10,13 @@ use crate::prelude::{CommandData, Error, Result};
 
 use poise::FrameworkContext;
 use serenity::all::FullEvent;
-use serenity::prelude::Context;
 
 pub async fn event_handler(
-    ctx: &Context,
+    framework_context: FrameworkContext<'_, CommandData, Error>,
     event: &FullEvent,
-    _framework: FrameworkContext<'_, CommandData, Error>,
-    data: &CommandData,
 ) -> Result<()> {
+    let ctx = framework_context.serenity_context;
+    let data = framework_context.user_data();
     match event {
         FullEvent::Ready { data_about_bot } => {
             ready::handle_ready(ctx, data_about_bot)?;
@@ -29,12 +28,12 @@ pub async fn event_handler(
             roles::handle_reaction_remove(ctx, removed_reaction).await?;
         }
         FullEvent::VoiceStateUpdate { old, new } => {
-            audit::handle_voice_state_update(ctx, old, new, data).await?;
-            music::handle_voice_state_update(ctx, old, new).await?;
+            audit::handle_voice_state_update(ctx, old, new, &data).await?;
+            music::handle_voice_state_update(ctx, old, new, &data).await?;
         }
         FullEvent::Message { new_message } => {
-            lottery::handle_message(ctx, new_message, data).await?;
-            reactions::handle_message(ctx, new_message, data).await?;
+            lottery::handle_message(ctx, new_message, &data).await?;
+            reactions::handle_message(ctx, new_message, &data).await?;
         }
         _ => {}
     }

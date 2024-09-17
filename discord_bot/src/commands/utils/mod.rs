@@ -3,10 +3,7 @@ pub use videos::get_video_details;
 
 use crate::prelude::{Context, Error, Result};
 
-use serenity::{
-    all::{ChannelId, GuildId},
-    async_trait,
-};
+use serenity::{all::GuildId, async_trait};
 use songbird::{Call, Event, EventContext, EventHandler, Songbird, TrackEvent};
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -31,23 +28,14 @@ impl EventHandler for SoundEndNotifier {
 }
 
 pub async fn get_call(ctx: Context<'_>) -> Result<Option<Arc<Mutex<Call>>>> {
-    // Get songbird manager and guild_id
-    let manager = songbird::get(poise::Context::serenity_context(ctx))
-        .await
-        .ok_or(Error::InvalidGuild)?;
+    // Get guild_id and call handler
     let guild_id = ctx.guild_id().ok_or(Error::InvalidGuild)?;
-
-    // Get call handler
-    Ok(manager.get(guild_id))
+    Ok(ctx.data().songbird_manager.get(guild_id))
 }
 
 pub async fn join_voice_channel(ctx: Context<'_>) -> Result<()> {
-    // Get songbird manager
-    let manager = songbird::get(poise::Context::serenity_context(ctx))
-        .await
-        .ok_or(Error::InvalidGuild)?;
-
     // Check if already in a call
+    let manager = &ctx.data().songbird_manager;
     let guild_id = ctx.guild_id().ok_or(Error::InvalidGuild)?;
     if manager.get(guild_id).is_some() {
         println!("Attempting to join, but already in a call.");
@@ -56,9 +44,8 @@ pub async fn join_voice_channel(ctx: Context<'_>) -> Result<()> {
 
     // Get the id of the voice channel
     let user_id = ctx.author().id;
-    let channel_id: ChannelId = ctx
-        .cache()
-        .guild(guild_id)
+    let channel_id = ctx
+        .guild()
         .ok_or(Error::InvalidGuild)?
         .voice_states
         .get(&user_id)
@@ -72,16 +59,17 @@ pub async fn join_voice_channel(ctx: Context<'_>) -> Result<()> {
     let mut handle = handle_lock.lock().await;
     handle.add_global_event(
         Event::Track(TrackEvent::End),
-        SoundEndNotifier { manager, guild_id },
+        SoundEndNotifier {
+            manager: manager.clone(),
+            guild_id,
+        },
     );
 
     Ok(())
 }
 
 pub async fn leave_voice_channel(ctx: Context<'_>) -> Result<()> {
-    let manager = songbird::get(poise::Context::serenity_context(ctx))
-        .await
-        .ok_or(Error::InvalidGuild)?;
+    let manager = &ctx.data().songbird_manager;
     let guild_id = ctx.guild_id().ok_or(Error::InvalidGuild)?;
 
     if manager.get(guild_id).is_some() {

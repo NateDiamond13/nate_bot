@@ -2,8 +2,9 @@ use crate::prelude::{CommandData, Error, Result};
 use crate::utils;
 
 use chrono::Utc;
-use serenity::all::{Channel, GuildChannel, VoiceState};
+use serenity::all::{CacheHttp, Channel, GuildChannel, VoiceState};
 use serenity::model::guild::audit_log::{Action, MemberAction};
+use serenity::nonmax::NonMaxU8;
 use serenity::prelude::Context;
 
 pub async fn handle_voice_state_update(
@@ -39,7 +40,7 @@ pub async fn handle_voice_state_update(
             return Ok(());
         }
     };
-    if member.user.bot {
+    if member.user.bot() {
         return Ok(());
     }
 
@@ -50,7 +51,7 @@ pub async fn handle_voice_state_update(
     };
     let audit_logs = member
         .guild_id
-        .audit_logs(ctx, Some(action_type), None, None, Some(1))
+        .audit_logs(ctx.http(), Some(action_type), None, None, NonMaxU8::new(1))
         .await?;
 
     // Check if user did this to themselves
@@ -60,9 +61,17 @@ pub async fn handle_voice_state_update(
             return Ok(());
         }
     };
-    if entry.user_id == member.user.id {
-        return Ok(());
-    }
+    let entry_user_id = match entry.user_id {
+        Some(user_id) => {
+            if user_id == member.user.id {
+                return Ok(());
+            }
+            user_id
+        }
+        None => {
+            return Ok(());
+        }
+    };
 
     // Check if entry was created in the last second
     let entry_time = entry.id.created_at().time();
@@ -73,7 +82,7 @@ pub async fn handle_voice_state_update(
     }
 
     // Get user and channel info to print out
-    let user = entry.user_id.to_user(ctx).await?;
+    let user = entry_user_id.to_user(ctx).await?;
     let old_channel_name = get_channel_name(old_state, ctx).await?;
 
     match action_type {
@@ -103,8 +112,12 @@ async fn get_channel_name(voice_state: &VoiceState, context: &Context) -> Result
     let Some(channel_id) = voice_state.channel_id else {
         return Err(Error::InvalidVoiceChannel);
     };
-    match channel_id.to_channel(&context.http).await {
-        Ok(Channel::Guild(GuildChannel { name, .. })) => Ok(name),
+
+    match channel_id
+        .to_channel(context.http(), voice_state.guild_id)
+        .await
+    {
+        Ok(Channel::Guild(GuildChannel { name, .. })) => Ok(name.to_string()),
         _ => Err(Error::InvalidVoiceChannel),
     }
 }

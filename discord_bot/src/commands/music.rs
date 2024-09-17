@@ -21,7 +21,7 @@ pub async fn play(
     );
 
     // Attempt download from url or search string
-    let video_details = match utils::get_video_details(&url_or_search, ctx.data()).await {
+    let video_details = match utils::get_video_details(&url_or_search, &ctx.data()).await {
         Ok(details) => details,
         Err(err) => {
             let response =
@@ -31,13 +31,6 @@ pub async fn play(
             return Err(err);
         }
     };
-
-    if !video_details.input.is_playable() {
-        let response = format!("Could not play sound: {url_or_search}");
-        println!("{response}");
-        update_reply(ctx, reply_msg, response).await?;
-        return Ok(());
-    }
 
     if video_details.num_seconds > 7200 {
         let response = "Cannot queue sounds longer than 2 hours.";
@@ -116,9 +109,13 @@ pub async fn skip(ctx: Context<'_>) -> Result<()> {
 
         match queue.skip() {
             Ok(_) => {
-                queue_len = queue.len();
-                ctx.say(format!("Skipping sound, {queue_len} in queue."))
-                    .await?;
+                queue_len = queue.len() - 1;
+                if queue_len == 0 {
+                    ctx.say("Skipping sound, queue empty.").await?;
+                } else {
+                    ctx.say(format!("Skipping sound, {queue_len} in queue."))
+                        .await?;
+                }
             }
             Err(e) => {
                 println!("{e}");

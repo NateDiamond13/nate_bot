@@ -8,19 +8,20 @@ edition = "2021"
 [dependencies]
 chrono = "=0.4.38"
 dotenvy = "=0.15.7"
-poise = "=0.6.1"
+poise = { git = "https://github.com/serenity-rs/poise", branch = "serenity-next" }
 rand = "=0.8.5"
 regex = "=1.10.6"
-reqwest_old = { version = "=0.11.27", package = "reqwest", default-features = false, features = [
-    "cookies",
-    "json",
-    "multipart",
+reqwest = { version = "=0.12.7", default-features = false, features = [
     "rustls-tls",
 ] }
 rusty_ytdl = { version = "=0.7.4", features = ["rustls-tls"] }
-serenity = "=0.12.1"
-songbird = { version = "=0.4.1", features = ["builtin-queue"] }
-sqlx = { version = "=0.8.1", features = [
+serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next", features = [
+    "temp_cache",
+] }
+songbird = { git = "https://github.com/serenity-rs/songbird", branch = "serenity-next", features = [
+    "builtin-queue",
+] }
+sqlx = { version = "=0.8.2", features = [
     "chrono",
     "postgres",
     "runtime-tokio",
@@ -28,5 +29,5 @@ sqlx = { version = "=0.8.1", features = [
 ] }
 symphonia = { version = "=0.5.4", features = ["all-codecs", "all-formats"] }
 thiserror = "=1.0.63"
-tokio = { version = "=1.39.3", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "=1.40.0", features = ["macros", "rt-multi-thread"] }
 url = "=2.5.2"

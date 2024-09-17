@@ -1,4 +1,4 @@
-use crate::prelude::{Error, Result};
+use crate::prelude::{CommandData, Error, Result};
 
 use serenity::all::VoiceState;
 use serenity::prelude::Context;
@@ -7,6 +7,7 @@ pub async fn handle_voice_state_update(
     ctx: &Context,
     old_state: &Option<VoiceState>,
     new_state: &VoiceState,
+    data: &CommandData,
 ) -> Result<()> {
     // Ignore user joining a voice channel
     let Some(voice_state) = old_state else {
@@ -31,7 +32,7 @@ pub async fn handle_voice_state_update(
     }
 
     println!("Bot was disconnected from voice channel, clearing queue.");
-    let manager = songbird::get(ctx).await.ok_or(Error::InvalidGuild)?;
+    let manager = &data.songbird_manager;
     let guild_id = voice_state.guild_id.ok_or(Error::InvalidGuild)?;
 
     if manager.get(guild_id).is_some() {
