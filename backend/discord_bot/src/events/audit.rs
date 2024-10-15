@@ -1,5 +1,5 @@
+use crate::helpers;
 use crate::prelude::{CommandData, Error, Result};
-use crate::utils;
 
 use chrono::Utc;
 use serenity::all::{CacheHttp, Channel, GuildChannel, VoiceState};
@@ -93,7 +93,7 @@ pub async fn handle_voice_state_update(
                 user.name, member.user.name, old_channel_name, new_channel_name
             );
             println!("{response}");
-            utils::post_to_spam_channel(response, ctx, member.guild_id).await?;
+            helpers::post_to_spam_channel(response, ctx, member.guild_id).await?;
         }
         Action::Member(MemberAction::MemberDisconnect) => {
             let response = format!(
@@ -101,7 +101,7 @@ pub async fn handle_voice_state_update(
                 user.name, member.user.name, old_channel_name
             );
             println!("{response}");
-            utils::post_to_spam_channel(response, ctx, member.guild_id).await?;
+            helpers::post_to_spam_channel(response, ctx, member.guild_id).await?;
         }
         _ => {}
     }

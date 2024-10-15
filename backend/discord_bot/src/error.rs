@@ -2,11 +2,11 @@
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
-    #[error("Could not find environment variable: {0}")]
-    MissingVar(String),
+    #[error(transparent)]
+    LibDatabase(#[from] database::Error),
 
-    #[error("Environment variable '{0}' not in valid range: {1} - {2}")]
-    InvalidRangeVar(String, u32, u32),
+    #[error(transparent)]
+    LibUtils(#[from] utils::Error),
 
     #[error("Could not parse valid command arguments")]
     CommandArgParse,
@@ -46,7 +46,4 @@ pub enum Error {
 
     #[error(transparent)]
     SongbirdJoin(#[from] songbird::error::JoinError),
-
-    #[error(transparent)]
-    SQLx(#[from] sqlx::Error),
 }

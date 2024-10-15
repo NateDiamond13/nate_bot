@@ -1,9 +1,8 @@
 mod commands;
-mod db;
 mod error;
 mod events;
+mod helpers;
 mod prelude;
-mod utils;
 
 use std::sync::Arc;
 
@@ -20,11 +19,11 @@ use songbird::Songbird;
 #[tokio::main]
 async fn main() -> Result<()> {
     // Load bot token from the environment
-    let env_vars = utils::load_env()?;
+    let env_vars = utils::get_env_variables();
     let env = env_vars.clone();
 
     // Set up database connection pool
-    let pool = db::get_connection_pool(&env_vars.database_url).await?;
+    let pool = database::get_connection_pool(&env_vars.database_url).await?;
 
     // Set up http client and manager for songbird
     let http_client = HttpClient::new();

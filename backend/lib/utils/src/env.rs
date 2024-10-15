@@ -1,10 +1,32 @@
-use crate::prelude::{EnvVariables, Error, Result};
+use crate::prelude::{Error, Result};
 
-use dotenvy::dotenv;
-use std::env;
+use std::{env, ops::Deref, sync::LazyLock};
 
-pub fn load_env() -> Result<EnvVariables> {
-    if dotenv().is_err() {
+const ENV_FILENAME: &str = ".env.dev";
+static ENV_VARIABLES: LazyLock<Result<EnvVariables>> = LazyLock::new(load_env);
+
+#[derive(Debug, Clone)]
+pub struct EnvVariables {
+    pub audit_enabled_servers: Vec<u64>,
+    pub command_prefix: String,
+    pub custom_status: String,
+    pub database_url: String,
+    pub discord_token: String,
+    pub lottery_odds: u32,
+    pub queue_max_sounds: usize,
+    pub reaction_target_ids: Vec<u64>,
+    pub reaction_target_odds: u32,
+}
+
+pub fn get_env_variables() -> EnvVariables {
+    match ENV_VARIABLES.deref() {
+        Ok(c) => c.clone(),
+        Err(e) => panic!("Error occurred while reading from env: {:?}", e),
+    }
+}
+
+fn load_env() -> Result<EnvVariables> {
+    if dotenvy::from_filename_override(ENV_FILENAME).is_err() {
         println!("No .env file found. Attempting to load environment...");
     }
     Ok(EnvVariables {

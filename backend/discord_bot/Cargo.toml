@@ -1,0 +1,20 @@
+[package]
+name = "discord_bot"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+chrono = { workspace = true }
+database = { path = "../lib/database" }
+poise = { workspace = true }
+rand = { workspace = true }
+regex = { workspace = true }
+reqwest = { workspace = true }
+rusty_ytdl = { workspace = true }
+serenity = { workspace = true }
+songbird = { workspace = true }
+symphonia = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+url = { workspace = true }
+utils = { path = "../lib/utils" }

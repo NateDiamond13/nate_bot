@@ -1,5 +1,6 @@
-use crate::db::pictures;
 use crate::prelude::{Context, Result};
+
+use database::pictures;
 
 use poise::{command, CreateReply};
 use serenity::all::CreateEmbed;

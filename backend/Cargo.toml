@@ -1,17 +1,16 @@
-[package]
-name = "discord_bot"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+members = ["discord_bot", "lib/database", "lib/utils"]
+package.version = "0.1.0"
+package.edition = "2021"
+resolver = "2"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
+[workspace.dependencies]
 chrono = "=0.4.38"
 dotenvy = "=0.15.7"
 poise = { git = "https://github.com/serenity-rs/poise", branch = "serenity-next" }
 rand = "=0.8.5"
-regex = "=1.10.6"
-reqwest = { version = "=0.12.7", default-features = false, features = [
+regex = "=1.11.0"
+reqwest = { version = "=0.12.8", default-features = false, features = [
     "rustls-tls",
 ] }
 rusty_ytdl = { version = "=0.7.4", features = ["rustls-tls"] }

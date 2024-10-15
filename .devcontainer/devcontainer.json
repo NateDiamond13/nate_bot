@@ -1,0 +1,40 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/rust
+{
+    "name": "Rust w/ Docker",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    },
+    "remoteUser": "root",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-azuretools.vscode-docker",
+                "fill-labs.dependi"
+            ]
+        }
+    },
+    "mounts": [
+        // Volume for Docker
+        {
+            "source": "/var/run/docker.sock",
+            "target": "/var/run/docker-host.sock",
+            "type": "bind"
+        },
+        // Volume for cargo cache
+        {
+            "source": "devcontainer-cargo-cache-${devcontainerId}",
+            "target": "/usr/local/cargo",
+            "type": "volume"
+        }
+    ],
+    // Include environment file for sqlx
+    "runArgs": ["--env-file", ".env.dev"],
+    "postCreateCommand": "rustc --version"
+
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
+}

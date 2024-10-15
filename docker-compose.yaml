@@ -1,8 +1,8 @@
 services:
-  client:
+  discord_bot:
     build:
       context: .
-      dockerfile: ./docker/client/Dockerfile
+      dockerfile: ./docker/discord_bot/Dockerfile
       args:
         - DATABASE_URL=${DATABASE_URL}
     environment:

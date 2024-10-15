@@ -1,7 +1,5 @@
-use crate::{
-    prelude::{Context, Result},
-    utils,
-};
+use crate::helpers;
+use crate::prelude::{Context, Result};
 
 use chrono::Utc;
 use poise::{command, PrefixContext};
@@ -77,7 +75,7 @@ pub async fn purge(
     );
     println!("{response}");
     if let Some(guild_id) = ctx.guild_id() {
-        utils::post_to_spam_channel(response, ctx.serenity_context(), guild_id).await?;
+        helpers::post_to_spam_channel(response, ctx.serenity_context(), guild_id).await?;
     }
 
     Ok(())

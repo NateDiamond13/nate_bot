@@ -1,5 +1,6 @@
-use crate::db::pictures;
 use crate::prelude::{CommandData, Result};
+
+use database::pictures;
 
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
