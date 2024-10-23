@@ -1,5 +1,5 @@
 # Rust alpine base image
-FROM rust:1.81-alpine3.20
+FROM rust:1.82-alpine3.20
 
 # Install dependencies for crates
 RUN apk add --no-cache alpine-sdk cmake pkgconfig libressl-dev

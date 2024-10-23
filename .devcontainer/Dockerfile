@@ -1,5 +1,5 @@
-# Use Rust devcontainer as base
-FROM mcr.microsoft.com/devcontainers/rust:1.0.17-bookworm AS base
+# Use Rust devcontainer as base (https://github.com/devcontainers/images/tree/main/src/rust)
+FROM mcr.microsoft.com/devcontainers/rust:1.0.18-bookworm AS base
 
 # Update pacakges and install cmake
 RUN apt-get update \
