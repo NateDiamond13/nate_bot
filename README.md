@@ -14,7 +14,7 @@ NateBot for Discord, written in Rust
 ### Docker
 
 1. `docker compose build` to build the image
-2. `docker run --env-file .env --rm nate-bot-rust-client` to run the container
+2. `docker run --env-file .env.dev --rm nate-bot-rust-client` to run the container
 3. `docker buildx prune` to clear build cache
 
 ### SQLx
@@ -23,7 +23,3 @@ NateBot for Discord, written in Rust
 2. `sqlx migrate add -r <name>` to add migration (reversible)
 3. `sqlx migrate run` to run all migrations
 4. `sqlx migrate revert` to revert previous migration
-
-## Notes
-
-    - Visual Studio Build Tools and cmake are required to build the `songbird` crate on Windows
