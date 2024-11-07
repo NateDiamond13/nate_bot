@@ -25,7 +25,11 @@ async fn main() -> Result<()> {
 
     // Load redis URL from the environment
     let env_vars = utils::get_env_variables();
-    let broker_url = format!("redis://{}", env_vars.redis_url);
+    let broker_url = if env_vars.redis_url.starts_with("redis://") {
+        env_vars.redis_url.clone()
+    } else {
+        format!("redis://{}", env_vars.redis_url)
+    };
     let queue_name = "beat_queue";
 
     // Get listener and scheduler
