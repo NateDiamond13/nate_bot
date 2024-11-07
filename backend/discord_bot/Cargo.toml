@@ -6,11 +6,11 @@ edition = { workspace = true }
 [dependencies]
 chrono = { workspace = true }
 database = { path = "../lib/database" }
+env_logger = { workspace = true }
 poise = { workspace = true }
 rand = { workspace = true }
 regex = { workspace = true }
 reqwest = { workspace = true }
-rusty_ytdl = { workspace = true }
 serenity = { workspace = true }
 songbird = { workspace = true }
 symphonia = { workspace = true }

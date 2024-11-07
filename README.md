@@ -14,8 +14,10 @@ NateBot for Discord, written in Rust
 ### Docker
 
 1. `docker compose build` to build the image
-2. `docker run --env-file .env.dev --rm nate-bot-rust-client` to run the container
-3. `docker buildx prune` to clear build cache
+2. `docker run --env-file .env.dev --rm nate-bot-rust-discord_bot` to run the bot container
+3. `docker run --env-file .env.dev --rm nate-bot-rust-worker` to run the worker container
+4. `docker buildx prune` to clear build cache
+5. `docker run -p 6379:6379 --name my-redis -d --rm redis:alpine` to start background Redis server
 
 ### SQLx
 

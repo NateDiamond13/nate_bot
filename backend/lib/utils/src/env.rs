@@ -16,6 +16,7 @@ pub struct EnvVariables {
     pub queue_max_sounds: usize,
     pub reaction_target_ids: Vec<u64>,
     pub reaction_target_odds: u32,
+    pub redis_url: String,
 }
 
 pub fn get_env_variables() -> EnvVariables {
@@ -39,6 +40,7 @@ fn load_env() -> Result<EnvVariables> {
         queue_max_sounds: load_var_usize("QUEUE_MAX_SOUNDS")?,
         reaction_target_ids: load_vec_u64("REACTION_TARGET_IDS")?,
         reaction_target_odds: load_var_u32("REACTION_TARGET_ODDS", 1, u32::MAX)?,
+        redis_url: load_var_string("REDIS_URL")?,
     })
 }
 

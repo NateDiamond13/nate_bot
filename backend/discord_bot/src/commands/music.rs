@@ -1,7 +1,8 @@
 use crate::commands::utils;
-use crate::prelude::{Context, Error, Result};
+use crate::prelude::{CommandData, Context, Error, Result};
 
 use poise::{command, CreateReply, ReplyHandle};
+use songbird::input::{Compose, Input, YoutubeDl};
 
 /// Queue sound from given YouTube url
 #[command(prefix_command, slash_command, guild_only, category = "Music")]
@@ -21,7 +22,7 @@ pub async fn play(
     );
 
     // Attempt download from url or search string
-    let video_details = match utils::get_video_details(&url_or_search, &ctx.data()).await {
+    let video_details = match get_video_details(&url_or_search, &ctx.data()).await {
         Ok(details) => details,
         Err(err) => {
             let response =
@@ -157,6 +158,24 @@ pub async fn stop(ctx: Context<'_>) -> Result<()> {
     // Leave the voice channel
     utils::leave_voice_channel(ctx).await?;
     Ok(())
+}
+
+struct VideoDetails {
+    pub input: Input,
+    pub num_seconds: u64,
+    pub source_url: String,
+}
+
+async fn get_video_details(url_or_search: &str, data: &CommandData) -> Result<VideoDetails> {
+    let url_or_search = url_or_search.trim().to_string();
+    let mut src = YoutubeDl::new(data.http_client.clone(), url_or_search);
+    let metadata = src.aux_metadata().await?;
+
+    Ok(VideoDetails {
+        input: src.into(),
+        num_seconds: metadata.duration.ok_or(Error::VideoDetailParse)?.as_secs(),
+        source_url: metadata.source_url.ok_or(Error::VideoDetailParse)?,
+    })
 }
 
 async fn update_reply<'a>(

@@ -1,6 +1,3 @@
-mod videos;
-pub use videos::get_video_details;
-
 use crate::prelude::{Context, Error, Result};
 
 use serenity::{all::GuildId, async_trait};

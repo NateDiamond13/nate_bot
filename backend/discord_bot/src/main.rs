@@ -1,23 +1,24 @@
 mod commands;
-mod error;
 mod events;
 mod helpers;
 mod prelude;
 
 use std::sync::Arc;
 
-use prelude::{CommandData, HttpClient, Result};
-
+use env_logger::Env;
 use poise::serenity_prelude::ClientBuilder;
 use poise::{
     ApplicationContext, Context, Framework, FrameworkOptions, PrefixContext, PrefixFrameworkOptions,
 };
+use prelude::{CommandData, HttpClient, Result};
 use serenity::all::ActivityData;
 use serenity::prelude::GatewayIntents;
 use songbird::Songbird;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+
     // Load bot token from the environment
     let env_vars = utils::get_env_variables();
     let env = env_vars.clone();

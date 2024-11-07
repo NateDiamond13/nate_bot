@@ -1,0 +1,12 @@
+[package]
+name = "worker"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+celery = { workspace = true }
+env_logger = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+utils = { path = "../lib/utils" }
