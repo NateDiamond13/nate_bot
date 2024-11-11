@@ -17,6 +17,7 @@ pub struct EnvVariables {
     pub reaction_target_ids: Vec<u64>,
     pub reaction_target_odds: u32,
     pub redis_url: String,
+    pub webdriver_port: u16,
 }
 
 pub fn get_env_variables() -> EnvVariables {
@@ -41,6 +42,7 @@ fn load_env() -> Result<EnvVariables> {
         reaction_target_ids: load_vec_u64("REACTION_TARGET_IDS")?,
         reaction_target_odds: load_var_u32("REACTION_TARGET_ODDS", 1, u32::MAX)?,
         redis_url: load_var_string("REDIS_URL")?,
+        webdriver_port: load_var_u16("WEBDRIVER_PORT")?,
     })
 }
 
@@ -50,6 +52,14 @@ fn load_var_string(key: &str) -> Result<String> {
 
 fn load_var_usize(key: &str) -> Result<usize> {
     let value: usize = env::var(key)
+        .map_err(|_| Error::MissingVar(key.to_string()))?
+        .parse()
+        .map_err(|_| Error::MissingVar(key.to_string()))?;
+    Ok(value)
+}
+
+fn load_var_u16(key: &str) -> Result<u16> {
+    let value: u16 = env::var(key)
         .map_err(|_| Error::MissingVar(key.to_string()))?
         .parse()
         .map_err(|_| Error::MissingVar(key.to_string()))?;

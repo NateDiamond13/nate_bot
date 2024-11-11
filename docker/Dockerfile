@@ -2,7 +2,9 @@
 FROM rust:1.82-alpine3.20
 
 # Install dependencies for crates
-RUN apk add --no-cache alpine-sdk cmake pkgconfig libressl-dev
+RUN apk add alpine-sdk=1.0-r1 \
+    cmake=3.29.3-r0 \
+    libressl-dev=3.8.4-r0
 
 # Create empty shell projects that match structure
 WORKDIR /backend

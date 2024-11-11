@@ -3,7 +3,7 @@ mod listener;
 mod prelude;
 mod scheduler;
 
-use celery::beat::CronSchedule;
+// use celery::beat::CronSchedule;
 use celery::error::TaskError;
 use celery::prelude::TaskResult;
 use env_logger::Env;
@@ -38,10 +38,10 @@ async fn main() -> Result<()> {
 
     // Register tasks
     listener.register_task::<scraper_job>().await?;
-    scheduler.schedule_task(
-        scraper_job::new(),
-        CronSchedule::from_string("*/5 * * * *")?,
-    );
+    // scheduler.schedule_task(
+    //     scraper_job::new(),
+    //     CronSchedule::from_string("*/5 * * * *")?,
+    // );
 
     // Start listener and scheduler
     tokio::select! {
