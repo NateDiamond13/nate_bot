@@ -51,7 +51,7 @@ pub async fn purge(
     }
 
     // Get messages less than 14 days old that contain the given text
-    let messages_to_delete = channel.messages(ctx.http(), message_filter).await?;
+    let messages_to_delete = channel.id.messages(ctx.http(), message_filter).await?;
     let message_ids = messages_to_delete
         .iter()
         .filter(|&msg| -msg.timestamp.signed_duration_since(Utc::now()).num_days() < 14)
@@ -59,6 +59,7 @@ pub async fn purge(
         .map(|msg| msg.id)
         .collect::<Vec<MessageId>>();
     channel
+        .id
         .delete_messages(
             ctx.http(),
             message_ids.as_slice(),

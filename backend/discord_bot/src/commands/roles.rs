@@ -63,7 +63,7 @@ pub async fn new_role(
     }
 
     let builder = EditRole::new().name(&role).mentionable(true);
-    match guild.create_role(ctx.http(), builder).await {
+    match guild.id.create_role(ctx.http(), builder).await {
         Ok(role) => {
             create_role_message(ctx, role.name).await?;
         }

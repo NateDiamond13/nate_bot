@@ -15,7 +15,7 @@ regex = "=1.11.1"
 reqwest = { version = "=0.12.9", default-features = false, features = [
     "rustls-tls",
 ] }
-serde = "=1.0.214"
+serde = "=1.0.215"
 serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next", features = [
     "temp_cache",
 ] }

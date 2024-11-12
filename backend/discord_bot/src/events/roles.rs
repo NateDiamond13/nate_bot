@@ -63,7 +63,7 @@ async fn toggle_user_role(
 
     // Check if user already has role
     let has_role = user.has_role(ctx, guild_id, role.id).await?;
-    let member = guild.member(ctx, user.id).await?;
+    let member = guild.id.member(ctx, user.id).await?;
 
     // Toggle role for user
     if add_role && !has_role {
