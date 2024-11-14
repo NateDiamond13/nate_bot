@@ -17,7 +17,7 @@ use songbird::Songbird;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+    env_logger::Builder::from_env(Env::default().default_filter_or("warn")).init();
 
     // Load bot token from the environment
     let env_vars = utils::get_env_variables();
