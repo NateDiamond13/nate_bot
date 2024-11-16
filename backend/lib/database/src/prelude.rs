@@ -4,6 +4,9 @@
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error(transparent)]
+    ParseInt(#[from] std::num::ParseIntError),
+
+    #[error(transparent)]
     Sqlx(#[from] sqlx::Error),
 }
 

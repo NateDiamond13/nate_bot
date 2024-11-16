@@ -1,0 +1,9 @@
+[package]
+name = "webhooks"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+database = { path = "../database" }
+serenity = { workspace = true }
+thiserror = { workspace = true }

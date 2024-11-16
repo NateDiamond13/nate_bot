@@ -14,6 +14,7 @@ use prelude::{CommandData, HttpClient, Result};
 use serenity::all::ActivityData;
 use serenity::prelude::GatewayIntents;
 use songbird::Songbird;
+use tokio::signal;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -41,6 +42,7 @@ async fn main() -> Result<()> {
     let options = FrameworkOptions {
         commands: vec![
             commands::help(),
+            commands::patch_notes(),
             commands::ping(),
             commands::pictures(),
             commands::purge(),
@@ -97,6 +99,7 @@ async fn main() -> Result<()> {
     let intents = GatewayIntents::GUILDS
         | GatewayIntents::GUILD_MEMBERS
         | GatewayIntents::GUILD_MODERATION
+        | GatewayIntents::GUILD_WEBHOOKS
         | GatewayIntents::GUILD_VOICE_STATES
         | GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::GUILD_MESSAGE_REACTIONS
@@ -113,8 +116,15 @@ async fn main() -> Result<()> {
         .await?;
 
     // Start listening for events with an automatically determined number of shards
-    if let Err(why) = client.start_autosharded().await {
-        println!("Client error: {why:?}");
+    tokio::select! {
+        res = client.start_autosharded() => {
+            if let Err(why) = res {
+                eprintln!("Client Error: {why:?}");
+            }
+        }
+        _ = signal::ctrl_c() => {
+            eprintln!("Ctrl-C received, shutting down");
+        }
     }
     Ok(())
 }

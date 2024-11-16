@@ -1,5 +1,5 @@
 [workspace]
-members = ["discord_bot", "lib/database", "lib/utils", "worker"]
+members = ["discord_bot", "lib/database", "lib/utils", "lib/webhooks", "worker"]
 package.version = "0.1.0"
 package.edition = "2021"
 resolver = "2"
@@ -31,5 +31,9 @@ sqlx = { version = "=0.8.2", features = [
 symphonia = { version = "=0.5.4", features = ["all-codecs", "all-formats"] }
 thirtyfour = "=0.34.0"
 thiserror = "=2.0.3"
-tokio = { version = "=1.41.1", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "=1.41.1", features = [
+    "macros",
+    "rt-multi-thread",
+    "signal",
+] }
 url = "=2.5.3"

@@ -3,6 +3,9 @@ mod utils;
 mod help;
 pub use help::help;
 
+mod patch_notes;
+pub use patch_notes::patch_notes;
+
 mod pictures;
 pub use pictures::pictures;
 

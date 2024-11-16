@@ -5,9 +5,13 @@ edition = { workspace = true }
 
 [dependencies]
 celery = { workspace = true }
+chrono = { workspace = true }
+database = { path = "../lib/database" }
 env_logger = { workspace = true }
+regex = { workspace = true }
 serde = { workspace = true }
 thirtyfour = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
 utils = { path = "../lib/utils" }
+webhooks = { path = "../lib/webhooks" }

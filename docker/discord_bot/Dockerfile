@@ -7,6 +7,7 @@ FROM ./docker/Dockerfile AS builder
 COPY ./backend/discord_bot/src ./discord_bot/src
 COPY ./backend/lib/database/src ./lib/database/src
 COPY ./backend/lib/utils/src ./lib/utils/src
+COPY ./backend/lib/webhooks/src ./lib/webhooks/src
 
 # Build for release
 RUN cargo build --release -p discord_bot

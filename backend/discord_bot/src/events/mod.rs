@@ -19,7 +19,7 @@ pub async fn event_handler(
     let data = framework_context.user_data();
     match event {
         FullEvent::Ready { data_about_bot } => {
-            ready::handle_ready(ctx, data_about_bot)?;
+            ready::handle_ready(&framework_context, data_about_bot).await?;
         }
         FullEvent::ReactionAdd { add_reaction } => {
             roles::handle_reaction_add(ctx, add_reaction).await?;

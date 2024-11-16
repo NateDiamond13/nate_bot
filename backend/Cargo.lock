@@ -1183,6 +1183,7 @@ dependencies = [
  "tokio",
  "url",
  "utils",
+ "webhooks",
 ]
 
 [[package]]
@@ -5258,6 +5259,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "webhooks"
+version = "0.1.0"
+dependencies = [
+ "database",
+ "serenity",
+ "thiserror 2.0.3",
+]
+
+[[package]]
 name = "webpki"
 version = "0.22.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5518,12 +5528,16 @@ name = "worker"
 version = "0.1.0"
 dependencies = [
  "celery",
+ "chrono",
+ "database",
  "env_logger",
+ "regex",
  "serde",
  "thirtyfour",
  "thiserror 2.0.3",
  "tokio",
  "utils",
+ "webhooks",
 ]
 
 [[package]]
