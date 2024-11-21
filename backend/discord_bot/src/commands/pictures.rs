@@ -7,7 +7,6 @@ use serenity::all::CreateEmbed;
 
 /// Base command for picture display, use subcommands.
 #[command(
-    prefix_command,
     slash_command,
     guild_only,
     category = "Pictures",
@@ -20,7 +19,7 @@ pub async fn pictures(_: Context<'_>) -> Result<()> {
 }
 
 /// List all available pictures.
-#[command(prefix_command, slash_command, category = "Pictures", rename = "list")]
+#[command(slash_command, category = "Pictures", rename = "list")]
 pub async fn pic_list(ctx: Context<'_>) -> Result<()> {
     let guild_str = match ctx.guild_id() {
         Some(guild_id) => guild_id.to_string(),
@@ -51,7 +50,7 @@ pub async fn pic_list(ctx: Context<'_>) -> Result<()> {
 }
 
 /// Show picture with a given name, if it exists.
-#[command(prefix_command, slash_command, category = "Pictures", rename = "show")]
+#[command(slash_command, category = "Pictures", rename = "show")]
 pub async fn pic_show(
     ctx: Context<'_>,
     #[description = "Name of picture"] name: String,
@@ -76,12 +75,7 @@ pub async fn pic_show(
 }
 
 /// Show random picture.
-#[command(
-    prefix_command,
-    slash_command,
-    category = "Pictures",
-    rename = "random"
-)]
+#[command(slash_command, category = "Pictures", rename = "random")]
 pub async fn pic_random(ctx: Context<'_>) -> Result<()> {
     let guild_str = match ctx.guild_id() {
         Some(guild_id) => guild_id.to_string(),
@@ -103,7 +97,7 @@ pub async fn pic_random(ctx: Context<'_>) -> Result<()> {
 }
 
 /// Add new picture with the given name, if it doesn't already exist.
-#[command(prefix_command, slash_command, category = "Pictures", rename = "add")]
+#[command(slash_command, category = "Pictures", rename = "add")]
 pub async fn pic_add(
     ctx: Context<'_>,
     name: String,
@@ -147,12 +141,7 @@ pub async fn pic_add(
 }
 
 /// Remove picture with the given name, if it exists.
-#[command(
-    prefix_command,
-    slash_command,
-    category = "Pictures",
-    rename = "remove"
-)]
+#[command(slash_command, category = "Pictures", rename = "remove")]
 pub async fn pic_remove(ctx: Context<'_>, name: String) -> Result<()> {
     let guild_str = match ctx.guild_id() {
         Some(guild_id) => guild_id.to_string(),

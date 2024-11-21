@@ -5,7 +5,7 @@ use poise::{command, CreateReply, ReplyHandle};
 use songbird::input::{Compose, Input, YoutubeDl};
 
 /// Queue sound from given YouTube url
-#[command(prefix_command, slash_command, guild_only, category = "Music")]
+#[command(slash_command, guild_only, category = "Music")]
 pub async fn play(
     ctx: Context<'_>,
     #[description = "Url of video or string of text to search for"] url_or_search: String,
@@ -95,7 +95,7 @@ pub async fn play(
 }
 
 /// Skip the currently playing sound
-#[command(prefix_command, slash_command, guild_only, category = "Music")]
+#[command(slash_command, guild_only, category = "Music")]
 pub async fn skip(ctx: Context<'_>) -> Result<()> {
     let Some(call) = utils::get_call(ctx).await? else {
         ctx.say("Bot is not currently in a voice channel.").await?;
@@ -135,7 +135,7 @@ pub async fn skip(ctx: Context<'_>) -> Result<()> {
 }
 
 /// Stop playback and clear the queue
-#[command(prefix_command, slash_command, guild_only, category = "Music")]
+#[command(slash_command, guild_only, category = "Music")]
 pub async fn stop(ctx: Context<'_>) -> Result<()> {
     let Some(call) = utils::get_call(ctx).await? else {
         ctx.say("Bot is not currently in a voice channel.").await?;

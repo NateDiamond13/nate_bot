@@ -17,7 +17,6 @@ struct DiceRoll {
 
 /// Roll a single dice (default: 100).
 #[command(
-    prefix_command,
     slash_command,
     category = "Roll",
     subcommands("number_roll", "dice_roll")
@@ -30,18 +29,13 @@ pub async fn roll(ctx: Context<'_>) -> Result<()> {
 }
 
 /// Roll a single dice (number > 0).
-#[command(prefix_command, slash_command, category = "Roll", rename = "num")]
+#[command(slash_command, category = "Roll", rename = "num")]
 pub async fn number_roll(
     ctx: Context<'_>,
     #[description = "A positive integer"]
     #[min = 1]
     number: u32,
 ) -> Result<()> {
-    if number < 1 {
-        ctx.say("Argument must be a positive integer").await?;
-        return Ok(());
-    }
-
     let author_mention = ctx.author().mention().to_string();
     let response = format_simple_roll(author_mention, number);
     ctx.say(response).await?;
@@ -49,7 +43,7 @@ pub async fn number_roll(
 }
 
 /// Roll at least one dice (dice format: XdY).
-#[command(prefix_command, slash_command, category = "Roll", rename = "dice")]
+#[command(slash_command, category = "Roll", rename = "dice")]
 pub async fn dice_roll(
     ctx: Context<'_>,
     #[description = "A multi-dice roll in form XdY (e.g. 1d6, 2d20, etc.)"] dice: String,

@@ -27,7 +27,6 @@ impl fmt::Display for PatchGame {
 /// Base command for patch notes, use subcommands.
 #[command(
     slash_command,
-    guild_only,
     category = "Patch Notes",
     rename = "patch",
     subcommands("patch_latest", "patch_sub", "patch_unsub"),
@@ -59,6 +58,7 @@ pub async fn patch_latest(
 /// Subscribe this channel to receive patch notifications for a game. (Admin only)
 #[command(
     slash_command,
+    guild_only,
     category = "Patch Notes",
     rename = "sub",
     required_permissions = "ADMINISTRATOR"
@@ -119,6 +119,7 @@ pub async fn patch_sub(
 /// Unsubscribe this channel from receiving patch notifications for a game. (Admin only)
 #[command(
     slash_command,
+    guild_only,
     category = "Patch Notes",
     rename = "unsub",
     required_permissions = "ADMINISTRATOR"

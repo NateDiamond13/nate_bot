@@ -7,9 +7,7 @@ use std::sync::Arc;
 
 use env_logger::Env;
 use poise::serenity_prelude::ClientBuilder;
-use poise::{
-    ApplicationContext, Context, Framework, FrameworkOptions, PrefixContext, PrefixFrameworkOptions,
-};
+use poise::{ApplicationContext, Context, Framework, FrameworkOptions};
 use prelude::{CommandData, HttpClient, Result};
 use serenity::all::ActivityData;
 use serenity::prelude::GatewayIntents;
@@ -41,7 +39,6 @@ async fn main() -> Result<()> {
     // Set up poise framework with options
     let options = FrameworkOptions {
         commands: vec![
-            commands::help(),
             commands::patch_notes(),
             commands::ping(),
             commands::pictures(),
@@ -52,21 +49,10 @@ async fn main() -> Result<()> {
             commands::music::skip(),
             commands::music::stop(),
         ],
-        // Allows prefix commands to be executed
-        prefix_options: PrefixFrameworkOptions {
-            prefix: Some(env_vars.command_prefix.into()),
-            ..Default::default()
-        },
         // Logs which commands are executed and by whom
         pre_command: |ctx| {
             Box::pin(async move {
                 match ctx {
-                    Context::Prefix(PrefixContext { msg, .. }) => {
-                        println!(
-                            "User \"{}\" executed prefix command: [\"{}\"]",
-                            msg.author.name, msg.content
-                        );
-                    }
                     Context::Application(ApplicationContext {
                         interaction,
                         command,
@@ -77,6 +63,7 @@ async fn main() -> Result<()> {
                             interaction.user.name, command.qualified_name
                         );
                     }
+                    _ => {}
                 }
             })
         },

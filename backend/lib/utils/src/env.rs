@@ -8,7 +8,6 @@ static ENV_VARIABLES: LazyLock<Result<EnvVariables>> = LazyLock::new(load_env);
 #[derive(Debug, Clone)]
 pub struct EnvVariables {
     pub audit_enabled_servers: Vec<u64>,
-    pub command_prefix: String,
     pub custom_status: String,
     pub database_url: String,
     pub discord_token: String,
@@ -33,7 +32,6 @@ fn load_env() -> Result<EnvVariables> {
     }
     Ok(EnvVariables {
         audit_enabled_servers: load_vec_u64("AUDIT_ENABLED_SERVERS")?,
-        command_prefix: load_var_string("COMMAND_PREFIX")?,
         custom_status: load_var_string("CUSTOM_STATUS")?,
         database_url: load_var_string("DATABASE_URL")?,
         discord_token: load_var_string("DISCORD_TOKEN")?,

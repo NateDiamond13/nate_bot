@@ -6,11 +6,8 @@ use serenity::all::{EditRole, ReactionType};
 use serenity::model::guild;
 use serenity::small_fixed_array::FixedString;
 
-const MIN_ROLE_LENGTH: usize = 3;
-
 /// Base command for role management, use subcommands. (Admin only)
 #[command(
-    prefix_command,
     slash_command,
     category = "Roles",
     subcommands("new_role", "post_role"),
@@ -23,7 +20,7 @@ pub async fn roles(_: Context<'_>) -> Result<()> {
 }
 
 /// Create a vote response for a new role in the server. (Admin only)
-#[command(prefix_command, slash_command, category = "Roles", rename = "new")]
+#[command(slash_command, category = "Roles", rename = "new")]
 pub async fn new_role(
     ctx: Context<'_>,
     #[description = "Name of the new role to add"]
@@ -33,15 +30,6 @@ pub async fn new_role(
     if !in_roles_channel(ctx).await {
         ctx.say(format!(
             "Command can only be used in #{ROLE_CHANNEL} channel"
-        ))
-        .await?;
-        return Ok(());
-    }
-
-    if role.len() < MIN_ROLE_LENGTH {
-        ctx.say(format!(
-            "Role name must be at least {} characters long",
-            MIN_ROLE_LENGTH
         ))
         .await?;
         return Ok(());
@@ -75,7 +63,7 @@ pub async fn new_role(
 }
 
 /// Create a vote response for an existing role in the server. (Admin only)
-#[command(prefix_command, slash_command, category = "Roles", rename = "post")]
+#[command(slash_command, category = "Roles", rename = "post")]
 pub async fn post_role(
     ctx: Context<'_>,
     #[description = "Existing role to post"] role: guild::Role,

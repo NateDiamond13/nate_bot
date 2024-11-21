@@ -58,6 +58,7 @@ async fn start_background(port_number: u16) -> Result<Child> {
 
 async fn start_main(port_number: u16) -> WebDriverResult<WebDriver> {
     let mut caps = DesiredCapabilities::chrome();
+    caps.add_arg("--incognito")?;
     caps.add_arg("--no-sandbox")?;
     caps.add_arg("--disable-dev-shm-usage")?;
     caps.add_arg("--disable-gpu")?;
