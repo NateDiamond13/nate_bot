@@ -16,6 +16,5 @@ songbird = { workspace = true }
 symphonia = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
-url = { workspace = true }
 utils = { path = "../lib/utils" }
 webhooks = { path = "../lib/webhooks" }
