@@ -36,6 +36,9 @@ pub enum Error {
     Serenity(#[from] serenity::Error),
 
     #[error(transparent)]
+    SerenityToken(#[from] serenity::secrets::TokenError),
+
+    #[error(transparent)]
     SongbirdAudioStream(#[from] songbird::input::AudioStreamError),
 
     #[error(transparent)]

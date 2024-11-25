@@ -30,7 +30,7 @@ sqlx = { version = "=0.8.2", features = [
     "tls-rustls",
 ] }
 symphonia = { version = "=0.5.4", features = ["all-codecs", "all-formats"] }
-thirtyfour = "=0.34.0"
+thirtyfour = "=0.35.0"
 thiserror = "=2.0.3"
 tokio = { version = "=1.41.1", features = [
     "macros",

@@ -5,7 +5,7 @@ use serenity::all::{CreateEmbed, CreateEmbedAuthor, ExecuteWebhook, Http, Webhoo
 
 pub async fn send_all_alerts(patch_notes: &PatchNotes, subs: &[PatchNotesSub]) -> Result<()> {
     let embed = create_patch_embed(patch_notes);
-    let http = Http::new("");
+    let http = Http::without_token();
 
     for sub in subs {
         if let Ok(hook) =

@@ -3,13 +3,14 @@ mod events;
 mod helpers;
 mod prelude;
 
+use std::str::FromStr;
 use std::sync::Arc;
 
 use env_logger::Env;
 use poise::serenity_prelude::ClientBuilder;
 use poise::{ApplicationContext, Context, Framework, FrameworkOptions};
 use prelude::{CommandData, HttpClient, Result};
-use serenity::all::ActivityData;
+use serenity::all::{ActivityData, Token};
 use serenity::prelude::GatewayIntents;
 use songbird::Songbird;
 use tokio::signal;
@@ -95,7 +96,8 @@ async fn main() -> Result<()> {
 
     // Create a new instance of the Client, logging in as a bot
     println!("Starting bot...");
-    let mut client = ClientBuilder::new(&env_vars.discord_token, intents)
+    let discord_token = Token::from_str(&env_vars.discord_token)?;
+    let mut client = ClientBuilder::new(discord_token, intents)
         .voice_manager::<Songbird>(data.songbird_manager.clone())
         .framework(framework)
         .activity(ActivityData::custom(env_vars.custom_status))
