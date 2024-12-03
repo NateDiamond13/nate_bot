@@ -16,6 +16,8 @@ pub struct EnvVariables {
     pub reaction_target_ids: Vec<u64>,
     pub reaction_target_odds: u32,
     pub redis_url: String,
+    pub soundcloud_client_id: String,
+    pub soundcloud_client_secret: String,
     pub webdriver_port: u16,
 }
 
@@ -40,6 +42,8 @@ fn load_env() -> Result<EnvVariables> {
         reaction_target_ids: load_vec_u64("REACTION_TARGET_IDS")?,
         reaction_target_odds: load_var_u32("REACTION_TARGET_ODDS", 1, u32::MAX)?,
         redis_url: load_var_string("REDIS_URL")?,
+        soundcloud_client_id: load_var_string("SOUNDCLOUD_CLIENT_ID")?,
+        soundcloud_client_secret: load_var_string("SOUNDCLOUD_CLIENT_SECRET")?,
         webdriver_port: load_var_u16("WEBDRIVER_PORT")?,
     })
 }

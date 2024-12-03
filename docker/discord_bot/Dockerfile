@@ -14,7 +14,8 @@ RUN cargo build --release -p discord_bot
 
 # Copy binary to an alpine image
 FROM alpine:3.20 AS runner
-RUN apk add --no-cache yt-dlp tini
+RUN apk upgrade --no-cache \
+    && apk add --no-cache yt-dlp tini
 COPY --from=builder /backend/target/release/discord_bot .
 
 # Run command

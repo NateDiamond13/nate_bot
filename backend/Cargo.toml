@@ -14,8 +14,11 @@ poise = { git = "https://github.com/serenity-rs/poise", branch = "serenity-next"
 rand = "=0.8.5"
 regex = "=1.11.1"
 reqwest = { version = "=0.12.9", default-features = false, features = [
+    "json",
     "rustls-tls",
 ] }
+reqwest-middleware = { version = "=0.4.0", features = ["json", "rustls-tls"] }
+reqwest-retry = "=0.7.0"
 serde = "=1.0.215"
 serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next", features = [
     "temp_cache",
@@ -37,3 +40,4 @@ tokio = { version = "=1.41.1", features = [
     "rt-multi-thread",
     "signal",
 ] }
+url = "=2.5.4"

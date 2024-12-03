@@ -1,10 +1,9 @@
 use crate::commands::utils;
-use crate::prelude::{CommandData, Context, Error, Result};
+use crate::prelude::{Context, Error, Result};
 
 use poise::{command, CreateReply, ReplyHandle};
-use songbird::input::{Compose, Input, YoutubeDl};
 
-/// Queue sound from given YouTube url
+/// Queue sound from given url or search string
 #[command(slash_command, guild_only, category = "Music")]
 pub async fn play(
     ctx: Context<'_>,
@@ -22,18 +21,24 @@ pub async fn play(
     );
 
     // Attempt download from url or search string
-    let video_details = match get_video_details(&url_or_search, &ctx.data()).await {
-        Ok(details) => details,
+    let sound_details = match utils::get_sound_details(&url_or_search, &ctx.data()).await {
+        Ok(Some(details)) => details,
+        Ok(None) => {
+            let response = format!("Invalid sound source: {url_or_search}.");
+            println!("{response}");
+            update_reply(ctx, reply_msg, response).await?;
+            return Ok(());
+        }
         Err(err) => {
             let response =
-                format!("Error occurred while getting video details for \"{url_or_search}\".");
+                format!("Error occurred while getting sound details for \"{url_or_search}\".");
             println!("{response}");
             update_reply(ctx, reply_msg, response).await?;
             return Err(err);
         }
     };
 
-    if video_details.num_seconds > 7200 {
+    if sound_details.num_seconds > 7200 {
         let response = "Cannot queue sounds longer than 2 hours.";
         println!("{response}");
         update_reply(ctx, reply_msg, response).await?;
@@ -76,7 +81,7 @@ pub async fn play(
 
     let max_sounds = ctx.data().env.queue_max_sounds;
     if handler.queue().len() < max_sounds {
-        handler.enqueue_input(video_details.input).await;
+        handler.enqueue_input(sound_details.input).await;
     } else {
         let response = format!("Maximum sounds ({max_sounds}) already in queue.");
         println!("{response}");
@@ -86,8 +91,8 @@ pub async fn play(
 
     // Get current length of queue
     let response = match handler.queue().len() {
-        n if n > 1 => format!("Added to queue ({}): {}", n, video_details.source_url),
-        _ => format!("Playing sound: {}", video_details.source_url),
+        n if n > 1 => format!("Added to queue ({}): {}", n, sound_details.source_url),
+        _ => format!("Playing sound: {}", sound_details.source_url),
     };
 
     update_reply(ctx, reply_msg, response).await?;
@@ -158,24 +163,6 @@ pub async fn stop(ctx: Context<'_>) -> Result<()> {
     // Leave the voice channel
     utils::leave_voice_channel(ctx).await?;
     Ok(())
-}
-
-struct VideoDetails {
-    pub input: Input,
-    pub num_seconds: u64,
-    pub source_url: String,
-}
-
-async fn get_video_details(url_or_search: &str, data: &CommandData) -> Result<VideoDetails> {
-    let url_or_search = url_or_search.trim().to_string();
-    let mut src = YoutubeDl::new(data.http_client.clone(), url_or_search);
-    let metadata = src.aux_metadata().await?;
-
-    Ok(VideoDetails {
-        input: src.into(),
-        num_seconds: metadata.duration.ok_or(Error::VideoDetailParse)?.as_secs(),
-        source_url: metadata.source_url.ok_or(Error::VideoDetailParse)?,
-    })
 }
 
 async fn update_reply<'a>(

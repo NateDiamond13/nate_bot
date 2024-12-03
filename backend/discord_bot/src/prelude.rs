@@ -23,6 +23,9 @@ pub enum Error {
     #[error("Could not parse valid video details")]
     VideoDetailParse,
 
+    #[error("Missing auth token for {0}")]
+    MissingAuthToken(String),
+
     #[error(transparent)]
     IO(#[from] std::io::Error),
 
@@ -31,6 +34,12 @@ pub enum Error {
 
     #[error(transparent)]
     Regex(#[from] regex::Error),
+
+    #[error(transparent)]
+    Reqwest(#[from] reqwest::Error),
+
+    #[error(transparent)]
+    ReqwestMiddleware(#[from] reqwest_middleware::Error),
 
     #[error(transparent)]
     Serenity(#[from] serenity::Error),

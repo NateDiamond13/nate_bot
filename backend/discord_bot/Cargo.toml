@@ -11,10 +11,14 @@ poise = { workspace = true }
 rand = { workspace = true }
 regex = { workspace = true }
 reqwest = { workspace = true }
+reqwest-middleware = { workspace = true }
+reqwest-retry = { workspace = true }
+serde = { workspace = true }
 serenity = { workspace = true }
 songbird = { workspace = true }
 symphonia = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
+url = { workspace = true }
 utils = { path = "../lib/utils" }
 webhooks = { path = "../lib/webhooks" }

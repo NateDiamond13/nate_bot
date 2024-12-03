@@ -1,3 +1,6 @@
+mod sounds;
+pub use sounds::get_sound_details;
+
 use crate::prelude::{Context, Error, Result};
 
 use serenity::{all::GuildId, async_trait};

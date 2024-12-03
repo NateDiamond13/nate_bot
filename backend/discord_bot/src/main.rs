@@ -2,6 +2,7 @@ mod commands;
 mod events;
 mod helpers;
 mod prelude;
+mod services;
 
 use std::str::FromStr;
 use std::sync::Arc;

@@ -1,4 +1,4 @@
-mod utils;
+pub mod utils;
 
 mod patch_notes;
 pub use patch_notes::patch_notes;

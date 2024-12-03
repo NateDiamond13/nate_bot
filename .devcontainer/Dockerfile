@@ -7,7 +7,8 @@ RUN apt-get update \
     && apt-get install -y cmake chromium-driver
 
 # Update Rust toolchain and install clippy & rustfmt
-RUN rustup toolchain install stable \
+RUN rustup toolchain uninstall stable \
+    && rustup toolchain install stable \
     && rustup default stable \
     && rustup update stable \
     && rustup component add clippy rustfmt

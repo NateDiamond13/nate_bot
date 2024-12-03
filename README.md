@@ -26,7 +26,3 @@ NateBot for Discord, written in Rust
 2. `sqlx migrate add -r <name>` to add migration (reversible)
 3. `sqlx migrate run` to run all migrations
 4. `sqlx migrate revert` to revert previous migration
-
-### TODOS:
-
-1. Change music commands to play from Soundcloud
