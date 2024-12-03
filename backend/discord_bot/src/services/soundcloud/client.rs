@@ -73,7 +73,7 @@ async fn find_track_url(
         .query(&[
             ("q", search_str),
             ("access", "playable"),
-            ("limit", "1"),
+            ("limit", "3"),
             ("linked_partitioning", "true"),
         ])
         .send()
