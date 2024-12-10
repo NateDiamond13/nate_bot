@@ -13,7 +13,7 @@ COPY ./backend/lib/webhooks/src ./lib/webhooks/src
 RUN cargo build --release -p discord_bot
 
 # Copy binary to an alpine image
-FROM alpine:3.20 AS runner
+FROM alpine:3.21 AS runner
 RUN apk upgrade --no-cache \
     && apk add --no-cache yt-dlp tini
 COPY --from=builder /backend/target/release/discord_bot .

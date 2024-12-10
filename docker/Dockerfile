@@ -1,10 +1,10 @@
 # Rust alpine base image
-FROM rust:1.83-alpine3.20
+FROM rust:1.83-alpine3.21
 
 # Install dependencies for crates
-RUN apk add alpine-sdk=1.0-r1 \
-    cmake=3.29.3-r0 \
-    libressl-dev=3.8.4-r0
+RUN apk add alpine-sdk=1.1-r0 \
+    cmake=3.31.1-r0 \
+    libressl-dev=4.0.0-r0
 
 # Create empty shell projects that match structure
 WORKDIR /backend
