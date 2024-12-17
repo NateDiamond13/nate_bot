@@ -1,7 +1,7 @@
 # Rust alpine base image
 FROM rust:1.83-alpine3.21
 
-# Install dependencies for crates
+# Install dependencies for crates (https://pkgs.alpinelinux.org/packages)
 RUN apk add alpine-sdk=1.1-r0 \
     cmake=3.31.1-r0 \
     libressl-dev=4.0.0-r0
