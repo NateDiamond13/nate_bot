@@ -34,8 +34,8 @@ sqlx = { version = "=0.8.3", features = [
 ] }
 symphonia = { version = "=0.5.4", features = ["all-codecs", "all-formats"] }
 thirtyfour = "=0.35.0"
-thiserror = "=2.0.9"
-tokio = { version = "=1.42.0", features = [
+thiserror = "=2.0.10"
+tokio = { version = "=1.43.0", features = [
     "macros",
     "rt-multi-thread",
     "signal",
