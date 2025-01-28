@@ -2,7 +2,7 @@ use crate::prelude::{CommandData, Result};
 
 use rand::rngs::StdRng;
 use rand::seq::{IteratorRandom, SliceRandom};
-use rand::{Rng, SeedableRng};
+use rand::{random_range, SeedableRng};
 use serenity::all::{CacheHttp, Message};
 use serenity::prelude::Context;
 use std::cmp;
@@ -18,8 +18,7 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
     }
 
     // Check if message passes reaction odds
-    let mut rng = StdRng::from_entropy();
-    if rng.gen_range(0..data.env.reaction_target_odds) != 0 {
+    if random_range(0..data.env.reaction_target_odds) != 0 {
         return Ok(());
     }
 
@@ -32,7 +31,8 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
     // Choose how many emojis to react with
     let min_count = cmp::min(emojis.len(), REACTION_COUNT_MIN);
     let max_count = cmp::min(emojis.len(), REACTION_COUNT_MAX);
-    let emoji_count = rng.gen_range(min_count..=max_count);
+    let emoji_count = random_range(min_count..=max_count);
+    let mut rng = StdRng::from_os_rng();
     let mut choices = emojis.iter().choose_multiple(&mut rng, emoji_count);
     choices.shuffle(&mut rng);
 

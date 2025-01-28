@@ -2,8 +2,7 @@ use crate::prelude::{CommandData, Result};
 
 use database::pictures;
 
-use rand::rngs::StdRng;
-use rand::{Rng, SeedableRng};
+use rand::random_range;
 use serenity::all::{CacheHttp, CreateEmbed, CreateMessage, Mentionable, Message};
 use serenity::prelude::Context;
 
@@ -14,7 +13,7 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
     }
 
     // Check if message passes lottery odds
-    if StdRng::from_entropy().gen_range(0..data.env.lottery_odds) != 0 {
+    if random_range(0..data.env.lottery_odds) != 0 {
         return Ok(());
     }
 

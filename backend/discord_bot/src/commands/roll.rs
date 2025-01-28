@@ -1,7 +1,7 @@
 use crate::prelude::{Context, Error, Result};
 
 use poise::{command, CreateReply};
-use rand::{thread_rng, Rng};
+use rand::random_range;
 use regex::Regex;
 use serenity::all::Mentionable;
 use serenity::builder::CreateEmbed;
@@ -64,7 +64,7 @@ pub async fn dice_roll(
 
 fn format_simple_roll(author: String, max_roll: u32) -> String {
     let roll = if max_roll > 1 {
-        thread_rng().gen_range(1..max_roll)
+        random_range(1..=max_roll)
     } else {
         1
     };
@@ -76,7 +76,7 @@ fn format_dice_roll(author: String, roll: &DiceRoll) -> CreateReply {
 
     let mut rolls = Vec::new();
     for _ in 0..count {
-        rolls.push(thread_rng().gen_range(1..sides));
+        rolls.push(random_range(1..=sides));
     }
     let total: u32 = rolls.iter().sum();
 
