@@ -2,7 +2,7 @@ use crate::prelude::{CommandData, Result};
 
 use rand::rngs::StdRng;
 use rand::seq::{IteratorRandom, SliceRandom};
-use rand::{random_range, SeedableRng};
+use rand::{SeedableRng, random_range};
 use serenity::all::{CacheHttp, Message};
 use serenity::prelude::Context;
 use std::cmp;

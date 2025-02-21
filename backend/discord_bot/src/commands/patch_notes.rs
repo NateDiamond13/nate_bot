@@ -7,7 +7,7 @@ use database::{
     patch_notes_subscriptions::{self, CreatePatchNotesSub},
 };
 
-use poise::{command, ChoiceParameter, CreateReply};
+use poise::{ChoiceParameter, CreateReply, command};
 use serenity::all::{CreateWebhook, Webhook};
 
 #[derive(ChoiceParameter, Debug)]

@@ -1,6 +1,6 @@
 use crate::prelude::{Context, Error, Result};
 
-use poise::{command, CreateReply};
+use poise::{CreateReply, command};
 use rand::random_range;
 use regex::Regex;
 use serenity::all::Mentionable;
@@ -109,7 +109,7 @@ fn parse_dice_string(dice_string: impl Into<String>) -> Result<DiceRoll> {
 
 #[cfg(test)]
 mod tests {
-    use crate::commands::roll::{parse_dice_string, DiceRoll};
+    use crate::commands::roll::{DiceRoll, parse_dice_string};
     use crate::prelude::Error;
 
     #[test]

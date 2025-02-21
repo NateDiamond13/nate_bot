@@ -2,7 +2,7 @@ use crate::prelude::{Context, Result};
 
 use database::pictures;
 
-use poise::{command, CreateReply};
+use poise::{CreateReply, command};
 use serenity::all::CreateEmbed;
 
 /// Base command for picture display, use subcommands.

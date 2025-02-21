@@ -2,11 +2,11 @@ use crate::prelude::{Error, Result};
 
 use chrono::{Duration, Utc};
 use database::{
-    auth_tokens::{self, AuthToken, CreateAuthToken},
     PgPool,
+    auth_tokens::{self, AuthToken, CreateAuthToken},
 };
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
-use reqwest_retry::{policies::ExponentialBackoff, RetryTransientMiddleware};
+use reqwest_retry::{RetryTransientMiddleware, policies::ExponentialBackoff};
 use serde::Deserialize;
 use utils::EnvVariables;
 
