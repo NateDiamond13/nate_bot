@@ -6,20 +6,20 @@ resolver = "3"
 
 [workspace.dependencies]
 celery = "=0.5.5"
-chrono = "=0.4.39"
+chrono = "=0.4.40"
 dotenvy = "=0.15.7"
-env_logger = "=0.11.6"
+env_logger = "=0.11.7"
 htmd = "=0.1.6"
 poise = { git = "https://github.com/serenity-rs/poise", branch = "serenity-next" }
 rand = "=0.9.0"
 regex = "=1.11.1"
-reqwest = { version = "=0.12.12", default-features = false, features = [
+reqwest = { version = "=0.12.14", default-features = false, features = [
     "json",
     "rustls-tls",
 ] }
-reqwest-middleware = "=0.4.0"
+reqwest-middleware = "=0.4.1"
 reqwest-retry = "=0.7.0"
-serde = "=1.0.218"
+serde = "=1.0.219"
 serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next", features = [
     "temp_cache",
 ] }
@@ -34,8 +34,8 @@ sqlx = { version = "=0.8.3", features = [
 ] }
 symphonia = { version = "=0.5.4", features = ["all-codecs", "all-formats"] }
 thirtyfour = "=0.35.0"
-thiserror = "=2.0.11"
-tokio = { version = "=1.43.0", features = [
+thiserror = "=2.0.12"
+tokio = { version = "=1.44.1", features = [
     "macros",
     "rt-multi-thread",
     "signal",

@@ -9,7 +9,8 @@ NateBot for Discord, written in Rust
 1. `cargo build --workspace` to build all parts of the project
 2. `cargo run` to run the project
 3. `cargo test` to run the tests
-4. `cargo update` to update dependencies
+4. `cargo update` to update all packages and their dependencies
+5. `cargo update --recursive <package>` to update specific package and its dependencies
 
 ### Docker
 
