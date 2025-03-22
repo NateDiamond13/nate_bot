@@ -1,9 +1,9 @@
-use crate::prelude::{Error, Result};
-
 use regex::Regex;
 use serenity::all::{CacheHttp, Channel, Reaction, ReactionType};
 use serenity::prelude::Context;
 use serenity::small_fixed_array::FixedString;
+
+use crate::prelude::{Error, Result};
 
 pub const ROLE_CHANNEL: &str = "roles";
 pub const ROLE_REACTION: &str = "👍";

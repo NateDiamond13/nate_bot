@@ -1,7 +1,7 @@
-use crate::prelude::{Error, Result};
-
 use chrono::NaiveDateTime;
 use sqlx::{PgPool, query, query_as};
+
+use crate::prelude::{Error, Result};
 
 #[derive(Debug)]
 pub struct PatchNotesSub {

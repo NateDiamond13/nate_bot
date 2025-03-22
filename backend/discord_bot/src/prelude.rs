@@ -66,4 +66,6 @@ pub struct CommandData {
     pub songbird_manager: std::sync::Arc<songbird::Songbird>,
 }
 
+pub type Command = poise::Command<CommandData, Error>;
+
 pub type Context<'a> = poise::Context<'a, CommandData, Error>;

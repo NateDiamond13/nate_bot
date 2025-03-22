@@ -1,19 +1,15 @@
-use crate::prelude::{CommandData, Error, Result};
+use serenity::all::{CacheHttp, Context, Ready};
 
-use poise::FrameworkContext;
-use serenity::all::{CacheHttp, Ready};
+use crate::commands;
+use crate::prelude::Result;
 
-pub async fn handle_ready(
-    framework_context: &FrameworkContext<'_, CommandData, Error>,
-    event: &Ready,
-) -> Result<()> {
-    let ctx = framework_context.serenity_context;
+pub async fn handle_ready(ctx: &Context, event: &Ready) -> Result<()> {
     let shard_id = ctx.shard_id.get();
     println!("{} (Shard {}) is connected!", event.user.name, &shard_id);
 
     if shard_id == 0 {
-        let commands = &framework_context.options.commands;
-        poise::builtins::register_globally(ctx.http(), commands).await?;
+        let commands = commands::get_commands();
+        poise::builtins::register_globally(ctx.http(), &commands).await?;
     }
 
     Ok(())

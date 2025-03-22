@@ -1,11 +1,12 @@
-use crate::prelude::{CommandData, Result};
+use std::cmp;
 
 use rand::rngs::StdRng;
 use rand::seq::{IteratorRandom, SliceRandom};
 use rand::{SeedableRng, random_range};
 use serenity::all::{CacheHttp, Message};
 use serenity::prelude::Context;
-use std::cmp;
+
+use crate::prelude::{CommandData, Result};
 
 const REACTION_COUNT_MIN: usize = 5;
 const REACTION_COUNT_MAX: usize = 20;

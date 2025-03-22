@@ -1,14 +1,11 @@
 use std::fmt;
 
-use crate::prelude::{Context, Result};
-
-use database::{
-    patch_notes::{self},
-    patch_notes_subscriptions::{self, CreatePatchNotesSub},
-};
-
+use database::patch_notes;
+use database::patch_notes_subscriptions::{self, CreatePatchNotesSub};
 use poise::{ChoiceParameter, CreateReply, command};
 use serenity::all::{CreateWebhook, Webhook};
+
+use crate::prelude::{Context, Result};
 
 #[derive(ChoiceParameter, Debug)]
 pub enum PatchGame {

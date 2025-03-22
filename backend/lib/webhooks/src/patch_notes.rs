@@ -1,7 +1,8 @@
-use crate::prelude::Result;
-
-use database::{patch_notes::PatchNotes, patch_notes_subscriptions::PatchNotesSub};
+use database::patch_notes::PatchNotes;
+use database::patch_notes_subscriptions::PatchNotesSub;
 use serenity::all::{CreateEmbed, CreateEmbedAuthor, ExecuteWebhook, Http, Webhook};
+
+use crate::prelude::Result;
 
 pub async fn send_all_alerts(patch_notes: &PatchNotes, subs: &[PatchNotesSub]) -> Result<()> {
     let embed = create_patch_embed(patch_notes);

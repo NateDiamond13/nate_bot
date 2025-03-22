@@ -1,21 +1,24 @@
-pub mod utils;
-
+mod music;
 mod patch_notes;
-pub use patch_notes::patch_notes;
-
 mod pictures;
-pub use pictures::pictures;
-
 mod ping;
-pub use ping::ping;
-
 mod purge;
-pub use purge::purge;
-
 mod roles;
-pub use roles::roles;
-
 mod roll;
-pub use roll::roll;
+mod utils;
 
-pub mod music;
+use crate::prelude::Command;
+
+pub fn get_commands() -> Vec<Command> {
+    vec![
+        music::play(),
+        music::skip(),
+        music::stop(),
+        patch_notes::patch_notes(),
+        pictures::pictures(),
+        ping::ping(),
+        purge::purge(),
+        roles::roles(),
+        roll::roll(),
+    ]
+}

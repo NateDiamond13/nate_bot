@@ -3,5 +3,5 @@
 mod env;
 mod prelude;
 
-pub use env::*;
-pub use prelude::*;
+pub use env::{EnvVariables, get_env_variables};
+pub use prelude::{Error, Result};

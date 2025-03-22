@@ -1,6 +1,6 @@
-use crate::prelude::Result;
-
 use serenity::all::{CacheHttp, ChannelId, Context, GuildId};
+
+use crate::prelude::Result;
 
 const SPAM_CHANNEL_NAME: &str = "botspam";
 

@@ -1,6 +1,8 @@
-use crate::prelude::{Error, Result};
+use std::env;
+use std::ops::Deref;
+use std::sync::LazyLock;
 
-use std::{env, ops::Deref, sync::LazyLock};
+use crate::prelude::{Error, Result};
 
 const ENV_FILENAME: &str = ".env.dev";
 static ENV_VARIABLES: LazyLock<Result<EnvVariables>> = LazyLock::new(load_env);

@@ -1,14 +1,13 @@
-use crate::prelude::{Error, Result};
-
 use chrono::{Duration, Utc};
-use database::{
-    PgPool,
-    auth_tokens::{self, AuthToken, CreateAuthToken},
-};
+use database::PgPool;
+use database::auth_tokens::{self, AuthToken, CreateAuthToken};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
-use reqwest_retry::{RetryTransientMiddleware, policies::ExponentialBackoff};
+use reqwest_retry::RetryTransientMiddleware;
+use reqwest_retry::policies::ExponentialBackoff;
 use serde::Deserialize;
 use utils::EnvVariables;
+
+use crate::prelude::{Error, Result};
 
 const EXPIRY_GRACE_SECONDS: i64 = 20;
 

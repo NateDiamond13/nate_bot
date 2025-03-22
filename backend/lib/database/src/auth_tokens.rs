@@ -1,7 +1,7 @@
-use crate::prelude::Result;
-
 use chrono::NaiveDateTime;
 use sqlx::{PgPool, query, query_as};
+
+use crate::prelude::Result;
 
 #[derive(Debug)]
 pub struct AuthToken {

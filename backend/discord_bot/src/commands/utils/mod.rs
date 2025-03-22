@@ -1,12 +1,14 @@
 mod sounds;
+
+use std::sync::Arc;
+
+use serenity::all::GuildId;
+use serenity::async_trait;
+use songbird::{Call, Event, EventContext, EventHandler, Songbird, TrackEvent};
 pub use sounds::get_sound_details;
+use tokio::sync::Mutex;
 
 use crate::prelude::{Context, Error, Result};
-
-use serenity::{all::GuildId, async_trait};
-use songbird::{Call, Event, EventContext, EventHandler, Songbird, TrackEvent};
-use std::sync::Arc;
-use tokio::sync::Mutex;
 
 struct SoundEndNotifier {
     manager: Arc<Songbird>,

@@ -1,7 +1,7 @@
+use poise::{CreateReply, ReplyHandle, command};
+
 use crate::commands::utils;
 use crate::prelude::{Context, Error, Result};
-
-use poise::{CreateReply, ReplyHandle, command};
 
 /// Queue sound from given url or search string
 #[command(slash_command, guild_only, category = "Music")]

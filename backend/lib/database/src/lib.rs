@@ -6,9 +6,8 @@ pub mod patch_notes_subscriptions;
 pub mod pictures;
 mod prelude;
 
+pub use prelude::{Error, Result};
 pub use sqlx::PgPool;
-
-pub use prelude::*;
 
 pub type PgTransaction = sqlx::Transaction<'static, sqlx::Postgres>;
 

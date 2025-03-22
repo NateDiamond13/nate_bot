@@ -1,11 +1,11 @@
-use crate::helpers;
-use crate::prelude::{CommandData, Error, Result};
-
 use chrono::Utc;
 use serenity::all::{CacheHttp, Channel, GuildChannel, VoiceState};
 use serenity::model::guild::audit_log::{Action, MemberAction};
 use serenity::nonmax::NonMaxU8;
 use serenity::prelude::Context;
+
+use crate::helpers;
+use crate::prelude::{CommandData, Error, Result};
 
 pub async fn handle_voice_state_update(
     ctx: &Context,

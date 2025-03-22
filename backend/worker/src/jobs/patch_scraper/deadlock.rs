@@ -1,12 +1,10 @@
-use crate::prelude::{Error, Result};
-
 use chrono::{DateTime, NaiveDateTime};
-use database::{
-    patch_notes::{self, CreatePatchNotes},
-    patch_notes_subscriptions,
-};
+use database::patch_notes::{self, CreatePatchNotes};
+use database::patch_notes_subscriptions;
 use regex::Regex;
 use thirtyfour::prelude::{By, WebDriver, WebDriverResult, WebElement};
+
+use crate::prelude::{Error, Result};
 
 #[derive(Debug)]
 struct ChangelogThreadMetadata {

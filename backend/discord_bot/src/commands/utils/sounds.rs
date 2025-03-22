@@ -1,10 +1,8 @@
-use crate::{
-    prelude::{CommandData, Error, Result},
-    services,
-};
-
 use songbird::input::{Compose, Input, YoutubeDl};
 use url::Url;
+
+use crate::prelude::{CommandData, Error, Result};
+use crate::services;
 
 #[derive(Debug, PartialEq)]
 enum SoundSource {

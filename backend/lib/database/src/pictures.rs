@@ -1,7 +1,7 @@
-use crate::prelude::Result;
-
 use chrono::NaiveDateTime;
 use sqlx::{FromRow, PgPool, query, query_as};
+
+use crate::prelude::Result;
 
 #[derive(Debug, FromRow)]
 pub struct Picture {

@@ -1,7 +1,7 @@
-use crate::prelude::{CommandData, Error, Result};
-
 use serenity::all::VoiceState;
 use serenity::prelude::Context;
+
+use crate::prelude::{CommandData, Error, Result};
 
 pub async fn handle_voice_state_update(
     ctx: &Context,

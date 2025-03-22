@@ -1,10 +1,9 @@
-use crate::prelude::{CommandData, Result};
-
 use database::pictures;
-
 use rand::random_range;
 use serenity::all::{CacheHttp, CreateEmbed, CreateMessage, Mentionable, Message};
 use serenity::prelude::Context;
+
+use crate::prelude::{CommandData, Result};
 
 pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData) -> Result<()> {
     // Check if author is a bot

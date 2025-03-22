@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use crate::prelude::{Error, Result};
-
 use celery::{Celery, CeleryBuilder};
+
+use crate::prelude::{Error, Result};
 
 pub type WorkerListener = Arc<Celery>;
 

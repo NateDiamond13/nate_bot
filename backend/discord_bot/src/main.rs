@@ -8,6 +8,7 @@ use std::str::FromStr;
 use std::sync::Arc;
 
 use env_logger::Env;
+use events::DiscordEventHandler;
 use poise::serenity_prelude::ClientBuilder;
 use poise::{ApplicationContext, Context, Framework, FrameworkOptions};
 use prelude::{CommandData, HttpClient, Result};
@@ -31,6 +32,7 @@ async fn main() -> Result<()> {
     let http_client = HttpClient::new();
     let songbird_manager = songbird::Songbird::serenity();
 
+    // Set up the data accessible for every command
     let data = Arc::new(CommandData {
         env,
         pool,
@@ -40,17 +42,8 @@ async fn main() -> Result<()> {
 
     // Set up poise framework with options
     let options = FrameworkOptions {
-        commands: vec![
-            commands::patch_notes(),
-            commands::ping(),
-            commands::pictures(),
-            commands::purge(),
-            commands::roles(),
-            commands::roll(),
-            commands::music::play(),
-            commands::music::skip(),
-            commands::music::stop(),
-        ],
+        // Defines all available commands
+        commands: commands::get_commands(),
         // Logs which commands are executed and by whom
         pre_command: |ctx| {
             Box::pin(async move {
@@ -75,14 +68,11 @@ async fn main() -> Result<()> {
         },
         // Ignore commands from bots
         command_check: Some(|ctx| Box::pin(async move { Ok(!ctx.author().bot()) })),
-        // Handle events
-        event_handler: |framework_context, event| {
-            Box::pin(events::event_handler(framework_context, event))
-        },
         ..Default::default()
     };
 
-    let framework = Framework::new(options);
+    // Build the poise framework from the given options
+    let framework = Framework::builder().options(options).build();
 
     // Set gateway intents, which decides what events the bot will be notified about
     let intents = GatewayIntents::GUILDS
@@ -103,6 +93,7 @@ async fn main() -> Result<()> {
         .framework(framework)
         .activity(ActivityData::custom(env_vars.custom_status))
         .data(data)
+        .event_handler(DiscordEventHandler)
         .await?;
 
     // Start listening for events with an automatically determined number of shards

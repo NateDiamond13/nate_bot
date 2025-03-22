@@ -1,10 +1,10 @@
-use crate::events::{ROLE_CHANNEL, ROLE_REACTION};
-use crate::prelude::{Context, Result};
-
 use poise::command;
 use serenity::all::{EditRole, ReactionType};
 use serenity::model::guild;
 use serenity::small_fixed_array::FixedString;
+
+use crate::events::{ROLE_CHANNEL, ROLE_REACTION};
+use crate::prelude::{Context, Result};
 
 /// Base command for role management, use subcommands. (Admin only)
 #[command(

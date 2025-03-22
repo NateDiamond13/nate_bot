@@ -1,10 +1,10 @@
-use crate::prelude::{Context, Error, Result};
-
 use poise::{CreateReply, command};
 use rand::random_range;
 use regex::Regex;
 use serenity::all::Mentionable;
 use serenity::builder::CreateEmbed;
+
+use crate::prelude::{Context, Error, Result};
 
 const MAX_ROLLS: u32 = 50;
 const DEFAULT_ROLL: u32 = 100;

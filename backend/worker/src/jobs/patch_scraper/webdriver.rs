@@ -1,11 +1,12 @@
-use std::{thread, time::Duration};
-
-use crate::prelude::{Error, Result};
+use std::thread;
+use std::time::Duration;
 
 use thirtyfour::prelude::{
     ChromiumLikeCapabilities, DesiredCapabilities, WebDriver, WebDriverResult,
 };
 use tokio::process::{Child, Command};
+
+use crate::prelude::{Error, Result};
 
 #[derive(Debug)]
 pub struct DualWebDriver {
