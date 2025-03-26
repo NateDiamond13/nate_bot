@@ -4,8 +4,12 @@ use crate::prelude::{Error, Result};
 
 pub type WorkerScheduler = Beat<LocalSchedulerBackend>;
 
-pub async fn get_scheduler(broker_url: &str, queue_name: &str) -> Result<WorkerScheduler> {
-    let scheduler = BeatBuilder::with_default_scheduler_backend("celery", broker_url)
+pub async fn get_scheduler(
+    app_name: &str,
+    broker_url: &str,
+    queue_name: &str,
+) -> Result<WorkerScheduler> {
+    let scheduler = BeatBuilder::with_default_scheduler_backend(app_name, broker_url)
         .default_queue(queue_name)
         .build()
         .await?;

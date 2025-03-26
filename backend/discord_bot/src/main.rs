@@ -7,7 +7,6 @@ mod services;
 use std::str::FromStr;
 use std::sync::Arc;
 
-use env_logger::Env;
 use events::DiscordEventHandler;
 use poise::serenity_prelude::ClientBuilder;
 use poise::{ApplicationContext, Context, Framework, FrameworkOptions};
@@ -19,7 +18,8 @@ use tokio::signal;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    env_logger::Builder::from_env(Env::default().default_filter_or("warn")).init();
+    // Register env logger
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
     // Load bot token from the environment
     let env_vars = utils::get_env_variables();

@@ -8,7 +8,6 @@ mod scheduler;
 use celery::beat::CronSchedule;
 use celery::error::TaskError;
 use celery::prelude::TaskResult;
-use env_logger::Env;
 use listener::Listenable;
 use prelude::Result;
 use scheduler::Schedulable;
@@ -21,9 +20,13 @@ async fn scraper_job() -> TaskResult<()> {
         .map_err(|e| TaskError::UnexpectedError(e.to_string()))
 }
 
+const APP_NAME: &str = "celery";
+const QUEUE_NAME: &str = "beat_queue";
+
 #[tokio::main]
 async fn main() -> Result<()> {
-    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+    // Register env logger
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
     // Load redis URL from the environment
     let env_vars = utils::get_env_variables();
@@ -32,11 +35,10 @@ async fn main() -> Result<()> {
     } else {
         format!("redis://{}", env_vars.redis_url)
     };
-    let queue_name = "beat_queue";
 
     // Get listener and scheduler
-    let listener = listener::get_listener(&broker_url, queue_name).await?;
-    let mut scheduler = scheduler::get_scheduler(&broker_url, queue_name).await?;
+    let listener = listener::get_listener(APP_NAME, &broker_url, QUEUE_NAME).await?;
+    let mut scheduler = scheduler::get_scheduler(APP_NAME, &broker_url, QUEUE_NAME).await?;
 
     // Register tasks
     listener.register_task::<scraper_job>().await?;

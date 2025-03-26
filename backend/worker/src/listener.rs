@@ -6,8 +6,12 @@ use crate::prelude::{Error, Result};
 
 pub type WorkerListener = Arc<Celery>;
 
-pub async fn get_listener(broker_url: &str, queue_name: &str) -> Result<WorkerListener> {
-    let listener = CeleryBuilder::new("celery", broker_url)
+pub async fn get_listener(
+    app_name: &str,
+    broker_url: &str,
+    queue_name: &str,
+) -> Result<WorkerListener> {
+    let listener = CeleryBuilder::new(app_name, broker_url)
         .default_queue(queue_name)
         .prefetch_count(1) // Only do one task at a time
         .task_max_retries(2) // Retry failed tasks at most 2 times
