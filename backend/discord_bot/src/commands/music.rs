@@ -165,9 +165,9 @@ pub async fn stop(ctx: Context<'_>) -> Result<()> {
     Ok(())
 }
 
-async fn update_reply<'a>(
+async fn update_reply(
     ctx: Context<'_>,
-    reply: ReplyHandle<'a>,
+    reply: ReplyHandle<'_>,
     content: impl Into<String>,
 ) -> Result<()> {
     reply

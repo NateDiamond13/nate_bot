@@ -51,8 +51,8 @@ impl SoundcloudClient {
         conn: &PgPool,
         env_vars: &EnvVariables,
     ) -> Result<Option<String>> {
-        let auth_token = get_token(&self.mid_client, &conn, &env_vars).await?;
-        find_track_url(&search_str, &self.mid_client, &auth_token).await
+        let auth_token = get_token(&self.mid_client, conn, env_vars).await?;
+        find_track_url(search_str, &self.mid_client, &auth_token).await
     }
 }
 
@@ -61,7 +61,7 @@ async fn find_track_url(
     mid_client: &ClientWithMiddleware,
     auth_token: &AuthToken,
 ) -> Result<Option<String>> {
-    println!("Searching Soundcloud for \"{}\"", &search_str);
+    println!("Searching Soundcloud for \"{}\"", search_str);
     let response = mid_client
         .get("https://api.soundcloud.com/tracks")
         .header("Accept", "application/json; charset=utf-8")
@@ -79,7 +79,7 @@ async fn find_track_url(
         .await?;
 
     let result = response.json::<SearchResult>().await?;
-    Ok(result.collection.get(0).map(|e| e.permalink_url.clone()))
+    Ok(result.collection.first().map(|e| e.permalink_url.clone()))
 }
 
 async fn get_token(
@@ -97,10 +97,10 @@ async fn get_token(
             return Ok(token);
         }
         // If it's expired, refresh the token
-        new_sc_token = refresh_token(&token, &mid_client, &env_vars).await?;
+        new_sc_token = refresh_token(&token, mid_client, env_vars).await?;
     } else {
         // If the token doesn't exist, fetch a new one
-        new_sc_token = fetch_new_token(&mid_client, &env_vars).await?
+        new_sc_token = fetch_new_token(mid_client, env_vars).await?
     }
 
     let expires_at = Utc::now().naive_utc() + Duration::seconds(new_sc_token.expires_in as i64);

@@ -47,18 +47,16 @@ async fn main() -> Result<()> {
         // Logs which commands are executed and by whom
         pre_command: |ctx| {
             Box::pin(async move {
-                match ctx {
-                    Context::Application(ApplicationContext {
-                        interaction,
-                        command,
-                        ..
-                    }) => {
-                        println!(
-                            "User \"{}\" executed slash command: [\"/{}\"]",
-                            interaction.user.name, command.qualified_name
-                        );
-                    }
-                    _ => {}
+                if let Context::Application(ApplicationContext {
+                    interaction,
+                    command,
+                    ..
+                }) = ctx
+                {
+                    println!(
+                        "User \"{}\" executed slash command: [\"/{}\"]",
+                        interaction.user.name, command.qualified_name
+                    );
                 }
             })
         },
