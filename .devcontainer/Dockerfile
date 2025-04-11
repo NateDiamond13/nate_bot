@@ -1,5 +1,5 @@
 # Use Rust devcontainer as base (https://github.com/devcontainers/images/tree/main/src/rust)
-FROM mcr.microsoft.com/devcontainers/rust:1.0.21-bookworm AS base
+FROM mcr.microsoft.com/devcontainers/rust:1.0.22-bookworm AS base
 
 # Update and install packages
 RUN apt-get update \
