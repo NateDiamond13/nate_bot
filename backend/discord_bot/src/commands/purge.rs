@@ -1,6 +1,6 @@
 use chrono::Utc;
 use poise::command;
-use serenity::all::{GetMessages, MessageId};
+use serenity::all::{Channel, GetMessages, MessageId};
 
 use crate::helpers;
 use crate::prelude::{Context, Result};
@@ -16,8 +16,12 @@ pub async fn purge(
     #[min_length = 3]
     text: String,
 ) -> Result<()> {
-    let channel = match ctx.guild_channel().await {
-        Some(channel) => channel,
+    let (channel_id, channel_name) = match ctx.channel().await {
+        Some(Channel::Guild(channel)) => (channel.id.widen(), channel.base.name),
+        Some(Channel::GuildThread(thread)) => (thread.id.widen(), thread.base.name),
+        Some(_) => {
+            return Ok(());
+        }
         None => {
             return Ok(());
         }
@@ -27,15 +31,14 @@ pub async fn purge(
     let message_filter = GetMessages::new().limit(PURGE_LIMIT);
 
     // Get messages less than 14 days old that contain the given text
-    let messages_to_delete = channel.id.messages(ctx.http(), message_filter).await?;
+    let messages_to_delete = channel_id.messages(ctx.http(), message_filter).await?;
     let message_ids = messages_to_delete
         .iter()
         .filter(|&msg| -msg.timestamp.signed_duration_since(Utc::now()).num_days() < MAX_PURGE_DAYS)
         .filter(|&msg| msg.content.to_lowercase().contains(&text_lower))
         .map(|msg| msg.id)
         .collect::<Vec<MessageId>>();
-    channel
-        .id
+    channel_id
         .delete_messages(
             ctx.http(),
             message_ids.as_slice(),
@@ -48,7 +51,7 @@ pub async fn purge(
         ctx.author().name,
         message_ids.len(),
         text,
-        channel.name
+        channel_name
     );
     println!("{response}");
     if let Some(guild_id) = ctx.guild_id() {

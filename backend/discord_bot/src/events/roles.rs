@@ -47,7 +47,7 @@ async fn toggle_user_role(
     let Channel::Guild(channel) = reaction.channel(ctx).await? else {
         return Ok(());
     };
-    if channel.name != ROLE_CHANNEL {
+    if channel.base.name != ROLE_CHANNEL {
         return Ok(());
     }
 
@@ -55,7 +55,7 @@ async fn toggle_user_role(
     let role_name = parse_for_role(message.content)?;
 
     // Check if role exists in guild
-    let guild_id = channel.guild_id;
+    let guild_id = channel.base.guild_id;
     let guild = guild_id.to_partial_guild(ctx).await?;
     let role = guild
         .role_by_name(&role_name)

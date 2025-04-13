@@ -1,5 +1,5 @@
 use chrono::Utc;
-use serenity::all::{CacheHttp, Channel, GuildChannel, VoiceState};
+use serenity::all::{CacheHttp, GuildChannel, VoiceState};
 use serenity::model::guild::audit_log::{Action, MemberAction};
 use serenity::nonmax::NonMaxU8;
 use serenity::prelude::Context;
@@ -114,10 +114,10 @@ async fn get_channel_name(voice_state: &VoiceState, context: &Context) -> Result
     };
 
     match channel_id
-        .to_channel(context.http(), voice_state.guild_id)
+        .to_guild_channel(context.http(), voice_state.guild_id)
         .await
     {
-        Ok(Channel::Guild(GuildChannel { name, .. })) => Ok(name.to_string()),
+        Ok(GuildChannel { base, .. }) => Ok(base.name.to_string()),
         _ => Err(Error::InvalidVoiceChannel),
     }
 }

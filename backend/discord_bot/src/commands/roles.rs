@@ -1,5 +1,5 @@
 use poise::command;
-use serenity::all::{EditRole, ReactionType};
+use serenity::all::{Channel, EditRole, ReactionType};
 use serenity::model::guild;
 use serenity::small_fixed_array::FixedString;
 
@@ -114,8 +114,10 @@ async fn create_role_message(ctx: Context<'_>, role_name: impl Into<String>) -> 
 }
 
 async fn in_roles_channel(ctx: Context<'_>) -> bool {
-    match ctx.guild_channel().await {
-        Some(channel) => channel.name == ROLE_CHANNEL,
+    match ctx.channel().await {
+        Some(Channel::Guild(channel)) => channel.base.name == ROLE_CHANNEL,
+        Some(Channel::GuildThread(thread)) => thread.base.name == ROLE_CHANNEL,
+        Some(_) => false,
         None => false,
     }
 }

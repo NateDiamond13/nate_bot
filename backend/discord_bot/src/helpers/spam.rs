@@ -1,4 +1,4 @@
-use serenity::all::{CacheHttp, ChannelId, Context, GuildId};
+use serenity::all::{CacheHttp, Context, GenericChannelId, GuildId};
 
 use crate::prelude::Result;
 
@@ -18,7 +18,14 @@ pub async fn post_to_spam_channel(
     Ok(())
 }
 
-async fn channel_id_from_name(ctx: &Context, guild_id: GuildId, name: &str) -> Option<ChannelId> {
+async fn channel_id_from_name(
+    ctx: &Context,
+    guild_id: GuildId,
+    name: &str,
+) -> Option<GenericChannelId> {
     let channels = guild_id.channels(ctx.http()).await.ok()?;
-    channels.iter().find(|c| c.name == name).map(|c| c.id)
+    channels
+        .iter()
+        .find(|c| c.base.name == name)
+        .map(|c| c.id.widen())
 }

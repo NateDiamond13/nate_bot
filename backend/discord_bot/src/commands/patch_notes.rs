@@ -3,7 +3,7 @@ use std::fmt;
 use database::patch_notes;
 use database::patch_notes_subscriptions::{self, CreatePatchNotesSub};
 use poise::{ChoiceParameter, CreateReply, command};
-use serenity::all::{CreateWebhook, Webhook};
+use serenity::all::{Channel, CreateWebhook, Webhook};
 
 use crate::prelude::{Context, Result};
 
@@ -64,13 +64,24 @@ pub async fn patch_sub(
     ctx: Context<'_>,
     #[description = "Target game"] game: PatchGame,
 ) -> Result<()> {
-    let Some(guild_channel) = ctx.guild_channel().await else {
-        ctx.say("Could not find current channel").await?;
-        return Ok(());
+    let guild_channel = match ctx.channel().await {
+        Some(Channel::Guild(channel)) => channel,
+        Some(Channel::GuildThread(_)) => {
+            ctx.say("Cannot subscribe within thread channel").await?;
+            return Ok(());
+        }
+        Some(Channel::Private(_)) => {
+            ctx.say("Cannot subscribe within private channel").await?;
+            return Ok(());
+        }
+        _ => {
+            ctx.say("Could not find current channel").await?;
+            return Ok(());
+        }
     };
 
-    let guild_id = guild_channel.guild_id.to_string();
-    let channel_id = guild_channel.id.to_string();
+    let guild_id = guild_channel.base.guild_id.to_string();
+    let channel_id = guild_channel.id.widen().to_string();
 
     // Check if sub already exists
     if patch_notes_subscriptions::get(&ctx.data().pool, game.to_string(), &guild_id, &channel_id)
@@ -125,13 +136,24 @@ pub async fn patch_unsub(
     ctx: Context<'_>,
     #[description = "Target game"] game: PatchGame,
 ) -> Result<()> {
-    let Some(guild_channel) = ctx.guild_channel().await else {
-        ctx.say("Could not find current channel").await?;
-        return Ok(());
+    let guild_channel = match ctx.channel().await {
+        Some(Channel::Guild(channel)) => channel,
+        Some(Channel::GuildThread(_)) => {
+            ctx.say("Cannot unsubscribe within thread channel").await?;
+            return Ok(());
+        }
+        Some(Channel::Private(_)) => {
+            ctx.say("Cannot unsubscribe within private channel").await?;
+            return Ok(());
+        }
+        _ => {
+            ctx.say("Could not find current channel").await?;
+            return Ok(());
+        }
     };
 
-    let guild_id = guild_channel.guild_id.to_string();
-    let channel_id = guild_channel.id.to_string();
+    let guild_id = guild_channel.base.guild_id.to_string();
+    let channel_id = guild_channel.id.widen().to_string();
 
     // Check if sub exists
     let Some(Ok(current_sub)) =
