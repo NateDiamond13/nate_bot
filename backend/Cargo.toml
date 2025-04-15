@@ -26,7 +26,7 @@ serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next", f
 songbird = { git = "https://github.com/serenity-rs/songbird", branch = "serenity-next", features = [
     "builtin-queue",
 ] }
-sqlx = { version = "=0.8.3", features = [
+sqlx = { version = "=0.8.4", features = [
     "chrono",
     "postgres",
     "runtime-tokio",
