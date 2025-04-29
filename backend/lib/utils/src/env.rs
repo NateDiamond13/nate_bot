@@ -85,10 +85,7 @@ fn load_vec_u64(key: &str) -> Result<Vec<u64>> {
     let var_string = env::var(key).map_err(|_| Error::MissingVar(key.to_string()))?;
     let results: Vec<u64> = var_string
         .split(',')
-        .filter_map(|s| match s.trim().parse() {
-            Ok(res) => Some(res),
-            Err(_) => None,
-        })
+        .filter_map(|s| s.trim().parse().ok())
         .collect();
     Ok(results)
 }

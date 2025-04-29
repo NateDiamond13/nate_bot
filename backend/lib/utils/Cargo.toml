@@ -5,4 +5,5 @@ edition = { workspace = true }
 
 [dependencies]
 dotenvy = { workspace = true }
+env_logger = { workspace = true }
 thiserror = { workspace = true }

@@ -25,8 +25,8 @@ const QUEUE_NAME: &str = "beat_queue";
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Register env logger
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
+    // Register logger
+    utils::init_logger();
 
     // Load redis URL from the environment
     let env_vars = utils::get_env_variables();

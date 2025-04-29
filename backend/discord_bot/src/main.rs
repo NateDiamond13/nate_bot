@@ -18,8 +18,8 @@ use tokio::signal;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Register env logger
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
+    // Register logger
+    utils::init_logger();
 
     // Load bot token from the environment
     let env_vars = utils::get_env_variables();

@@ -7,7 +7,6 @@ edition = { workspace = true }
 celery = { workspace = true }
 chrono = { workspace = true }
 database = { path = "../lib/database" }
-env_logger = { workspace = true }
 regex = { workspace = true }
 serde = { workspace = true }
 thirtyfour = { workspace = true }
