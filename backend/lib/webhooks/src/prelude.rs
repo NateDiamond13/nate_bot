@@ -10,5 +10,5 @@ pub enum Error {
     Serenity(#[from] serenity::Error),
 }
 
-/// Utils library result
+/// Webhooks library result
 pub type Result<T> = core::result::Result<T, Error>;
