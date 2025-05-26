@@ -1,7 +1,7 @@
 use serenity::all::VoiceState;
 use serenity::prelude::Context;
 
-use crate::prelude::{CommandData, Error, Result};
+use crate::prelude::{CommandData, Error, Result, SongbirdError};
 
 pub async fn handle_voice_state_update(
     ctx: &Context,
@@ -36,7 +36,10 @@ pub async fn handle_voice_state_update(
     let guild_id = voice_state.guild_id.ok_or(Error::InvalidGuild)?;
 
     if manager.get(guild_id).is_some() {
-        manager.remove(guild_id).await?;
+        manager
+            .remove(guild_id)
+            .await
+            .map_err(|err| Error::Songbird(Box::new(SongbirdError::SongbirdJoin(err))))?;
     }
 
     Ok(())

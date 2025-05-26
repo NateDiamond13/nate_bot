@@ -11,10 +11,7 @@
     "remoteUser": "root",
     "customizations": {
         "vscode": {
-            "extensions": [
-                "ms-azuretools.vscode-docker",
-                "fill-labs.dependi"
-            ]
+            "extensions": ["ms-azuretools.vscode-containers", "fill-labs.dependi"]
         }
     },
     "mounts": [
@@ -32,7 +29,7 @@
         }
     ],
     // Include environment file for sqlx
-    "runArgs": ["--env-file", ".env.dev"],
+    "runArgs": ["--env-file", ".env"],
     "postCreateCommand": "rustc --version"
 
     // Use 'forwardPorts' to make a list of ports inside the container available locally.

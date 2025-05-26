@@ -1,7 +1,7 @@
 use songbird::input::{Compose, Input, YoutubeDl};
 use url::Url;
 
-use crate::prelude::{CommandData, Error, Result};
+use crate::prelude::{CommandData, Error, Result, SongbirdError};
 use crate::services;
 
 #[derive(Debug, PartialEq)]
@@ -50,7 +50,11 @@ async fn get_download_details(
     data: &CommandData,
 ) -> Result<Option<SoundDetails>> {
     let mut src = YoutubeDl::new(data.http_client.clone(), url.into());
-    let metadata = src.aux_metadata().await?;
+    let metadata = src
+        .aux_metadata()
+        .await
+        .map_err(|err| Error::Songbird(Box::new(SongbirdError::SongbirdAudioStream(err))))?;
+
     Ok(Some(SoundDetails {
         input: src.into(),
         num_seconds: metadata.duration.ok_or(Error::VideoDetailParse)?.as_secs(),

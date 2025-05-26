@@ -1,6 +1,15 @@
 //! Discord Bot prelude
 
 #[derive(thiserror::Error, Debug)]
+pub enum SongbirdError {
+    #[error(transparent)]
+    SongbirdAudioStream(#[from] songbird::input::AudioStreamError),
+
+    #[error(transparent)]
+    SongbirdJoin(#[from] songbird::error::JoinError),
+}
+
+#[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error(transparent)]
     LibDatabase(#[from] database::Error),
@@ -48,10 +57,7 @@ pub enum Error {
     SerenityToken(#[from] serenity::secrets::TokenError),
 
     #[error(transparent)]
-    SongbirdAudioStream(#[from] songbird::input::AudioStreamError),
-
-    #[error(transparent)]
-    SongbirdJoin(#[from] songbird::error::JoinError),
+    Songbird(Box<SongbirdError>),
 }
 
 pub type Result<T> = core::result::Result<T, Error>;

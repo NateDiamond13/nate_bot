@@ -8,7 +8,7 @@ use songbird::{Call, Event, EventContext, EventHandler, Songbird, TrackEvent};
 pub use sounds::get_sound_details;
 use tokio::sync::Mutex;
 
-use crate::prelude::{Context, Error, Result};
+use crate::prelude::{Context, Error, Result, SongbirdError};
 
 struct SoundEndNotifier {
     manager: Arc<Songbird>,
@@ -55,7 +55,10 @@ pub async fn join_voice_channel(ctx: Context<'_>) -> Result<()> {
         .ok_or(Error::InvalidVoiceChannel)?;
 
     // Join the voice channel
-    let handle_lock = manager.join(guild_id, channel_id).await?;
+    let handle_lock = manager
+        .join(guild_id, channel_id)
+        .await
+        .map_err(|err| Error::Songbird(Box::new(SongbirdError::SongbirdJoin(err))))?;
 
     // Add event handler to leave voice channel when queue is empty
     let mut handle = handle_lock.lock().await;
@@ -75,7 +78,10 @@ pub async fn leave_voice_channel(ctx: Context<'_>) -> Result<()> {
     let guild_id = ctx.guild_id().ok_or(Error::InvalidGuild)?;
 
     if manager.get(guild_id).is_some() {
-        manager.remove(guild_id).await?;
+        manager
+            .remove(guild_id)
+            .await
+            .map_err(|err| Error::Songbird(Box::new(SongbirdError::SongbirdJoin(err))))?;
     }
     Ok(())
 }

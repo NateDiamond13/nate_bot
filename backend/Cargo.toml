@@ -9,7 +9,7 @@ celery = "=0.5.5"
 chrono = "=0.4.41"
 dotenvy = "=0.15.7"
 env_logger = "=0.11.8"
-htmd = "=0.1.6"
+htmd = "=0.2.2"
 poise = { git = "https://github.com/serenity-rs/poise", branch = "serenity-next" }
 rand = "=0.9.1"
 regex = "=1.11.1"
@@ -26,7 +26,7 @@ serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next", f
 songbird = { git = "https://github.com/serenity-rs/songbird", branch = "serenity-next", features = [
     "builtin-queue",
 ] }
-sqlx = { version = "=0.8.5", features = [
+sqlx = { version = "=0.8.6", features = [
     "chrono",
     "postgres",
     "runtime-tokio",
@@ -35,7 +35,7 @@ sqlx = { version = "=0.8.5", features = [
 symphonia = { version = "=0.5.4", features = ["all-codecs", "all-formats"] }
 thirtyfour = "=0.35.0"
 thiserror = "=2.0.12"
-tokio = { version = "=1.44.2", features = [
+tokio = { version = "=1.45.1", features = [
     "macros",
     "rt-multi-thread",
     "signal",

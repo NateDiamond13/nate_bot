@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 
 use crate::prelude::{Error, Result};
 
-const ENV_FILENAME: &str = ".env.dev";
+const ENV_FILENAME: &str = ".env";
 static ENV_VARIABLES: LazyLock<Result<EnvVariables>> = LazyLock::new(load_env);
 
 #[derive(Debug, Clone)]
