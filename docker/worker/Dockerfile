@@ -13,7 +13,7 @@ COPY ./backend/lib/webhooks/src ./lib/webhooks/src
 RUN cargo build --release -p worker
 
 # Copy binary to an alpine image
-FROM alpine:3.21 AS runner
+FROM alpine:3.22 AS runner
 RUN apk upgrade --no-cache \
     && apk add --no-cache tini chromium-chromedriver
 COPY --from=builder /backend/target/release/worker .
