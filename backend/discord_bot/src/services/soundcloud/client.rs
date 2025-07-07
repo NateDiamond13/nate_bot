@@ -61,7 +61,7 @@ async fn find_track_url(
     mid_client: &ClientWithMiddleware,
     auth_token: &AuthToken,
 ) -> Result<Option<String>> {
-    println!("Searching Soundcloud for \"{search_str}\"");
+    log::info!("Searching Soundcloud for \"{search_str}\"");
     let response = mid_client
         .get("https://api.soundcloud.com/tracks")
         .header("Accept", "application/json; charset=utf-8")
@@ -123,7 +123,7 @@ async fn fetch_new_token(
     mid_client: &ClientWithMiddleware,
     env_vars: &EnvVariables,
 ) -> Result<SoundcloudTokenResult> {
-    println!("Fetching new Soundcloud token");
+    log::info!("Fetching new Soundcloud token");
     let response = mid_client
         .post("https://secure.soundcloud.com/oauth/token")
         .header("Accept", "application/json; charset=utf-8")
@@ -144,7 +144,7 @@ async fn refresh_token(
     mid_client: &ClientWithMiddleware,
     env_vars: &EnvVariables,
 ) -> Result<SoundcloudTokenResult> {
-    println!("Refreshing Soundcloud token");
+    log::info!("Refreshing Soundcloud token");
     let response = mid_client
         .post("https://secure.soundcloud.com/oauth/token")
         .header("Accept", "application/json; charset=utf-8")

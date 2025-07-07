@@ -41,16 +41,16 @@ async fn start_background(port_number: u16) -> Result<Child> {
     let mut child_process = Command::new("chromedriver")
         .arg(format!("--port={port_number}"))
         .spawn()?;
-    eprintln!("Background webdriver starting...");
+    log::info!("Background webdriver starting...");
     thread::sleep(Duration::from_secs(1));
 
     match child_process.try_wait() {
         Ok(Some(_)) => {
-            eprintln!("Child process already exited");
+            log::error!("Child process already exited");
             Err(Error::WebDriverChild)
         }
-        Err(e) => {
-            eprintln!("Error attempting to wait: {e}");
+        Err(err) => {
+            log::error!("Error attempting to wait: {err}");
             Err(Error::WebDriverChild)
         }
         Ok(None) => Ok(child_process),
@@ -67,18 +67,18 @@ async fn start_main(port_number: u16) -> WebDriverResult<WebDriver> {
 
     let server_url = format!("http://127.0.0.1:{port_number}");
     let driver = WebDriver::new(server_url, caps).await?;
-    eprintln!("Main webdriver starting...");
+    log::info!("Main webdriver starting...");
     Ok(driver)
 }
 
 async fn stop_main(main_driver: WebDriver) -> WebDriverResult<()> {
     main_driver.quit().await?;
-    eprintln!("Main webdriver stopped successfully");
+    log::info!("Main webdriver stopped successfully");
     Ok(())
 }
 
 async fn stop_background(mut child_process: Child) -> Result<()> {
     child_process.kill().await?;
-    eprintln!("Background webdriver process stopped successfully");
+    log::info!("Background webdriver process stopped successfully");
     Ok(())
 }

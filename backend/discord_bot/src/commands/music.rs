@@ -14,7 +14,7 @@ pub async fn play(
     force: bool,
 ) -> Result<()> {
     let reply_msg = ctx.say("Attempting to queue sound...").await?;
-    println!(
+    log::info!(
         "User '{}' adding sound to queue: '{}'",
         ctx.author().name,
         url_or_search
@@ -25,14 +25,14 @@ pub async fn play(
         Ok(Some(details)) => details,
         Ok(None) => {
             let response = format!("Invalid sound source: {url_or_search}.");
-            println!("{response}");
+            log::error!("{response}");
             update_reply(ctx, reply_msg, response).await?;
             return Ok(());
         }
         Err(err) => {
             let response =
                 format!("Error occurred while getting sound details for \"{url_or_search}\".");
-            println!("{response}");
+            log::error!("{response}");
             update_reply(ctx, reply_msg, response).await?;
             return Err(err);
         }
@@ -40,7 +40,7 @@ pub async fn play(
 
     if sound_details.num_seconds > 7200 {
         let response = "Cannot queue sounds longer than 2 hours.";
-        println!("{response}");
+        log::error!("{response}");
         update_reply(ctx, reply_msg, response).await?;
         return Ok(());
     }
@@ -50,7 +50,7 @@ pub async fn play(
         Ok(()) => {}
         Err(Error::InvalidVoiceChannel) => {
             let response = "User is not currently in a voice channel.";
-            println!("{response}");
+            log::error!("{response}");
             update_reply(ctx, reply_msg, response).await?;
             return Ok(());
         }
@@ -65,7 +65,7 @@ pub async fn play(
         Ok(Some(call)) => call,
         Ok(None) => {
             let response = "Could not find current voice channel.";
-            println!("{response}");
+            log::error!("{response}");
             update_reply(ctx, reply_msg, response).await?;
             return Ok(());
         }
@@ -84,7 +84,7 @@ pub async fn play(
         handler.enqueue_input(sound_details.input).await;
     } else {
         let response = format!("Maximum sounds ({max_sounds}) already in queue.");
-        println!("{response}");
+        log::error!("{response}");
         update_reply(ctx, reply_msg, response).await?;
         return Ok(());
     }
@@ -123,8 +123,8 @@ pub async fn skip(ctx: Context<'_>) -> Result<()> {
                         .await?;
                 }
             }
-            Err(e) => {
-                println!("{e}");
+            Err(err) => {
+                log::error!("{err:?}");
                 ctx.say("Error occurred while trying to skip sound.")
                     .await?;
                 return Ok(());

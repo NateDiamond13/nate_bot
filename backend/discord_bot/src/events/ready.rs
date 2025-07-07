@@ -5,7 +5,7 @@ use crate::prelude::Result;
 
 pub async fn handle_ready(ctx: &Context, event: &Ready) -> Result<()> {
     let shard_id = ctx.shard_id.get();
-    println!("{} (Shard {}) is connected!", event.user.name, &shard_id);
+    log::info!("{} (Shard {}) is connected!", event.user.name, &shard_id);
 
     if shard_id == 0 {
         let commands = commands::get_commands();

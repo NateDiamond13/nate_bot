@@ -109,6 +109,8 @@ fn parse_dice_string(dice_string: impl Into<String>) -> Result<DiceRoll> {
 
 #[cfg(test)]
 mod tests {
+    use test_log::test;
+
     use crate::commands::roll::{DiceRoll, parse_dice_string};
     use crate::prelude::Error;
 

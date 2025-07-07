@@ -53,7 +53,7 @@ pub async fn purge(
         text,
         channel_name
     );
-    println!("{response}");
+    log::info!("{response}");
     if let Some(guild_id) = ctx.guild_id() {
         helpers::post_to_spam_channel(response, ctx.serenity_context(), guild_id).await?;
     }

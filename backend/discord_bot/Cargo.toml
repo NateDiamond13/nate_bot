@@ -6,6 +6,7 @@ edition = { workspace = true }
 [dependencies]
 chrono = { workspace = true }
 database = { path = "../lib/database" }
+log = { workspace = true }
 poise = { workspace = true }
 rand = { workspace = true }
 regex = { workspace = true }
@@ -21,3 +22,6 @@ tokio = { workspace = true }
 url = { workspace = true }
 utils = { path = "../lib/utils" }
 webhooks = { path = "../lib/webhooks" }
+
+[dev-dependencies]
+test-log = { workspace = true }

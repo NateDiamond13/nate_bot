@@ -29,7 +29,7 @@ async fn main() -> Result<()> {
     utils::init_logger();
 
     // Load redis URL from the environment
-    let env_vars = utils::get_env_variables();
+    let env_vars = utils::get_config();
     let broker_url = if env_vars.redis_url.starts_with("redis://") {
         env_vars.redis_url.clone()
     } else {
@@ -50,19 +50,19 @@ async fn main() -> Result<()> {
     // Start listener and scheduler
     tokio::select! {
         res = listener.start_listen() => {
-            if let Err(error) = res {
-                dbg!(error);
+            if let Err(err) = res {
+                log::error!("{err:?}");
             }
-            eprintln!("Listener has shutdown");
+            log::info!("Listener has shutdown");
         }
         res = scheduler.start_schedule() => {
-            if let Err(error) = res {
-                dbg!(error);
+            if let Err(err) = res {
+                log::error!("{err:?}");
             }
-            eprintln!("Scheduler has shutdown");
+            log::info!("Scheduler has shutdown");
         }
         _ = signal::ctrl_c() => {
-            eprintln!("Ctrl-C received, shutting down");
+            log::info!("Ctrl-C received, shutting down");
         }
     }
     Ok(())

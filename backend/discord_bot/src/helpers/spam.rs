@@ -10,7 +10,7 @@ pub async fn post_to_spam_channel(
     guild_id: GuildId,
 ) -> Result<()> {
     let Some(channel_id) = channel_id_from_name(ctx, guild_id, SPAM_CHANNEL_NAME).await else {
-        println!("-> Could not find spam channel: \"{SPAM_CHANNEL_NAME}\"");
+        log::error!("-> Could not find spam channel: \"{SPAM_CHANNEL_NAME}\"");
         return Ok(());
     };
 

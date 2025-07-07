@@ -22,7 +22,7 @@ async fn main() -> Result<()> {
     utils::init_logger();
 
     // Load bot token from the environment
-    let env_vars = utils::get_env_variables();
+    let env_vars = utils::get_config();
     let env = env_vars.clone();
 
     // Set up database connection pool
@@ -53,16 +53,17 @@ async fn main() -> Result<()> {
                     ..
                 }) = ctx
                 {
-                    println!(
+                    log::info!(
                         "User \"{}\" executed slash command: [\"/{}\"]",
-                        interaction.user.name, command.qualified_name
+                        interaction.user.name,
+                        command.qualified_name
                     );
                 }
             })
         },
         // Logs on command errors
         on_error: |err| {
-            Box::pin(async move { println!("Error occurred during command: {err:#?}") })
+            Box::pin(async move { log::info!("Error occurred during command: {err:#?}") })
         },
         // Ignore commands from bots
         command_check: Some(|ctx| Box::pin(async move { Ok(!ctx.author().bot()) })),
@@ -84,7 +85,7 @@ async fn main() -> Result<()> {
         | GatewayIntents::MESSAGE_CONTENT;
 
     // Create a new instance of the Client, logging in as a bot
-    println!("Starting bot...");
+    log::info!("Starting bot...");
     let discord_token = Token::from_str(&env_vars.discord_token)?;
     let mut client = ClientBuilder::new(discord_token, intents)
         .voice_manager::<Songbird>(data.songbird_manager.clone())
@@ -98,11 +99,11 @@ async fn main() -> Result<()> {
     tokio::select! {
         res = client.start_autosharded() => {
             if let Err(why) = res {
-                eprintln!("Client Error: {why:?}");
+                log::error!("Client Error: {why:?}");
             }
         }
         _ = signal::ctrl_c() => {
-            eprintln!("Ctrl-C received, shutting down");
+            log::info!("Ctrl-C received, shutting down");
         }
     }
     Ok(())

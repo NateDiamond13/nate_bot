@@ -1177,6 +1177,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "database",
+ "log",
  "poise",
  "rand 0.9.1",
  "regex",
@@ -1187,6 +1188,7 @@ dependencies = [
  "serenity",
  "songbird",
  "symphonia",
+ "test-log",
  "thiserror 2.0.12",
  "tokio",
  "url",
@@ -4733,6 +4735,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "test-log"
+version = "0.2.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e33b98a582ea0be1168eba097538ee8dd4bbe0f2b01b22ac92ea30054e5be7b"
+dependencies = [
+ "env_logger",
+ "test-log-macros",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "test-log-macros"
+version = "0.2.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "451b374529930d7601b1eef8d32bc79ae870b6079b069401709c2a8bf9e75f36"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.104",
+]
+
+[[package]]
 name = "thirtyfour"
 version = "0.36.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5372,6 +5396,8 @@ version = "0.1.0"
 dependencies = [
  "dotenvy",
  "env_logger",
+ "log",
+ "test-log",
  "thiserror 2.0.12",
 ]
 
@@ -5955,6 +5981,7 @@ dependencies = [
  "celery",
  "chrono",
  "database",
+ "log",
  "regex",
  "serde",
  "thirtyfour",

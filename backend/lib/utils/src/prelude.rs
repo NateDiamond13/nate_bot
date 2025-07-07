@@ -1,7 +1,7 @@
 //! Library - Utils prelude
 
 /// Utils library error
-#[derive(thiserror::Error, Debug)]
+#[derive(thiserror::Error, Clone, Debug)]
 pub enum Error {
     #[error("Could not find environment variable: {0}")]
     MissingVar(String),

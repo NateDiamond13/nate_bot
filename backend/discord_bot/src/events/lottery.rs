@@ -16,9 +16,10 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
         return Ok(());
     }
 
-    println!(
+    log::info!(
         "Lottery won by '{}' - Odds: 1/{}",
-        message.author.name, data.env.lottery_odds
+        message.author.name,
+        data.env.lottery_odds
     );
 
     // Get the current guild

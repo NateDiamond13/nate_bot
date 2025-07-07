@@ -10,14 +10,14 @@ pub const ROLE_REACTION: &str = "👍";
 
 pub async fn handle_reaction_add(ctx: &Context, event: &Reaction) -> Result<()> {
     if let Err(error) = toggle_user_role(ctx, event, true).await {
-        println!("Error in role reaction add: {error}");
+        log::error!("Error in role reaction add: {error}");
     }
     Ok(())
 }
 
 pub async fn handle_reaction_remove(ctx: &Context, event: &Reaction) -> Result<()> {
     if let Err(error) = toggle_user_role(ctx, event, false).await {
-        println!("Error in role reaction remove: {error}");
+        log::error!("Error in role reaction remove: {error}");
     }
     Ok(())
 }
@@ -70,17 +70,21 @@ async fn toggle_user_role(
         member
             .add_role(ctx.http(), role.id, Some("Added by roles handler"))
             .await?;
-        println!(
+        log::info!(
             "Added user '{}' to role '{}' in guild '{}'",
-            user.name, role.name, guild.name
+            user.name,
+            role.name,
+            guild.name
         );
     } else if !add_role && has_role {
         member
             .remove_role(ctx.http(), role.id, Some("Removed by roles handler"))
             .await?;
-        println!(
+        log::info!(
             "Removed user '{}' from role '{}' in guild '{}'",
-            user.name, role.name, guild.name
+            user.name,
+            role.name,
+            guild.name
         );
     }
     Ok(())
@@ -98,6 +102,8 @@ fn parse_for_role(message_str: impl Into<String>) -> Result<String> {
 
 #[cfg(test)]
 mod tests {
+    use test_log::test;
+
     use crate::events::roles::parse_for_role;
 
     #[test]

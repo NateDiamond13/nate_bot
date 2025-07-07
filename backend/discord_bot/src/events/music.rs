@@ -27,11 +27,11 @@ pub async fn handle_voice_state_update(
 
     // Handle if bot was moved to another channel or disconnected.
     if new_state.channel_id.is_some() {
-        println!("Bot was moved to another voice channel.");
+        log::info!("Bot was moved to another voice channel.");
         return Ok(());
     }
 
-    println!("Bot was disconnected from voice channel, clearing queue.");
+    log::info!("Bot was disconnected from voice channel, clearing queue.");
     let manager = &data.songbird_manager;
     let guild_id = voice_state.guild_id.ok_or(Error::InvalidGuild)?;
 

@@ -37,9 +37,11 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
     let mut choices = emojis.iter().choose_multiple(&mut rng, emoji_count);
     choices.shuffle(&mut rng);
 
-    println!(
+    log::info!(
         "Reacting to a message from '{}' with {} emoji(s) - Odds: 1/{}",
-        message.author.name, emoji_count, data.env.reaction_target_odds
+        message.author.name,
+        emoji_count,
+        data.env.reaction_target_odds
     );
 
     // React to the message with the chosen emojis

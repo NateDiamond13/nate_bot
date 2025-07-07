@@ -28,7 +28,7 @@ pub async fn update_latest(driver: &WebDriver, database_url: String) -> Result<b
     // If there's a new patch
     if insert_result == 1 {
         let target_game = "deadlock";
-        println!("New patch found for game: {target_game}");
+        log::info!("New patch found for game: {target_game}");
 
         // Send alerts to subscribed channels
         let Some(subs) = patch_notes_subscriptions::get_all_for_game(&conn, target_game).await
@@ -90,11 +90,11 @@ async fn get_thread_metadata(
     let title = title_anchor.inner_html().await?.trim().to_string();
 
     let Some(ref_link) = title_anchor.attr("href").await? else {
-        eprintln!("-- Missing thread metadata: ref_link");
+        log::error!("-- Missing thread metadata: ref_link");
         return Ok(None);
     };
     let Some(patch_id) = parse_id(&ref_link) else {
-        eprintln!("-- Missing thread metadata: patch_id");
+        log::error!("-- Missing thread metadata: patch_id");
         return Ok(None);
     };
 
@@ -106,7 +106,7 @@ async fn get_thread_metadata(
         .attr("datetime")
         .await?;
     let Some(timestamp) = parse_timestamp(timestamp_str) else {
-        eprintln!("-- Missing thread metadata: timestamp");
+        log::error!("-- Missing thread metadata: timestamp");
         return Ok(None);
     };
 

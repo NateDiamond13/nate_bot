@@ -20,8 +20,8 @@ impl EventHandler for SoundEndNotifier {
     async fn act(&self, _ctx: &EventContext<'_>) -> Option<Event> {
         let call = self.manager.get(self.guild_id)?;
         if call.lock().await.queue().is_empty() {
-            if let Err(e) = self.manager.remove(self.guild_id).await {
-                println!("Error while sound ends: {e}");
+            if let Err(err) = self.manager.remove(self.guild_id).await {
+                log::error!("Error while sound ends: {err}");
             }
         }
 
@@ -40,7 +40,7 @@ pub async fn join_voice_channel(ctx: Context<'_>) -> Result<()> {
     let manager = &ctx.data().songbird_manager;
     let guild_id = ctx.guild_id().ok_or(Error::InvalidGuild)?;
     if manager.get(guild_id).is_some() {
-        println!("Attempting to join, but already in a call.");
+        log::error!("Attempting to join, but already in a call.");
         return Ok(());
     }
 

@@ -18,7 +18,7 @@ pub struct DiscordEventHandler;
 impl EventHandler for DiscordEventHandler {
     async fn dispatch(&self, ctx: &Context, event: &FullEvent) {
         if let Err(err) = dispatch_helper(ctx, event).await {
-            eprintln!("Event handler error: {err:?}");
+            log::error!("Event handler error: {err:?}");
         }
     }
 }

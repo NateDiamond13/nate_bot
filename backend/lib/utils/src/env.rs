@@ -23,16 +23,22 @@ pub struct EnvVariables {
     pub webdriver_port: u16,
 }
 
-pub fn get_env_variables() -> EnvVariables {
+/// Get the configuration variables defined in the environment (can panic)
+pub fn get_config() -> EnvVariables {
     match ENV_VARIABLES.deref() {
         Ok(env_vars) => env_vars.clone(),
         Err(err) => panic!("Error occurred while reading from env: {err:?}"),
     }
 }
 
+/// Get the configuration variables defined in the environment (will not panic)
+pub fn get_config_safe() -> Result<EnvVariables> {
+    ENV_VARIABLES.clone()
+}
+
 fn load_env() -> Result<EnvVariables> {
     if dotenvy::from_filename_override(ENV_FILENAME).is_err() {
-        println!("No .env file found. Attempting to load environment...");
+        log::warn!("No .env file found. Attempting to load environment...");
     }
     Ok(EnvVariables {
         audit_enabled_servers: load_vec_u64("AUDIT_ENABLED_SERVERS")?,
@@ -88,4 +94,19 @@ fn load_vec_u64(key: &str) -> Result<Vec<u64>> {
         .filter_map(|s| s.trim().parse().ok())
         .collect();
     Ok(results)
+}
+
+#[cfg(test)]
+mod tests {
+    use test_log::test;
+
+    use crate::env::{get_config, get_config_safe};
+
+    #[test]
+    fn load_env_vars() {
+        let _ = get_config();
+
+        let v = get_config_safe();
+        assert!(v.is_ok());
+    }
 }

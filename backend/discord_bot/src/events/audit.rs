@@ -92,7 +92,7 @@ pub async fn handle_voice_state_update(
                 "User '{}' moved '{}' from channel '{}' to '{}'",
                 user.name, member.user.name, old_channel_name, new_channel_name
             );
-            println!("{response}");
+            log::info!("{response}");
             helpers::post_to_spam_channel(response, ctx, member.guild_id).await?;
         }
         Action::Member(MemberAction::MemberDisconnect) => {
@@ -100,7 +100,7 @@ pub async fn handle_voice_state_update(
                 "User '{}' disconnected '{}' from channel '{}'",
                 user.name, member.user.name, old_channel_name
             );
-            println!("{response}");
+            log::info!("{response}");
             helpers::post_to_spam_channel(response, ctx, member.guild_id).await?;
         }
         _ => {}
