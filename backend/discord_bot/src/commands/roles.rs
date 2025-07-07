@@ -56,7 +56,7 @@ pub async fn new_role(
             create_role_message(ctx, role.name).await?;
         }
         Err(why) => {
-            ctx.say(format!("Failed to create role: {:?}", why)).await?;
+            ctx.say(format!("Failed to create role: {why:?}")).await?;
         }
     };
     Ok(())

@@ -25,8 +25,8 @@ pub struct EnvVariables {
 
 pub fn get_env_variables() -> EnvVariables {
     match ENV_VARIABLES.deref() {
-        Ok(c) => c.clone(),
-        Err(e) => panic!("Error occurred while reading from env: {:?}", e),
+        Ok(env_vars) => env_vars.clone(),
+        Err(err) => panic!("Error occurred while reading from env: {err:?}"),
     }
 }
 

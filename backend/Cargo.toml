@@ -13,7 +13,7 @@ htmd = "=0.2.2"
 poise = { git = "https://github.com/serenity-rs/poise", branch = "serenity-next" }
 rand = "=0.9.1"
 regex = "=1.11.1"
-reqwest = { version = "=0.12.20", default-features = false, features = [
+reqwest = { version = "=0.12.22", default-features = false, features = [
     "json",
     "rustls-tls",
 ] }
@@ -33,9 +33,9 @@ sqlx = { version = "=0.8.6", features = [
     "tls-rustls",
 ] }
 symphonia = { version = "=0.5.4", features = ["all-codecs", "all-formats"] }
-thirtyfour = "=0.35.0"
+thirtyfour = "=0.36.1"
 thiserror = "=2.0.12"
-tokio = { version = "=1.45.1", features = [
+tokio = { version = "=1.46.1", features = [
     "macros",
     "rt-multi-thread",
     "signal",

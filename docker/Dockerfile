@@ -1,5 +1,5 @@
 # Rust alpine base image
-FROM rust:1.87-alpine3.22
+FROM rust:1.88-alpine3.22
 
 # Install dependencies for crates (https://pkgs.alpinelinux.org/packages)
 RUN apk add alpine-sdk=1.1-r0 \

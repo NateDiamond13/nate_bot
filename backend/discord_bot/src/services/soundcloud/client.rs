@@ -61,7 +61,7 @@ async fn find_track_url(
     mid_client: &ClientWithMiddleware,
     auth_token: &AuthToken,
 ) -> Result<Option<String>> {
-    println!("Searching Soundcloud for \"{}\"", search_str);
+    println!("Searching Soundcloud for \"{search_str}\"");
     let response = mid_client
         .get("https://api.soundcloud.com/tracks")
         .header("Accept", "application/json; charset=utf-8")

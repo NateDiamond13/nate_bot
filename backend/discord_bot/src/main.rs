@@ -62,7 +62,7 @@ async fn main() -> Result<()> {
         },
         // Logs on command errors
         on_error: |err| {
-            Box::pin(async move { println!("Error occurred during command: {:#?}", err) })
+            Box::pin(async move { println!("Error occurred during command: {err:#?}") })
         },
         // Ignore commands from bots
         command_check: Some(|ctx| Box::pin(async move { Ok(!ctx.author().bot()) })),
