@@ -19,10 +19,10 @@ struct SoundEndNotifier {
 impl EventHandler for SoundEndNotifier {
     async fn act(&self, _ctx: &EventContext<'_>) -> Option<Event> {
         let call = self.manager.get(self.guild_id)?;
-        if call.lock().await.queue().is_empty() {
-            if let Err(err) = self.manager.remove(self.guild_id).await {
-                log::error!("Error while sound ends: {err}");
-            }
+        if call.lock().await.queue().is_empty()
+            && let Err(err) = self.manager.remove(self.guild_id).await
+        {
+            log::error!("Error while sound ends: {err}");
         }
 
         None

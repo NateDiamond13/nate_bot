@@ -10,6 +10,7 @@ const MAX_ROLLS: u32 = 50;
 const DEFAULT_ROLL: u32 = 100;
 const EMBED_COLOR: u32 = 0x00FFBA;
 
+#[derive(Debug, Clone)]
 struct DiceRoll {
     pub count: u32,
     pub sides: u32,
@@ -71,7 +72,7 @@ fn format_simple_roll(author: String, max_roll: u32) -> String {
     format!("{author} rolls a {roll} (1-{max_roll})")
 }
 
-fn format_dice_roll(author: String, roll: &DiceRoll) -> CreateReply {
+fn format_dice_roll(author: String, roll: &DiceRoll) -> CreateReply<'_> {
     let &DiceRoll { count, sides } = roll;
 
     let mut rolls = Vec::new();
