@@ -1,69 +1,40 @@
-#![allow(non_local_definitions)]
-
 mod jobs;
-mod listener;
 mod prelude;
-mod scheduler;
 
-use celery::beat::CronSchedule;
-use celery::error::TaskError;
-use celery::prelude::TaskResult;
-use listener::Listenable;
+use jobs::job_handler;
 use prelude::Result;
-use scheduler::Schedulable;
+use queue::{QueueListener, QueueScheduler};
 use tokio::signal;
-
-#[celery::task]
-async fn scraper_job() -> TaskResult<()> {
-    jobs::patch_scraper::execute_job()
-        .await
-        .map_err(|e| TaskError::UnexpectedError(e.to_string()))
-}
-
-const APP_NAME: &str = "celery";
-const QUEUE_NAME: &str = "beat_queue";
 
 #[tokio::main]
 async fn main() -> Result<()> {
     // Register logger
     utils::init_logger();
 
-    // Load redis URL from the environment
-    let env_vars = utils::get_config();
-    let broker_url = if env_vars.redis_url.starts_with("redis://") {
-        env_vars.redis_url.clone()
-    } else {
-        format!("redis://{}", env_vars.redis_url)
-    };
+    // Load environment variables
+    let env_vars = utils::get_config_safe()?;
+    let broker_url = env_vars.redis_url;
 
-    // Get listener and scheduler
-    let listener = listener::get_listener(APP_NAME, &broker_url, QUEUE_NAME).await?;
-    let mut scheduler = scheduler::get_scheduler(APP_NAME, &broker_url, QUEUE_NAME).await?;
+    // Get the job queue scheduler and listener
+    let scheduler = QueueScheduler::new(&broker_url).await?;
+    let listener = QueueListener::new(&broker_url)?;
 
-    // Register tasks
-    listener.register_task::<scraper_job>().await?;
-    scheduler.schedule_task(
-        scraper_job::new(),
-        CronSchedule::from_string("*/15 * * * *")?, // Run every 15 min
-    );
+    // Register scheduled job tasks and start scheduler
+    jobs::register_scheduled_jobs(&scheduler).await?;
+    scheduler.start_schedule().await?;
 
-    // Start listener and scheduler
+    // Start listener and wait for shutdown signal
     tokio::select! {
-        res = listener.start_listen() => {
+        res = listener.start_listen(job_handler) => {
             if let Err(err) = res {
                 log::error!("{err:?}");
             }
             log::info!("Listener has shutdown");
         }
-        res = scheduler.start_schedule() => {
-            if let Err(err) = res {
-                log::error!("{err:?}");
-            }
-            log::info!("Scheduler has shutdown");
-        }
         _ = signal::ctrl_c() => {
             log::info!("Ctrl-C received, shutting down");
         }
     }
+
     Ok(())
 }

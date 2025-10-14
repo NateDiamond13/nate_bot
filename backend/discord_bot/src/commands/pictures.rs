@@ -28,7 +28,13 @@ pub async fn pic_list(ctx: Context<'_>) -> Result<()> {
         }
     };
 
-    let Some(pics) = pictures::get_all(&ctx.data().pool, &guild_str).await else {
+    let Ok(mut conn) = ctx.data().pool.get_connection().await else {
+        ctx.say("An error occurred while connecting to the database.")
+            .await?;
+        return Ok(());
+    };
+
+    let Some(pics) = pictures::get_all(conn.as_mut(), &guild_str).await else {
         ctx.say("An error occurred while fetching pictures.")
             .await?;
         return Ok(());
@@ -62,7 +68,13 @@ pub async fn pic_show(
         }
     };
 
-    let Some(pic) = pictures::get(&ctx.data().pool, &name, &guild_str).await else {
+    let Ok(mut conn) = ctx.data().pool.get_connection().await else {
+        ctx.say("An error occurred while connecting to the database.")
+            .await?;
+        return Ok(());
+    };
+
+    let Some(pic) = pictures::get(conn.as_mut(), &name, &guild_str).await else {
         ctx.say(format!("Could not find picture '{name}'.")).await?;
         return Ok(());
     };
@@ -84,7 +96,13 @@ pub async fn pic_random(ctx: Context<'_>) -> Result<()> {
         }
     };
 
-    let Some(pic) = pictures::get_random(&ctx.data().pool, &guild_str, None).await else {
+    let Ok(mut conn) = ctx.data().pool.get_connection().await else {
+        ctx.say("An error occurred while connecting to the database.")
+            .await?;
+        return Ok(());
+    };
+
+    let Some(pic) = pictures::get_random(conn.as_mut(), &guild_str, None).await else {
         ctx.say("Could not find random picture.").await?;
         return Ok(());
     };
@@ -111,8 +129,16 @@ pub async fn pic_add(
         }
     };
 
-    let pool = &ctx.data().pool;
-    if pictures::get(pool, &name, &guild_str).await.is_some() {
+    let Ok(mut conn) = ctx.data().pool.get_connection().await else {
+        ctx.say("An error occurred while connecting to the database.")
+            .await?;
+        return Ok(());
+    };
+
+    if pictures::get(conn.as_mut(), &name, &guild_str)
+        .await
+        .is_some()
+    {
         ctx.say(format!("Picture '{name}' already exists.")).await?;
         return Ok(());
     }
@@ -126,7 +152,7 @@ pub async fn pic_add(
         added_by_user: ctx.author().id.to_string(),
         is_nsfw,
     };
-    match pictures::insert(pool, &create_pic).await {
+    match pictures::insert(conn.as_mut(), &create_pic).await {
         Ok(_) => {
             ctx.say(format!("Picture '{name}' successfully added."))
                 .await?;
@@ -150,8 +176,13 @@ pub async fn pic_remove(ctx: Context<'_>, name: String) -> Result<()> {
         }
     };
 
-    let pool = &ctx.data().pool;
-    let Some(existing_pic) = pictures::get(pool, &name, &guild_str).await else {
+    let Ok(mut conn) = ctx.data().pool.get_connection().await else {
+        ctx.say("An error occurred while connecting to the database.")
+            .await?;
+        return Ok(());
+    };
+
+    let Some(existing_pic) = pictures::get(conn.as_mut(), &name, &guild_str).await else {
         ctx.say(format!("Picture '{name}' not found.")).await?;
         return Ok(());
     };
@@ -177,7 +208,7 @@ pub async fn pic_remove(ctx: Context<'_>, name: String) -> Result<()> {
     }
 
     // Remove the picture
-    match pictures::remove(pool, &name, &guild_str).await {
+    match pictures::remove(conn.as_mut(), &name, &guild_str).await {
         Ok(_) => {
             ctx.say(format!("Picture '{name}' successfully removed."))
                 .await?;

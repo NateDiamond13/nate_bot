@@ -1,6 +1,6 @@
 use chrono::{DateTime, NaiveDateTime};
 use database::patch_notes::{self, CreatePatchNotes};
-use database::patch_notes_subscriptions;
+use database::{DbPool, patch_notes_subscriptions};
 use regex::Regex;
 use thirtyfour::prelude::{By, WebDriver, WebDriverResult, WebElement};
 
@@ -14,37 +14,50 @@ struct ChangelogThreadMetadata {
     pub timestamp: NaiveDateTime,
 }
 
-pub async fn update_latest(driver: &WebDriver, database_url: String) -> Result<bool> {
-    let Some(latest_patch_notes) = get_latest_patch_notes(driver)
+const TARGET_GAME: &str = "deadlock";
+
+pub async fn update_latest_notes(db_pool: &DbPool, web_driver: &WebDriver) -> Result<bool> {
+    log::info!("Attempting to update latest patch notes for game: {TARGET_GAME}");
+
+    // Fetch and parse patch notes
+    let Some(latest_patch_notes) = get_latest_patch_notes(web_driver, TARGET_GAME)
         .await
         .map_err(|e| Error::WebDriverInternal(e.to_string()))?
     else {
         return Ok(false);
     };
 
-    let conn = database::get_connection_pool(&database_url).await?;
-    let insert_result = patch_notes::insert(&conn, &latest_patch_notes).await?;
+    // Start a database transaction
+    let mut tx = db_pool.begin_transaction().await?;
 
-    // If there's a new patch
-    if insert_result == 1 {
-        let target_game = "deadlock";
-        log::info!("New patch found for game: {target_game}");
+    // Attempt to insert patch notes into database
+    let insert_success = patch_notes::insert(tx.as_mut(), &latest_patch_notes).await?;
 
-        // Send alerts to subscribed channels
-        let Some(subs) = patch_notes_subscriptions::get_all_for_game(&conn, target_game).await
-        else {
+    // If there's a new patch, send alerts to subscribed channels
+    if insert_success {
+        log::info!("New patch notes found for game: {TARGET_GAME}");
+
+        if let Some(subs) =
+            patch_notes_subscriptions::get_all_for_game(tx.as_mut(), TARGET_GAME).await
+            && !subs.is_empty()
+            && let Some(latest_patch) = patch_notes::get_latest(tx.as_mut(), TARGET_GAME).await
+        {
+            webhooks::patch_notes::send_all_alerts(&latest_patch, &subs).await?;
+        } else {
             return Ok(false);
-        };
-        let Some(latest_patch) = patch_notes::get_latest(&conn, target_game).await else {
-            return Ok(false);
-        };
-        webhooks::patch_notes::send_all_alerts(&latest_patch, &subs).await?;
+        }
     }
+
+    // Commit transaction
+    database::commit_transaction(tx).await?;
 
     Ok(true)
 }
 
-async fn get_latest_patch_notes(driver: &WebDriver) -> WebDriverResult<Option<CreatePatchNotes>> {
+async fn get_latest_patch_notes(
+    driver: &WebDriver,
+    target_game: impl Into<String>,
+) -> WebDriverResult<Option<CreatePatchNotes>> {
     // Navigate to patch webpage
     driver
         .goto("https://forums.playdeadlock.com/forums/changelog.10/")
@@ -70,7 +83,7 @@ async fn get_latest_patch_notes(driver: &WebDriver) -> WebDriverResult<Option<Cr
     let content_block = block_wrapper.inner_html().await?;
 
     Ok(Some(CreatePatchNotes {
-        target_game: "deadlock".to_string(),
+        target_game: target_game.into(),
         patch_id: metadata.patch_id,
         link: thread_url,
         title: metadata.title,

@@ -39,8 +39,13 @@ pub async fn patch_latest(
     ctx: Context<'_>,
     #[description = "Target game"] game: PatchGame,
 ) -> Result<()> {
-    let Some(latest_patch) = patch_notes::get_latest(&ctx.data().pool, game.to_string()).await
-    else {
+    let Ok(mut conn) = ctx.data().pool.get_connection().await else {
+        ctx.say("An error occurred while connecting to the database.")
+            .await?;
+        return Ok(());
+    };
+
+    let Some(latest_patch) = patch_notes::get_latest(conn.as_mut(), game.to_string()).await else {
         ctx.say(format!("Could not find patch notes for game: {game}"))
             .await?;
         return Ok(());
@@ -80,11 +85,17 @@ pub async fn patch_sub(
         }
     };
 
+    let Ok(mut conn) = ctx.data().pool.get_connection().await else {
+        ctx.say("An error occurred while connecting to the database.")
+            .await?;
+        return Ok(());
+    };
+
     let guild_id = guild_channel.base.guild_id.to_string();
     let channel_id = guild_channel.id.widen().to_string();
 
     // Check if sub already exists
-    if patch_notes_subscriptions::get(&ctx.data().pool, game.to_string(), &guild_id, &channel_id)
+    if patch_notes_subscriptions::get(conn.as_mut(), game.to_string(), &guild_id, &channel_id)
         .await
         .is_some()
     {
@@ -114,8 +125,8 @@ pub async fn patch_sub(
         webhook_id: hook.id.into(),
         webhook_token: token.expose_secret().to_string(),
     };
-    patch_notes_subscriptions::insert(&ctx.data().pool, &create_sub).await?;
 
+    patch_notes_subscriptions::insert(conn.as_mut(), &create_sub).await?;
     ctx.say(format!(
         "This channel will now receive patch notifications for: **{game}**"
     ))
@@ -152,12 +163,18 @@ pub async fn patch_unsub(
         }
     };
 
+    let Ok(mut conn) = ctx.data().pool.get_connection().await else {
+        ctx.say("An error occurred while connecting to the database.")
+            .await?;
+        return Ok(());
+    };
+
     let guild_id = guild_channel.base.guild_id.to_string();
     let channel_id = guild_channel.id.widen().to_string();
 
     // Check if sub exists
     let Some(Ok(current_sub)) =
-        patch_notes_subscriptions::get(&ctx.data().pool, game.to_string(), &guild_id, &channel_id)
+        patch_notes_subscriptions::get(conn.as_mut(), game.to_string(), &guild_id, &channel_id)
             .await
     else {
         ctx.say(format!("This channel is not subscribed for: **{game}**"))
@@ -178,7 +195,7 @@ pub async fn patch_unsub(
 
     // Remove the sub
     patch_notes_subscriptions::remove(
-        &ctx.data().pool,
+        conn.as_mut(),
         &current_sub.target_game,
         &current_sub.guild_id,
         &current_sub.channel_id,

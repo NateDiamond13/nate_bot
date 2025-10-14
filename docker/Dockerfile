@@ -15,6 +15,7 @@ WORKDIR /backend
 RUN USER=root cargo new --bin discord_bot --vcs none \
     && USER=root cargo new --bin worker --vcs none \
     && USER=root cargo new --lib lib/database --vcs none \
+    && USER=root cargo new --lib lib/queue --vcs none \
     && USER=root cargo new --lib lib/utils --vcs none \
     && USER=root cargo new --lib lib/webhooks --vcs none
 
@@ -23,5 +24,6 @@ COPY ./backend/Cargo.toml ./backend/Cargo.lock ./
 COPY ./backend/discord_bot/Cargo.toml ./discord_bot/Cargo.toml
 COPY ./backend/worker/Cargo.toml ./worker/Cargo.toml
 COPY ./backend/lib/database/Cargo.toml ./lib/database/Cargo.toml
+COPY ./backend/lib/queue/Cargo.toml ./lib/queue/Cargo.toml
 COPY ./backend/lib/utils/Cargo.toml ./lib/utils/Cargo.toml
 COPY ./backend/lib/webhooks/Cargo.toml ./lib/webhooks/Cargo.toml

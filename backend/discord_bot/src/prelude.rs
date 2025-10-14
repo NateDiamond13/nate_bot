@@ -67,7 +67,7 @@ pub type HttpClient = reqwest::Client;
 #[derive(Debug, Clone)]
 pub struct CommandData {
     pub env: utils::EnvVariables,
-    pub pool: database::PgPool,
+    pub pool: database::DbPool,
     pub http_client: HttpClient,
     pub songbird_manager: std::sync::Arc<songbird::Songbird>,
 }

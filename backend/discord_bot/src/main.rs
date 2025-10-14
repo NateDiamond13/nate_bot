@@ -7,6 +7,7 @@ mod services;
 use std::str::FromStr;
 use std::sync::Arc;
 
+use database::DbPool;
 use events::DiscordEventHandler;
 use poise::serenity_prelude::ClientBuilder;
 use poise::{ApplicationContext, Context, Framework, FrameworkOptions};
@@ -26,7 +27,7 @@ async fn main() -> Result<()> {
     let env = env_vars.clone();
 
     // Set up database connection pool
-    let pool = database::get_connection_pool(&env_vars.database_url).await?;
+    let pool = DbPool::new(&env_vars.database_url).await?;
 
     // Set up http client and manager for songbird
     let http_client = HttpClient::new();

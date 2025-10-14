@@ -12,3 +12,11 @@ pub enum Error {
 
 /// Database library result
 pub type Result<T> = core::result::Result<T, Error>;
+
+pub type DbConnectionPool = sqlx::PgPool;
+pub type DbConnection = sqlx::pool::PoolConnection<sqlx::Postgres>;
+pub type DbTransaction = sqlx::Transaction<'static, sqlx::Postgres>;
+pub type DbQueryResult = sqlx::postgres::PgQueryResult;
+
+pub trait DbExecutor<'a>: sqlx::PgExecutor<'a> {}
+impl<'a, T: sqlx::PgExecutor<'a>> DbExecutor<'a> for T {}

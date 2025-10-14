@@ -1,5 +1,5 @@
 use chrono::{Duration, Utc};
-use database::PgPool;
+use database::DbPool;
 use database::auth_tokens::{self, AuthToken, CreateAuthToken};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use reqwest_retry::RetryTransientMiddleware;
@@ -48,10 +48,10 @@ impl SoundcloudClient {
     pub async fn search_for_track_url(
         &self,
         search_str: &str,
-        conn: &PgPool,
+        db_pool: &DbPool,
         env_vars: &EnvVariables,
     ) -> Result<Option<String>> {
-        let auth_token = get_token(&self.mid_client, conn, env_vars).await?;
+        let auth_token = get_token(&self.mid_client, db_pool, env_vars).await?;
         find_track_url(search_str, &self.mid_client, &auth_token).await
     }
 }
@@ -84,11 +84,12 @@ async fn find_track_url(
 
 async fn get_token(
     mid_client: &ClientWithMiddleware,
-    conn: &PgPool,
+    db_pool: &DbPool,
     env_vars: &EnvVariables,
 ) -> Result<AuthToken> {
     let source_site = "soundcloud.com".to_string();
-    let current_token = auth_tokens::get(conn, &source_site).await;
+    let mut conn = db_pool.get_connection().await?;
+    let current_token = auth_tokens::get(conn.as_mut(), &source_site).await;
 
     let new_sc_token;
     if let Some(token) = current_token {
@@ -112,10 +113,19 @@ async fn get_token(
         refresh_token: new_sc_token.refresh_token,
         scope: new_sc_token.scope,
     };
-    auth_tokens::insert(conn, &create_token).await?;
-    let new_token = auth_tokens::get(conn, &source_site)
+
+    // Begin transaction
+    let mut tx = db_pool.begin_transaction().await?;
+
+    // Insert and return new auth token
+    auth_tokens::insert(tx.as_mut(), &create_token).await?;
+    let new_token = auth_tokens::get(tx.as_mut(), &source_site)
         .await
         .ok_or(Error::MissingAuthToken(source_site))?;
+
+    // Commit transaction
+    database::commit_transaction(tx).await?;
+
     Ok(new_token)
 }
 

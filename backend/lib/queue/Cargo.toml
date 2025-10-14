@@ -1,21 +1,18 @@
 [package]
-name = "worker"
+name = "queue"
 version = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
 chrono = { workspace = true }
-database = { path = "../lib/database" }
 log = { workspace = true }
-queue = { path = "../lib/queue" }
-regex = { workspace = true }
+redis = { workspace = true }
 serde = { workspace = true }
-thirtyfour = { workspace = true }
+serde_json = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
-utils = { path = "../lib/utils" }
-webhooks = { path = "../lib/webhooks" }
+tokio-cron-scheduler = { workspace = true }
 
 [dev-dependencies]
-croner = { workspace = true }
 test-log = { workspace = true }
+utils = { path = "../../lib/utils" }

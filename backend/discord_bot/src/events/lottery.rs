@@ -31,7 +31,8 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
     };
 
     // Get a random picture
-    let Some(picture) = pictures::get_random(&data.pool, &guild_str, Some(false)).await else {
+    let mut conn = data.pool.get_connection().await?;
+    let Some(picture) = pictures::get_random(conn.as_mut(), &guild_str, Some(false)).await else {
         return Ok(());
     };
 
