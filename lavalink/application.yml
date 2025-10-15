@@ -1,0 +1,32 @@
+plugins:
+  youtube:
+    enabled: true
+    allowSearch: true
+    allowDirectVideoIds: true
+    allowDirectPlaylistIds: true
+    clients:
+      - MUSIC
+      - ANDROID_VR
+      - WEB
+      - MWEB
+      - WEBEMBEDDED 
+lavalink:
+  plugins:
+    - dependency: "dev.lavalink.youtube:youtube-plugin:1.15.0"
+  server:
+    sources:
+      youtube: false
+
+logging:
+  level:
+    root: DEBUG
+    lavalink: DEBUG   # Set this to DEBUG to enable more detailed logging from Lavalink
+    lavalink.server.io.SocketContext: TRACE   # Set this to TRACE to see all WebSocket messages sent
+    com.sedmelluq.discord.lavaplayer.tools.ExceptionTools: DEBUG    # Log all track exceptions (COMMON, SUSPICIOUS & FAULT)
+    dev.lavalink.youtube: DEBUG   # Log YouTube Plugin stuff
+  request:
+    enabled: true   # Log all requests to the REST API
+    includeClientInfo: true
+    includeHeaders: false
+    includeQueryString: true
+    includePayload: true

@@ -1,6 +1,7 @@
 mod commands;
 mod events;
 mod helpers;
+mod lavalink;
 mod prelude;
 mod services;
 
@@ -16,6 +17,7 @@ use serenity::all::{ActivityData, Token};
 use serenity::prelude::GatewayIntents;
 use songbird::Songbird;
 use tokio::signal;
+use tokio::sync::Mutex;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -23,7 +25,7 @@ async fn main() -> Result<()> {
     utils::init_logger();
 
     // Load bot token from the environment
-    let env_vars = utils::get_config();
+    let env_vars = utils::get_config_safe()?;
     let env = env_vars.clone();
 
     // Set up database connection pool
@@ -33,12 +35,17 @@ async fn main() -> Result<()> {
     let http_client = HttpClient::new();
     let songbird_manager = songbird::Songbird::serenity();
 
+    // Set up lavalink client to be replaced on ready
+    let lavalink_client =
+        lavalink::get_temp_client(env_vars.lavalink_hostname, env_vars.lavalink_password).await;
+
     // Set up the data accessible for every command
     let data = Arc::new(CommandData {
         env,
         pool,
         http_client,
         songbird_manager,
+        lavalink_client: Arc::new(Mutex::new(lavalink_client)),
     });
 
     // Set up poise framework with options
@@ -92,7 +99,7 @@ async fn main() -> Result<()> {
         .voice_manager::<Songbird>(data.songbird_manager.clone())
         .framework(framework)
         .activity(ActivityData::custom(env_vars.custom_status))
-        .data(data)
+        .data::<CommandData>(data)
         .event_handler(DiscordEventHandler)
         .await?;
 

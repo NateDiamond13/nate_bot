@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use poise::{CreateReply, ReplyHandle, command};
 
 use crate::commands::utils;

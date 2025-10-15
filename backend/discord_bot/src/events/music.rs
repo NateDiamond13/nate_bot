@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use serenity::all::VoiceState;
 use serenity::prelude::Context;
 

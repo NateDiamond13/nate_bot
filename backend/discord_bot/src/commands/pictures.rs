@@ -198,7 +198,10 @@ pub async fn pic_remove(ctx: Context<'_>, name: String) -> Result<()> {
 
     // Check user permissions
     if member.user.id.to_string() != existing_pic.added_by_user
-        && (member.permissions.is_none() || !member.permissions.unwrap().administrator())
+        && !member
+            .permissions
+            .map(|p| p.administrator())
+            .unwrap_or(false)
     {
         ctx.say(format!(
             "Cannot remove '{name}'. Pictures can only be removed by admins or the user that added them."

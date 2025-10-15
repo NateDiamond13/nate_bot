@@ -37,3 +37,17 @@ services:
       - SOUNDCLOUD_CLIENT_ID=${SOUNDCLOUD_CLIENT_ID}
       - SOUNDCLOUD_CLIENT_SECRET=${SOUNDCLOUD_CLIENT_SECRET}
       - WEBDRIVER_PORT=${WEBDRIVER_PORT}
+  lavalink:
+    image: ghcr.io/lavalink-devs/lavalink:4-alpine
+    container_name: lavalink
+    restart: unless-stopped
+    environment:
+      - _JAVA_OPTIONS=-Xmx4G # 4GB heap size
+      - SERVER_PORT=${LAVALINK_PORT}
+      - LAVALINK_SERVER_PASSWORD=${LAVALINK_PASSWORD}
+    volumes:
+      - ./lavalink/application.yml:/opt/Lavalink/application.yml
+    expose:
+      - ${LAVALINK_PORT}
+    ports:
+      - "${LAVALINK_PORT}:${LAVALINK_PORT}"

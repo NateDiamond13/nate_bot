@@ -1,4 +1,12 @@
+#![allow(dead_code)]
+
 //! Discord Bot prelude
+
+#[derive(thiserror::Error, Debug)]
+pub enum LavalinkError {
+    #[error(transparent)]
+    Lavalink(#[from] lavalink_rs::error::LavalinkError),
+}
 
 #[derive(thiserror::Error, Debug)]
 pub enum SongbirdError {
@@ -39,6 +47,9 @@ pub enum Error {
     IO(#[from] std::io::Error),
 
     #[error(transparent)]
+    Lavalink(Box<LavalinkError>),
+
+    #[error(transparent)]
     ParseInt(#[from] std::num::ParseIntError),
 
     #[error(transparent)]
@@ -58,18 +69,53 @@ pub enum Error {
 
     #[error(transparent)]
     Songbird(Box<SongbirdError>),
+
+    #[error(transparent)]
+    TokioTryLock(#[from] tokio::sync::TryLockError),
 }
 
 pub type Result<T> = core::result::Result<T, Error>;
 
 pub type HttpClient = reqwest::Client;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct CommandData {
     pub env: utils::EnvVariables,
     pub pool: database::DbPool,
     pub http_client: HttpClient,
     pub songbird_manager: std::sync::Arc<songbird::Songbird>,
+    pub lavalink_client: std::sync::Arc<tokio::sync::Mutex<lavalink_rs::client::LavalinkClient>>,
+}
+
+impl std::fmt::Debug for CommandData {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> core::result::Result<(), std::fmt::Error> {
+        #[allow(dead_code)]
+        #[derive(Debug)]
+        struct InnerCommandData<'a> {
+            env: &'a utils::EnvVariables,
+            pool: &'a database::DbPool,
+            http_client: &'a HttpClient,
+            songbird_manager: &'a std::sync::Arc<songbird::Songbird>,
+        }
+
+        let Self {
+            env,
+            pool,
+            http_client,
+            songbird_manager,
+            lavalink_client: _,
+        } = self;
+
+        std::fmt::Debug::fmt(
+            &InnerCommandData {
+                env,
+                pool,
+                http_client,
+                songbird_manager,
+            },
+            f,
+        )
+    }
 }
 
 pub type Command = poise::Command<CommandData, Error>;
