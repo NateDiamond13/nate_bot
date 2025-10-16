@@ -17,7 +17,6 @@ croner = "=3.0.0"
 dotenvy = "=0.15.7"
 env_logger = "=0.11.8"
 htmd = "=0.3.2"
-lavalink-rs = { version = "=0.14.2", features = ["serenity", "songbird"] }
 log = "=0.4.28"
 poise = "=0.6.1"
 rand = "=0.9.2"
@@ -61,6 +60,3 @@ url = "=2.5.7"
 poise = { git = "https://github.com/serenity-rs/poise", branch = "serenity-next" }
 serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next" }
 songbird = { git = "https://github.com/serenity-rs/songbird", branch = "serenity-next" }
-
-[patch.'https://github.com/serenity-rs/serenity?branch=next']
-serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next" }

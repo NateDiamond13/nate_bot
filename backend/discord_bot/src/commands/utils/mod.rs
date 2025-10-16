@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 mod sounds;
 
 use std::sync::Arc;

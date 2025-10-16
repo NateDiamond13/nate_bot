@@ -1,7 +1,8 @@
+#![allow(dead_code)]
+
 mod commands;
 mod events;
 mod helpers;
-mod lavalink;
 mod prelude;
 mod services;
 
@@ -17,13 +18,17 @@ use serenity::all::{ActivityData, Token};
 use serenity::prelude::GatewayIntents;
 use songbird::Songbird;
 use tokio::signal;
-use tokio::sync::Mutex;
 
 #[tokio::main]
 async fn main() -> Result<()> {
     // Register logger
     utils::init_logger();
 
+    // Run the bot
+    run_bot().await
+}
+
+async fn run_bot() -> Result<()> {
     // Load bot token from the environment
     let env_vars = utils::get_config_safe()?;
     let env = env_vars.clone();
@@ -35,17 +40,12 @@ async fn main() -> Result<()> {
     let http_client = HttpClient::new();
     let songbird_manager = songbird::Songbird::serenity();
 
-    // Set up lavalink client to be replaced on ready
-    let lavalink_client =
-        lavalink::get_temp_client(env_vars.lavalink_hostname, env_vars.lavalink_password).await;
-
     // Set up the data accessible for every command
     let data = Arc::new(CommandData {
         env,
         pool,
         http_client,
         songbird_manager,
-        lavalink_client: Arc::new(Mutex::new(lavalink_client)),
     });
 
     // Set up poise framework with options
@@ -114,5 +114,22 @@ async fn main() -> Result<()> {
             log::info!("Ctrl-C received, shutting down");
         }
     }
+
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use test_log::test;
+
+    use crate::prelude::Result;
+    use crate::run_bot;
+
+    #[ignore]
+    #[test(tokio::test)]
+    async fn test_discord_bot() -> Result<()> {
+        run_bot().await?;
+
+        Ok(())
+    }
 }

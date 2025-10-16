@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use songbird::input::{Compose, Input, YoutubeDl};
 use url::Url;
 

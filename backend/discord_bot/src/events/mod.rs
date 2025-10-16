@@ -44,7 +44,7 @@ async fn dispatch_helper(ctx: &Context, event: &FullEvent) -> Result<()> {
         FullEvent::VoiceStateUpdate { old, new, .. } => {
             let data = ctx.data::<CommandData>();
             audit::handle_voice_state_update(ctx, old, new, &data).await?;
-            // music::handle_voice_state_update(ctx, old, new, &data).await?;
+            music::handle_voice_state_update(ctx, old, new, &data).await?;
         }
         _ => {}
     }
