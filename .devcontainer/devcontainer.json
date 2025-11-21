@@ -11,7 +11,10 @@
     "remoteUser": "root",
     "customizations": {
         "vscode": {
-            "extensions": ["ms-azuretools.vscode-containers", "fill-labs.dependi"]
+            "extensions": [
+                "ms-azuretools.vscode-containers",
+                "fill-labs.dependi"
+            ]
         }
     },
     "mounts": [
