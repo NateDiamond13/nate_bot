@@ -43,13 +43,13 @@ fn load_env() -> Result<EnvVariables> {
     Ok(EnvVariables {
         audit_enabled_servers: load_vec_u64("AUDIT_ENABLED_SERVERS")?,
         custom_status: load_var_string("CUSTOM_STATUS")?,
-        database_url: load_var_string("DATABASE_URL")?,
+        database_url: load_var_string_prefixed("DATABASE_URL", "postgres://")?,
         discord_token: load_var_string("DISCORD_TOKEN")?,
         lottery_odds: load_var_u32("LOTTERY_ODDS", 1, u32::MAX)?,
         queue_max_sounds: load_var_usize("QUEUE_MAX_SOUNDS")?,
         reaction_target_ids: load_vec_u64("REACTION_TARGET_IDS")?,
         reaction_target_odds: load_var_u32("REACTION_TARGET_ODDS", 1, u32::MAX)?,
-        redis_url: load_var_string("REDIS_URL")?,
+        redis_url: load_var_string_prefixed("REDIS_URL", "redis://")?,
         soundcloud_client_id: load_var_string("SOUNDCLOUD_CLIENT_ID")?,
         soundcloud_client_secret: load_var_string("SOUNDCLOUD_CLIENT_SECRET")?,
         webdriver_port: load_var_u16("WEBDRIVER_PORT")?,
@@ -58,6 +58,15 @@ fn load_env() -> Result<EnvVariables> {
 
 fn load_var_string(key: &str) -> Result<String> {
     env::var(key).map_err(|_| Error::MissingVar(key.to_string()))
+}
+
+fn load_var_string_prefixed(key: &str, prefix: &str) -> Result<String> {
+    let value = load_var_string(key)?;
+    if value.starts_with(prefix) {
+        Ok(value)
+    } else {
+        Ok(format!("{prefix}{value}"))
+    }
 }
 
 fn load_var_usize(key: &str) -> Result<usize> {

@@ -1,10 +1,10 @@
 # Rust alpine base image
-FROM rust:1.90-alpine3.22
+FROM rust:1.91-alpine3.22
 
 # Install dependencies for crates (https://pkgs.alpinelinux.org/packages)
 RUN apk add alpine-sdk=1.1-r0 \
     cmake=3.31.7-r1 \
-    libressl-dev=4.1.1-r0
+    libressl-dev=4.1.2-r0
 
 # Include database url in build for SQLx
 ARG DATABASE_URL
