@@ -1,5 +1,14 @@
-# Rust alpine base image
-FROM rust:1.91-alpine3.22
+# Rust alpine base image with cargo-chef (https://hub.docker.com/r/lukemathwalker/cargo-chef)
+FROM lukemathwalker/cargo-chef:0.1.73-rust-1.91.1-alpine3.22 AS chef
+WORKDIR /backend
+
+# Plan and prepare build recipe
+FROM chef AS planner
+COPY ./backend .
+RUN cargo chef prepare --recipe-path recipe.json
+
+FROM chef AS builder
+COPY --from=planner /backend/recipe.json recipe.json
 
 # Install dependencies for crates (https://pkgs.alpinelinux.org/packages)
 RUN apk add alpine-sdk=1.1-r0 \
@@ -10,20 +19,5 @@ RUN apk add alpine-sdk=1.1-r0 \
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 
-# Create empty shell projects that match structure
-WORKDIR /backend
-RUN USER=root cargo new --bin discord_bot --vcs none \
-    && USER=root cargo new --bin worker --vcs none \
-    && USER=root cargo new --lib lib/database --vcs none \
-    && USER=root cargo new --lib lib/queue --vcs none \
-    && USER=root cargo new --lib lib/utils --vcs none \
-    && USER=root cargo new --lib lib/webhooks --vcs none
-
-# Copy manifests
-COPY ./backend/Cargo.toml ./backend/Cargo.lock ./
-COPY ./backend/discord_bot/Cargo.toml ./discord_bot/Cargo.toml
-COPY ./backend/worker/Cargo.toml ./worker/Cargo.toml
-COPY ./backend/lib/database/Cargo.toml ./lib/database/Cargo.toml
-COPY ./backend/lib/queue/Cargo.toml ./lib/queue/Cargo.toml
-COPY ./backend/lib/utils/Cargo.toml ./lib/utils/Cargo.toml
-COPY ./backend/lib/webhooks/Cargo.toml ./lib/webhooks/Cargo.toml
+# Build cached dependencies from recipe
+RUN cargo chef cook --release --recipe-path recipe.json
