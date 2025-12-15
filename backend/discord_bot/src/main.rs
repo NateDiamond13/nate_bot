@@ -14,7 +14,7 @@ use events::DiscordEventHandler;
 use poise::serenity_prelude::ClientBuilder;
 use poise::{ApplicationContext, Context, Framework, FrameworkOptions};
 use prelude::{CommandData, HttpClient, Result};
-use serenity::all::{ActivityData, Token};
+use serenity::all::{ActivityData, OnlineStatus, Token};
 use serenity::prelude::GatewayIntents;
 use songbird::Songbird;
 use tokio::signal;
@@ -99,6 +99,7 @@ async fn run_bot() -> Result<()> {
         .voice_manager::<Songbird>(data.songbird_manager.clone())
         .framework(framework)
         .activity(ActivityData::custom(env_vars.custom_status))
+        .status(OnlineStatus::Idle)
         .data::<CommandData>(data)
         .event_handler(DiscordEventHandler)
         .await?;
