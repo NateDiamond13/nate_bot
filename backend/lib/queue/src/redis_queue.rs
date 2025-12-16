@@ -1,5 +1,5 @@
 use chrono::{NaiveDateTime, Utc};
-use redis::AsyncCommands;
+use redis::{AsyncCommands, Direction};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 
@@ -8,7 +8,7 @@ use crate::prelude::Result;
 pub type RedisClient = redis::Client;
 pub type RedisConnectionManager = redis::aio::ConnectionManager;
 
-const POLL_TIMEOUT_SECS: usize = 10;
+const POLL_TIMEOUT_SECS: f64 = 10.0;
 
 /// Data stored within each [`QueueItem`]
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -140,10 +140,12 @@ impl WorkQueue {
             // Check if the main queue is empty, and if not push the first item to processing
             if in_processing == 0
                 && db
-                    .brpoplpush::<&str, &str, Option<String>>(
+                    .blmove::<&str, &str, Option<String>>(
                         &self.main_queue_key,
                         &self.processing_key,
-                        POLL_TIMEOUT_SECS as f64,
+                        Direction::Right,
+                        Direction::Left,
+                        POLL_TIMEOUT_SECS,
                     )
                     .await?
                     .is_none()

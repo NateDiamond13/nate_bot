@@ -7,9 +7,10 @@ use serde::de::DeserializeOwned;
 use crate::prelude::Result;
 use crate::redis_queue::{QueueItem, RedisClient, RedisConnectionManager, WorkQueue};
 
-const CONNECTION_MAX_DELAY_MS: u64 = 4_000;
+const CONNECTION_MAX_DELAY: Duration = Duration::from_millis(4_000);
 const CONNECTION_MAX_RETRIES: usize = 5;
-const CONNECTION_TIMEOUT: Duration = Duration::from_secs(5);
+const CONNECTION_TIMEOUT: Option<Duration> = Some(Duration::from_secs(5));
+const RESPONSE_TIMEOUT: Option<Duration> = Some(Duration::from_secs(30));
 const QUEUE_NAME: &str = "work_queue";
 
 /// Broker to handle connections to the work queue in redis
@@ -36,8 +37,9 @@ impl RedisQueueBroker {
         log::info!("Attempting to acquire Redis connection...");
         let config = ConnectionManagerConfig::new()
             .set_connection_timeout(CONNECTION_TIMEOUT)
-            .set_max_delay(CONNECTION_MAX_DELAY_MS)
-            .set_number_of_retries(CONNECTION_MAX_RETRIES);
+            .set_max_delay(CONNECTION_MAX_DELAY)
+            .set_number_of_retries(CONNECTION_MAX_RETRIES)
+            .set_response_timeout(RESPONSE_TIMEOUT);
         let conn = self
             .redis_client
             .get_connection_manager_with_config(config)
