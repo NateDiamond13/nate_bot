@@ -60,3 +60,6 @@ url = "=2.5.7"
 poise = { git = "https://github.com/serenity-rs/poise", branch = "serenity-next" }
 serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next" }
 songbird = { git = "https://github.com/serenity-rs/songbird", branch = "serenity-next" }
+
+[profile.dev.package.sqlx-macros]
+opt-level = 3
