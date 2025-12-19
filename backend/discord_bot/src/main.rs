@@ -1,10 +1,7 @@
-#![allow(dead_code)]
-
 mod commands;
 mod events;
 mod helpers;
 mod prelude;
-mod services;
 
 use std::str::FromStr;
 use std::sync::Arc;
@@ -13,10 +10,9 @@ use database::DbPool;
 use events::DiscordEventHandler;
 use poise::serenity_prelude::ClientBuilder;
 use poise::{ApplicationContext, Context, Framework, FrameworkOptions};
-use prelude::{CommandData, HttpClient, Result};
+use prelude::{CommandData, Result};
 use serenity::all::{ActivityData, OnlineStatus, Token};
 use serenity::prelude::GatewayIntents;
-use songbird::Songbird;
 use tokio::signal;
 
 #[tokio::main]
@@ -36,17 +32,8 @@ async fn run_bot() -> Result<()> {
     // Set up database connection pool
     let pool = DbPool::new(&env_vars.database_url).await?;
 
-    // Set up http client and manager for songbird
-    let http_client = HttpClient::new();
-    let songbird_manager = songbird::Songbird::serenity();
-
     // Set up the data accessible for every command
-    let data = Arc::new(CommandData {
-        env,
-        pool,
-        http_client,
-        songbird_manager,
-    });
+    let data = Arc::new(CommandData { env, pool });
 
     // Set up poise framework with options
     let options = FrameworkOptions {
@@ -96,7 +83,6 @@ async fn run_bot() -> Result<()> {
     log::info!("Starting bot...");
     let discord_token = Token::from_str(&env_vars.discord_token)?;
     let mut client = ClientBuilder::new(discord_token, intents)
-        .voice_manager::<Songbird>(data.songbird_manager.clone())
         .framework(framework)
         .activity(ActivityData::custom(env_vars.custom_status))
         .status(OnlineStatus::Idle)

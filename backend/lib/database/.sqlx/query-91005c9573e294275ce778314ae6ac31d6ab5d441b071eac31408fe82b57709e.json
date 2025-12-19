@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "DELETE FROM patch_notes_subscriptions\n        WHERE target_game = LOWER($1) AND guild_id = $2 AND channel_id = $3;",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "91005c9573e294275ce778314ae6ac31d6ab5d441b071eac31408fe82b57709e"
+}

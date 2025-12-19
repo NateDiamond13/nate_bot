@@ -1,0 +1,19 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO patch_notes (target_game, patch_id, link, title, content, posted_at)\n        VALUES (LOWER($1), $2, $3, $4, $5, $6)\n        ON CONFLICT (target_game, patch_id) DO NOTHING;",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Timestamp"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "b8329538f696e67dea947f0435583dd5a434206991324d984fe3ea1d4e34a6df"
+}

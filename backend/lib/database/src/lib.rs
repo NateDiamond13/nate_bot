@@ -1,6 +1,5 @@
 //! Database library to handle connections for Postgres database using [`sqlx`].
 
-pub mod auth_tokens;
 pub mod patch_notes;
 pub mod patch_notes_subscriptions;
 pub mod pictures;

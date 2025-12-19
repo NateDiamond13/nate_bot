@@ -15,8 +15,7 @@ NateBot for Discord, written in Rust
 #### Cargo Formatting (Nightly / Unstable)
 
 1. `rustup toolchain install nightly` to install the nightly toolchain
-2. `rustup component add rustfmt --toolchain nightly` to install the nightly version of rustfmt
-3. `cargo +nightly fmt` to run rustfmt with unstable features
+2. `cargo +nightly fmt` to run rustfmt with unstable features
 
 ### Docker
 
@@ -29,10 +28,11 @@ NateBot for Discord, written in Rust
 
 ### SQLx
 
-1. `sqlx migrate build-script` to generate build script (build.rs)
-2. `sqlx migrate add -r <name>` to add migration (reversible)
-3. `sqlx migrate run` to run all migrations
-4. `sqlx migrate revert` to revert previous migration
+1. `cargo sqlx migrate build-script` to generate build script (build.rs)
+2. `cargo sqlx migrate add -r <name>` to add migration (reversible)
+3. `cargo sqlx migrate run` to run all migrations
+4. `cargo sqlx migrate revert` to revert previous migration
+5. `cargo sqlx prepare` within backend/lib/database directory to prepare query statements
 
 ---
 

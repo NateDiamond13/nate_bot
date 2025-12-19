@@ -35,14 +35,12 @@ reqwest-retry = "=0.8.0"
 serde = "=1.0.228"
 serde_json = "=1.0.145"
 serenity = { version = "=0.12.4", features = ["temp_cache"] }
-songbird = { version = "=0.5.0", features = ["builtin-queue"] }
 sqlx = { version = "=0.8.6", features = [
     "chrono",
     "postgres",
     "runtime-tokio",
     "tls-rustls",
 ] }
-symphonia = { version = "=0.5.5", features = ["all-codecs", "all-formats"] }
 test-log = { version = "=0.2.19", features = ["trace", "color"] }
 thirtyfour = "=0.36.1"
 thiserror = "=2.0.17"
@@ -59,7 +57,6 @@ url = "=2.5.7"
 [patch.crates-io]
 poise = { git = "https://github.com/serenity-rs/poise", branch = "serenity-next" }
 serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next" }
-songbird = { git = "https://github.com/serenity-rs/songbird", branch = "serenity-next" }
 
 [profile.dev.package.sqlx-macros]
 opt-level = 3
