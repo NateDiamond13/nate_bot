@@ -9,6 +9,8 @@ use crate::prelude::{Context, Result};
 
 #[derive(ChoiceParameter, Debug)]
 pub enum PatchGame {
+    #[name = "arc raiders"]
+    ArcRaiders,
     #[name = "deadlock"]
     Deadlock,
 }
@@ -17,6 +19,7 @@ impl fmt::Display for PatchGame {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             PatchGame::Deadlock => write!(f, "Deadlock"),
+            PatchGame::ArcRaiders => write!(f, "ARC Raiders"),
         }
     }
 }

@@ -1,6 +1,6 @@
 use chrono::{DateTime, NaiveDateTime};
+use database::DbTransaction;
 use database::patch_notes::{self, CreatePatchNotes};
-use database::{DbPool, patch_notes_subscriptions};
 use regex::Regex;
 use thirtyfour::prelude::{By, WebDriver, WebDriverResult, WebElement};
 
@@ -16,7 +16,10 @@ struct ChangelogThreadMetadata {
 
 const TARGET_GAME: &str = "deadlock";
 
-pub async fn update_latest_notes(db_pool: &DbPool, web_driver: &WebDriver) -> Result<bool> {
+pub async fn update_latest_notes(
+    tx: &mut DbTransaction,
+    web_driver: &WebDriver,
+) -> Result<Option<String>> {
     log::info!("Attempting to update latest patch notes for game: {TARGET_GAME}");
 
     // Fetch and parse patch notes
@@ -24,34 +27,17 @@ pub async fn update_latest_notes(db_pool: &DbPool, web_driver: &WebDriver) -> Re
         .await
         .map_err(|e| Error::WebDriverInternal(e.to_string()))?
     else {
-        return Ok(false);
+        return Ok(None);
     };
-
-    // Start a database transaction
-    let mut tx = db_pool.begin_transaction().await?;
 
     // Attempt to insert patch notes into database
     let insert_success = patch_notes::insert(tx.as_mut(), &latest_patch_notes).await?;
 
-    // If there's a new patch, send alerts to subscribed channels
     if insert_success {
-        log::info!("New patch notes found for game: {TARGET_GAME}");
-
-        if let Some(subs) =
-            patch_notes_subscriptions::get_all_for_game(tx.as_mut(), TARGET_GAME).await
-            && !subs.is_empty()
-            && let Some(latest_patch) = patch_notes::get_latest(tx.as_mut(), TARGET_GAME).await
-        {
-            webhooks::patch_notes::send_all_alerts(&latest_patch, &subs).await?;
-        } else {
-            return Ok(false);
-        }
+        Ok(Some(TARGET_GAME.to_string()))
+    } else {
+        Ok(None)
     }
-
-    // Commit transaction
-    database::commit_transaction(tx).await?;
-
-    Ok(true)
 }
 
 async fn get_latest_patch_notes(

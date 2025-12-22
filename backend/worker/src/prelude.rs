@@ -16,6 +16,9 @@ pub enum Error {
     LibQueue(#[from] queue::Error),
 
     #[error(transparent)]
+    LibServices(#[from] services::Error),
+
+    #[error(transparent)]
     LibUtils(#[from] utils::Error),
 
     #[error(transparent)]

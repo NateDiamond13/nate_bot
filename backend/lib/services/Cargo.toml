@@ -1,0 +1,16 @@
+[package]
+name = "services"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+log = { workspace = true }
+reqwest = { workspace = true }
+reqwest-middleware = { workspace = true }
+serde = { workspace = true }
+reqwest-retry = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+test-log = { workspace = true }
+tokio = { workspace = true }

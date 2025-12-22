@@ -10,6 +10,7 @@ pub struct PatchNotes {
     pub title: String,
     pub content: String,
     pub game_title: String,
+    pub steam_app_id: Option<String>,
     pub thumbnail_url: Option<String>,
 }
 
@@ -21,6 +22,14 @@ pub struct CreatePatchNotes {
     pub title: String,
     pub content: String,
     pub posted_at: NaiveDateTime,
+}
+
+#[derive(Debug, FromRow)]
+pub struct SteamPatchMetadata {
+    pub target_game: String,
+    pub steam_app_id: String,
+    pub latest_patch_id: Option<String>,
+    pub latest_posted_at: Option<NaiveDateTime>,
 }
 
 pub async fn get_latest<'a>(
@@ -36,7 +45,7 @@ pub async fn get_latest<'a>(
             ORDER BY posted_at DESC
             LIMIT 1
         )
-        SELECT target_game, link, title, content, game_title, thumbnail_url
+        SELECT target_game, link, title, content, game_title, steam_app_id, thumbnail_url
         FROM latest_patch lp
             JOIN patch_game_info pgi
                 ON lp.target_game = pgi.internal_name;",
@@ -66,4 +75,31 @@ pub async fn insert<'a>(
     .await?;
 
     Ok(insert_result.rows_affected() > 0)
+}
+
+pub async fn get_latest_steam_patches<'a>(
+    dbx: impl DbExecutor<'a>,
+) -> Result<Vec<SteamPatchMetadata>> {
+    let metadata_result = query_as!(
+        SteamPatchMetadata,
+        r#"WITH steam_apps AS (
+            SELECT internal_name AS target_game, steam_app_id
+            FROM patch_game_info
+            WHERE steam_app_id IS NOT NULL
+        ),
+        latest_patches AS (
+            SELECT DISTINCT ON (target_game) target_game, patch_id, posted_at
+            FROM patch_notes
+            ORDER BY target_game, posted_at DESC
+        )
+        SELECT target_game, steam_app_id AS "steam_app_id!", patch_id AS latest_patch_id,
+            posted_at AS latest_posted_at
+        FROM steam_apps
+            LEFT JOIN latest_patches USING (target_game)
+        ORDER BY target_game;"#
+    )
+    .fetch_all(dbx)
+    .await?;
+
+    Ok(metadata_result)
 }

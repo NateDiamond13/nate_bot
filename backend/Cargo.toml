@@ -3,6 +3,7 @@ members = [
     "discord_bot",
     "lib/database",
     "lib/queue",
+    "lib/services",
     "lib/utils",
     "lib/webhooks",
     "worker",
@@ -26,14 +27,14 @@ redis = { version = "=1.0.1", features = [
     "tokio-rustls-comp",
 ] }
 regex = "=1.12.2"
-reqwest = { version = "=0.12.26", default-features = false, features = [
+reqwest = { version = "=0.12.28", default-features = false, features = [
     "json",
     "rustls-tls",
 ] }
 reqwest-middleware = "=0.4.2"
 reqwest-retry = "=0.8.0"
 serde = "=1.0.228"
-serde_json = "=1.0.145"
+serde_json = "=1.0.146"
 serenity = { version = "=0.12.4", features = ["temp_cache"] }
 sqlx = { version = "=0.8.6", features = [
     "chrono",

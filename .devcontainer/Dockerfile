@@ -1,10 +1,10 @@
 # Use Rust devcontainer as base (https://github.com/devcontainers/images/tree/main/src/rust)
-FROM mcr.microsoft.com/devcontainers/rust:2.0.3-bookworm AS base
+FROM mcr.microsoft.com/devcontainers/rust:2.0.6-bookworm AS base
 
 # Update and install packages
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y cmake chromium-driver
+    && apt-get install -y chromium-driver
 
 # Update Rust toolchain and install clippy & rustfmt
 RUN rustup toolchain uninstall stable \

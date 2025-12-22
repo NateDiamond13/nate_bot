@@ -1,0 +1,3 @@
+ALTER TABLE patch_game_info
+    ADD COLUMN IF NOT EXISTS steam_app_id TEXT,
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMP NOT NULL DEFAULT now();

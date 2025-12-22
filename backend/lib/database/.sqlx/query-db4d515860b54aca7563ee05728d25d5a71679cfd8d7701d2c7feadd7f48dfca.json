@@ -1,0 +1,38 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "WITH steam_apps AS (\n            SELECT internal_name AS target_game, steam_app_id\n            FROM patch_game_info\n            WHERE steam_app_id IS NOT NULL\n        ),\n        latest_patches AS (\n            SELECT DISTINCT ON (target_game) target_game, patch_id, posted_at\n            FROM patch_notes\n            ORDER BY target_game, posted_at DESC\n        )\n        SELECT target_game, steam_app_id AS \"steam_app_id!\", patch_id AS latest_patch_id,\n            posted_at AS latest_posted_at\n        FROM steam_apps\n            LEFT JOIN latest_patches USING (target_game)\n        ORDER BY target_game;",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "target_game",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "steam_app_id!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "latest_patch_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "latest_posted_at",
+        "type_info": "Timestamp"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "db4d515860b54aca7563ee05728d25d5a71679cfd8d7701d2c7feadd7f48dfca"
+}

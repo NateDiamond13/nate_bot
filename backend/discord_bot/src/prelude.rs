@@ -27,12 +27,6 @@ pub enum Error {
     Regex(#[from] regex::Error),
 
     #[error(transparent)]
-    Reqwest(#[from] reqwest::Error),
-
-    #[error(transparent)]
-    ReqwestMiddleware(#[from] reqwest_middleware::Error),
-
-    #[error(transparent)]
     Serenity(#[from] serenity::Error),
 
     #[error(transparent)]

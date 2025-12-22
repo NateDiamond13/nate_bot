@@ -8,6 +8,7 @@ COPY ./backend/worker/src ./worker/src
 COPY ./backend/lib/database/src ./lib/database/src
 COPY ./backend/lib/queue/src ./lib/queue/src
 COPY ./backend/lib/utils/src ./lib/utils/src
+COPY ./backend/lib/services/src ./lib/services/src
 COPY ./backend/lib/webhooks/src ./lib/webhooks/src
 
 # Copy sqlx files

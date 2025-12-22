@@ -10,6 +10,7 @@ log = { workspace = true }
 queue = { path = "../lib/queue" }
 regex = { workspace = true }
 serde = { workspace = true }
+services = { path = "../lib/services" }
 thirtyfour = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
