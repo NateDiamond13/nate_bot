@@ -12,7 +12,9 @@ pub use prelude::*;
 pub use scheduler::{QueueScheduler, ScheduledJob};
 pub use sender::QueueSender;
 
+/// Enum of job tasks that can be sent to the queue
 #[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
 pub enum SendableJob {
+    /// Patch Scraper job
     PatchScraper,
 }

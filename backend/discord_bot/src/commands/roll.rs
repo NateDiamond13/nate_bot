@@ -10,7 +10,7 @@ const MAX_ROLLS: u32 = 50;
 const DEFAULT_ROLL: u32 = 100;
 const EMBED_COLOR: u32 = 0x00FFBA;
 
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug)]
 struct DiceRoll {
     pub count: u32,
     pub sides: u32,

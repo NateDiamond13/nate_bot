@@ -4,7 +4,8 @@ use serenity::all::{CreateEmbed, CreateEmbedAuthor, ExecuteWebhook, Http, Webhoo
 
 use crate::prelude::{Error, Result, SerenityError};
 
-pub async fn send_all_alerts(patch_notes: &PatchNotes, subs: &[PatchNotesSub]) -> Result<()> {
+/// Send patch notes alerts to all subscribed guild channels
+pub async fn send_all_patch_alerts(patch_notes: &PatchNotes, subs: &[PatchNotesSub]) -> Result<()> {
     let embed = create_patch_embed(patch_notes);
     let http = Http::without_token();
 
@@ -22,15 +23,18 @@ pub async fn send_all_alerts(patch_notes: &PatchNotes, subs: &[PatchNotesSub]) -
     Ok(())
 }
 
+/// Create an embed from the given patch notes
 pub fn create_patch_embed(patch_notes: &PatchNotes) -> CreateEmbed<'_> {
     let mut embed = CreateEmbed::new()
         .title(&patch_notes.title)
         .url(&patch_notes.link)
         .author(CreateEmbedAuthor::new(&patch_notes.game_title))
         .description(format_embed_description(&patch_notes.content));
+
     if let Some(thumbnail) = &patch_notes.thumbnail_url {
         embed = embed.thumbnail(thumbnail);
     }
+
     embed
 }
 

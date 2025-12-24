@@ -1,3 +1,7 @@
+//! Services - Library
+//!
+//! Internal library to handle interacting with external API services (Steam, etc.)
+
 mod client;
 mod prelude;
 mod steam;

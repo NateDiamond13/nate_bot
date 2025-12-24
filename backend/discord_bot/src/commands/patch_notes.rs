@@ -54,7 +54,7 @@ pub async fn patch_latest(
         return Ok(());
     };
 
-    let embed = webhooks::patch_notes::create_patch_embed(&latest_patch);
+    let embed = webhooks::create_patch_embed(&latest_patch);
     let response = CreateReply::default().embed(embed);
     ctx.send(response).await?;
     Ok(())

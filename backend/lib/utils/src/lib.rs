@@ -1,4 +1,6 @@
-//! Utils library to handle environment variables, etc.
+//! Utils - Library
+//!
+//! Internal library to handle environment variables, logging, etc.
 
 mod env;
 mod logger;

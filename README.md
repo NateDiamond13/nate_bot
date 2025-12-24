@@ -33,9 +33,3 @@ NateBot for Discord, written in Rust
 3. `cargo sqlx migrate run` to run all migrations
 4. `cargo sqlx migrate revert` to revert previous migration
 5. `cargo sqlx prepare` within backend/lib/database directory to prepare query statements
-
----
-
-### TODOs
-
-1. Add comments

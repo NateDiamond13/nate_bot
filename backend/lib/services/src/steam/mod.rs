@@ -5,22 +5,26 @@ use crate::prelude::Result;
 pub use crate::steam::app_news::SteamAppNewsItem;
 use crate::steam::app_news::get_app_news;
 
+/// [`RequestClient`] wrapper for handling requests to Steam API
 #[derive(Clone, Debug)]
 pub struct SteamClient {
     request_client: RequestClient,
 }
 
 impl Default for SteamClient {
+    /// Create a new [`SteamClient`] from a default [`RequestClient`]
     fn default() -> Self {
         Self::new(RequestClient::default())
     }
 }
 
 impl SteamClient {
+    /// Create a new [`SteamClient`] from a [`RequestClient`]
     pub fn new(request_client: RequestClient) -> Self {
         Self { request_client }
     }
 
+    /// Get the latest `count` news items for a Steam App with the given `app_id`
     pub async fn get_app_news(
         &self,
         app_id: impl Into<String>,

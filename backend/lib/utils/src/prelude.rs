@@ -3,9 +3,11 @@
 /// Utils library error
 #[derive(thiserror::Error, Clone, Debug)]
 pub enum Error {
+    /// Error for a missing environment variable
     #[error("Could not find environment variable: {0}")]
     MissingVar(String),
 
+    /// Error for an integer variable outside of the valid range
     #[error("Environment variable '{0}' not in valid range: {1} - {2}")]
     InvalidRangeVar(String, u32, u32),
 }

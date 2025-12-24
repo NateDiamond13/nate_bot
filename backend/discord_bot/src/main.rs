@@ -1,3 +1,7 @@
+//! Discord Bot
+//!
+//! Application that creates a bot that will connect to Discord guilds and interact with users.
+
 mod commands;
 mod events;
 mod helpers;

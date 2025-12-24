@@ -1,37 +1,58 @@
 use chrono::NaiveDateTime;
-use sqlx::{FromRow, query, query_as};
+use sqlx::{query, query_as};
 
 use crate::prelude::{DbExecutor, Result};
 
-#[derive(Debug, FromRow)]
+/// Entity struct representing a patch notes entry in the database
+#[derive(Clone, Debug)]
 pub struct PatchNotes {
+    /// Internal name for the target game
     pub target_game: String,
+    /// Link to the patch notes page
     pub link: String,
+    /// Title of the patch notes
     pub title: String,
+    /// Content of the patch notes
     pub content: String,
+    /// Official title of the game
     pub game_title: String,
+    /// Steam App ID for the game
     pub steam_app_id: Option<String>,
+    /// Thumbnail URL for the game
     pub thumbnail_url: Option<String>,
 }
 
-#[derive(Debug, FromRow)]
+/// Struct for creating [`PatchNotes`] entries
+#[derive(Clone, Debug)]
 pub struct CreatePatchNotes {
+    /// Internal name for the target game
     pub target_game: String,
+    /// ID of the patch notes
     pub patch_id: String,
+    /// Link to the patch notes page
     pub link: String,
+    /// Title of the patch notes
     pub title: String,
+    /// Content of the patch notes
     pub content: String,
+    /// Date and time it was posted
     pub posted_at: NaiveDateTime,
 }
 
-#[derive(Debug, FromRow)]
+/// Metadata for a Steam game's latest patch notes entry
+#[derive(Clone, Debug)]
 pub struct SteamPatchMetadata {
+    /// Internal name for the target game
     pub target_game: String,
+    /// Steam App ID for the game
     pub steam_app_id: String,
+    /// ID of the latest patch notes (if it exists)
     pub latest_patch_id: Option<String>,
+    /// Date and time the latest patch notes were posted (if it exists)
     pub latest_posted_at: Option<NaiveDateTime>,
 }
 
+/// Get the latest [`PatchNotes`] entry from the database for a given `target_game`
 pub async fn get_latest<'a>(
     dbx: impl DbExecutor<'a>,
     target_game: impl Into<String>,
@@ -56,6 +77,7 @@ pub async fn get_latest<'a>(
     .ok()
 }
 
+/// Insert a new [`CreatePatchNotes`] into the database
 pub async fn insert<'a>(
     dbx: impl DbExecutor<'a>,
     create_patch_notes: &CreatePatchNotes,
@@ -77,6 +99,7 @@ pub async fn insert<'a>(
     Ok(insert_result.rows_affected() > 0)
 }
 
+/// Get the latest [`SteamPatchMetadata`] from the database for all games with a Steam App ID
 pub async fn get_latest_steam_patches<'a>(
     dbx: impl DbExecutor<'a>,
 ) -> Result<Vec<SteamPatchMetadata>> {

@@ -1,3 +1,7 @@
+//! Worker
+//!
+//! Application that handles a background worker for a job queue.
+
 mod jobs;
 mod prelude;
 
@@ -6,6 +10,7 @@ use prelude::Result;
 use queue::{QueueListener, QueueScheduler};
 use tokio::signal;
 
+/// Run the worker application
 #[tokio::main]
 async fn main() -> Result<()> {
     // Register logger

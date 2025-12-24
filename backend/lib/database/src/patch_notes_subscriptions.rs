@@ -3,17 +3,24 @@ use sqlx::{query, query_as};
 
 use crate::prelude::{DbExecutor, Error, Result};
 
-#[derive(Debug)]
+/// Entity struct representing a patch notes subscription entry in the database
+#[derive(Clone, Debug)]
 pub struct PatchNotesSub {
+    /// Internal name for the target game
     pub target_game: String,
+    /// Guild ID of the subscription
     pub guild_id: String,
+    /// Channel ID of the subscription
     pub channel_id: String,
+    /// Webhook ID for sending alerts to the subscribed channel
     pub webhook_id: u64,
+    /// Webhook token used for authentication
     pub webhook_token: String,
+    /// Date and time of creation
     pub created_at: NaiveDateTime,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug)]
 struct PatchNotesSubInternal {
     pub target_game: String,
     pub guild_id: String,
@@ -38,15 +45,22 @@ impl TryFrom<PatchNotesSubInternal> for PatchNotesSub {
     type Error = Error;
 }
 
-#[derive(Debug)]
+/// Struct for creating [`PatchNotesSub`] entries
+#[derive(Clone, Debug)]
 pub struct CreatePatchNotesSub {
+    /// Internal name for the target game
     pub target_game: String,
+    /// Guild ID of the subscription
     pub guild_id: String,
+    /// Channel ID of the subscription
     pub channel_id: String,
+    /// Webhook ID for sending alerts to the subscribed channel
     pub webhook_id: u64,
+    /// Webhook token used for authentication
     pub webhook_token: String,
 }
 
+/// Get a [`PatchNotesSub`] entry for a given `target_game`, `guild_id`, and `channel_id`
 pub async fn get<'a>(
     dbx: impl DbExecutor<'a>,
     target_game: impl Into<String>,
@@ -69,6 +83,7 @@ pub async fn get<'a>(
     result.map(|r| r.try_into())
 }
 
+/// Get all [`PatchNotesSub`] entries from the database for a given `target_game`
 pub async fn get_all_for_game<'a>(
     dbx: impl DbExecutor<'a>,
     target_game: impl Into<String>,
@@ -88,6 +103,7 @@ pub async fn get_all_for_game<'a>(
     result.map(|v| v.iter().flat_map(|r| r.clone().try_into()).collect())
 }
 
+/// Insert a new [`CreatePatchNotesSub`] into the database
 pub async fn insert<'a>(
     dbx: impl DbExecutor<'a>,
     create_patch_notes_sub: &CreatePatchNotesSub,
@@ -112,6 +128,7 @@ pub async fn insert<'a>(
     Ok(insert_result.rows_affected() > 0)
 }
 
+/// Remove a [`PatchNotesSub`] entry for a given `target_game`, `guild_id`, and `channel_id`
 pub async fn remove<'a>(
     dbx: impl DbExecutor<'a>,
     target_game: impl Into<String>,

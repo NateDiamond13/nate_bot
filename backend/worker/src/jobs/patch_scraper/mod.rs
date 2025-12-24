@@ -77,7 +77,7 @@ async fn alert_subscribers(tx: &mut DbTransaction, alert_games: Vec<String>) -> 
                 subs.len(),
                 latest_patch.target_game
             );
-            webhooks::patch_notes::send_all_alerts(&latest_patch, &subs).await?;
+            webhooks::send_all_patch_alerts(&latest_patch, &subs).await?;
         }
     }
 

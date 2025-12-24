@@ -6,6 +6,7 @@ use crate::redis_queue::QueueItem;
 const TASK_MAX_RETRIES: usize = 2;
 const TASK_TIMEOUT_SECS: u64 = 3600;
 
+/// Wrapper that can send jobs to a task queue
 #[derive(Clone, Debug)]
 pub struct QueueSender {
     broker: RedisQueueBroker,
@@ -14,7 +15,7 @@ pub struct QueueSender {
 }
 
 impl QueueSender {
-    /// Create a new [`QueueSender`] to send jobs to the queues (with default `max_retries`)
+    /// Create a new [`QueueSender`] to send jobs to the task queue (with default `max_retries`)
     pub fn new(broker_url: impl Into<String>) -> Result<Self> {
         let broker = RedisQueueBroker::new(broker_url)?;
 
@@ -25,6 +26,7 @@ impl QueueSender {
         })
     }
 
+    /// Send a [`SendableJob`] to the task queue
     pub async fn send_job(&self, job: &SendableJob) -> Result<bool> {
         let mut conn_manager = self.broker.get_connection_manager().await?;
 

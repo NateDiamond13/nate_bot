@@ -3,6 +3,9 @@ name = "services"
 version = { workspace = true }
 edition = { workspace = true }
 
+[lints]
+workspace = true
+
 [dependencies]
 log = { workspace = true }
 reqwest = { workspace = true }

@@ -7,17 +7,26 @@ use crate::prelude::{Error, Result};
 const ENV_FILENAME: &str = ".env";
 static ENV_VARIABLES: LazyLock<Result<EnvVariables>> = LazyLock::new(load_env);
 
-#[derive(Debug, Clone)]
+/// Environment variables that configure various components in the application
+#[derive(Clone, Debug)]
 pub struct EnvVariables {
+    /// List of guild IDs that have auditing enabled
     pub audit_enabled_servers: Vec<u64>,
+    /// Custom status to display for the bot
     pub custom_status: String,
+    /// URL of the application database
     pub database_url: String,
+    /// Token to verify the identity of the bot
     pub discord_token: String,
+    /// Odds that a lottery event will be triggered by a message
     pub lottery_odds: u32,
-    pub queue_max_sounds: usize,
+    /// List of user IDs that can trigger a reaction event
     pub reaction_target_ids: Vec<u64>,
+    /// Odds that a reaction event will be triggered by a message
     pub reaction_target_odds: u32,
+    /// URL of the Redis server
     pub redis_url: String,
+    /// Port to access the web driver
     pub webdriver_port: u16,
 }
 
@@ -44,7 +53,6 @@ fn load_env() -> Result<EnvVariables> {
         database_url: load_var_string_prefixed("DATABASE_URL", "postgres://")?,
         discord_token: load_var_string("DISCORD_TOKEN")?,
         lottery_odds: load_var_u32("LOTTERY_ODDS", 1, u32::MAX)?,
-        queue_max_sounds: load_var_usize("QUEUE_MAX_SOUNDS")?,
         reaction_target_ids: load_vec_u64("REACTION_TARGET_IDS")?,
         reaction_target_odds: load_var_u32("REACTION_TARGET_ODDS", 1, u32::MAX)?,
         redis_url: load_var_string_prefixed("REDIS_URL", "redis://")?,
@@ -63,14 +71,6 @@ fn load_var_string_prefixed(key: &str, prefix: &str) -> Result<String> {
     } else {
         Ok(format!("{prefix}{value}"))
     }
-}
-
-fn load_var_usize(key: &str) -> Result<usize> {
-    let value: usize = env::var(key)
-        .map_err(|_| Error::MissingVar(key.to_string()))?
-        .parse()
-        .map_err(|_| Error::MissingVar(key.to_string()))?;
-    Ok(value)
 }
 
 fn load_var_u16(key: &str) -> Result<u16> {

@@ -6,18 +6,21 @@ use crate::SendableJob;
 use crate::broker::RedisQueueBroker;
 use crate::prelude::{Error, Result};
 
+/// Wrapper that listens for and runs jobs that have been added to the task queue
 #[derive(Clone, Debug)]
 pub struct QueueListener {
     broker: RedisQueueBroker,
 }
 
 impl QueueListener {
+    /// Create a new [`QueueListener`] that listens for and runs jobs from the task queue
     pub fn new(broker_url: impl Into<String>) -> Result<Self> {
         let broker = RedisQueueBroker::new(broker_url)?;
 
         Ok(Self { broker })
     }
 
+    /// Start listening to the task queue
     pub async fn start_listen<F>(&self, job_func: F) -> Result<()>
     where
         F: AsyncFn(&SendableJob) -> Result<bool>,

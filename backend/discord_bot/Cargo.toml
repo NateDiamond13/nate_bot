@@ -3,6 +3,9 @@ name = "discord_bot"
 version = { workspace = true }
 edition = { workspace = true }
 
+[lints]
+workspace = true
+
 [dependencies]
 chrono = { workspace = true }
 database = { path = "../lib/database" }
