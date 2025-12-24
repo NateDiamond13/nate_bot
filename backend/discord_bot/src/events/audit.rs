@@ -51,7 +51,14 @@ pub async fn handle_voice_state_update(
     };
     let audit_logs = member
         .guild_id
-        .audit_logs(ctx.http(), Some(action_type), None, None, NonMaxU8::new(1))
+        .audit_logs(
+            ctx.http(),
+            Some(action_type),
+            None,
+            None,
+            None,
+            NonMaxU8::new(1),
+        )
         .await?;
 
     // Check if user did this to themselves

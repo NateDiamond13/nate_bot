@@ -83,11 +83,11 @@ async fn run_bot() -> Result<()> {
     log::info!("Starting bot...");
     let discord_token = Token::from_str(&env_vars.discord_token)?;
     let mut client = ClientBuilder::new(discord_token, intents)
-        .framework(framework)
+        .framework(Box::new(framework))
         .activity(ActivityData::custom(env_vars.custom_status))
         .status(OnlineStatus::Idle)
         .data::<CommandData>(data)
-        .event_handler(DiscordEventHandler)
+        .event_handler(Arc::new(DiscordEventHandler))
         .await?;
 
     // Start listening for events with an automatically determined number of shards

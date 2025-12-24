@@ -2,7 +2,7 @@ use database::patch_notes::PatchNotes;
 use database::patch_notes_subscriptions::PatchNotesSub;
 use serenity::all::{CreateEmbed, CreateEmbedAuthor, ExecuteWebhook, Http, Webhook};
 
-use crate::prelude::Result;
+use crate::prelude::{Error, Result, SerenityError};
 
 pub async fn send_all_alerts(patch_notes: &PatchNotes, subs: &[PatchNotesSub]) -> Result<()> {
     let embed = create_patch_embed(patch_notes);
@@ -13,7 +13,9 @@ pub async fn send_all_alerts(patch_notes: &PatchNotes, subs: &[PatchNotesSub]) -
             Webhook::from_id_with_token(&http, sub.webhook_id.into(), &sub.webhook_token).await
         {
             let builder = ExecuteWebhook::new().embed(embed.clone());
-            hook.execute(&http, false, builder).await?;
+            hook.execute(&http, false, builder)
+                .await
+                .map_err(|err| Error::Serenity(Box::new(SerenityError(err))))?;
         }
     }
 
