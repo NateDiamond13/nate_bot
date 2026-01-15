@@ -3,8 +3,6 @@ services:
     build:
       context: .
       dockerfile: ./docker/discord_bot/Dockerfile
-      args:
-        - DATABASE_URL=${DATABASE_URL}
     environment:
       - AUDIT_ENABLED_SERVERS=${AUDIT_ENABLED_SERVERS}
       - CUSTOM_STATUS=${CUSTOM_STATUS}
@@ -19,8 +17,6 @@ services:
     build:
       context: .
       dockerfile: ./docker/worker/Dockerfile
-      args:
-        - DATABASE_URL=${DATABASE_URL}
     environment:
       - AUDIT_ENABLED_SERVERS=${AUDIT_ENABLED_SERVERS}
       - CUSTOM_STATUS=${CUSTOM_STATUS}
