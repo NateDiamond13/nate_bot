@@ -1,5 +1,4 @@
 match_block_trailing_comma = false
-
-# nightly/unstable features
+# Nightly / unstable features
 group_imports = "StdExternalCrate"
 imports_granularity = "Module"

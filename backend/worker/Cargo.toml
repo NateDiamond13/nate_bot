@@ -3,9 +3,6 @@ name = "worker"
 version = { workspace = true }
 edition = { workspace = true }
 
-[lints]
-workspace = true
-
 [dependencies]
 chrono = { workspace = true }
 database = { path = "../lib/database" }
@@ -23,3 +20,6 @@ webhooks = { path = "../lib/webhooks" }
 [dev-dependencies]
 croner = { workspace = true }
 test-log = { workspace = true }
+
+[lints]
+workspace = true

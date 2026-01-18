@@ -3,11 +3,11 @@ name = "database"
 version = { workspace = true }
 edition = { workspace = true }
 
-[lints]
-workspace = true
-
 [dependencies]
 chrono = { workspace = true }
 log = { workspace = true }
 sqlx = { workspace = true }
 thiserror = { workspace = true }
+
+[lints]
+workspace = true

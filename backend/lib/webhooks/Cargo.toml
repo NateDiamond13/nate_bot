@@ -3,11 +3,11 @@ name = "webhooks"
 version = { workspace = true }
 edition = { workspace = true }
 
-[lints]
-workspace = true
-
 [dependencies]
 database = { path = "../database" }
 htmd = { workspace = true }
 serenity = { workspace = true }
 thiserror = { workspace = true }
+
+[lints]
+workspace = true

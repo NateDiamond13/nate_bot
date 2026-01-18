@@ -3,9 +3,6 @@ name = "utils"
 version = { workspace = true }
 edition = { workspace = true }
 
-[lints]
-workspace = true
-
 [dependencies]
 dotenvy = { workspace = true }
 env_logger = { workspace = true }
@@ -14,3 +11,6 @@ thiserror = { workspace = true }
 
 [dev-dependencies]
 test-log = { workspace = true }
+
+[lints]
+workspace = true

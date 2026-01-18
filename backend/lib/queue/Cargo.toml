@@ -3,9 +3,6 @@ name = "queue"
 version = { workspace = true }
 edition = { workspace = true }
 
-[lints]
-workspace = true
-
 [dependencies]
 chrono = { workspace = true }
 log = { workspace = true }
@@ -19,3 +16,6 @@ tokio-cron-scheduler = { workspace = true }
 [dev-dependencies]
 test-log = { workspace = true }
 utils = { path = "../../lib/utils" }
+
+[lints]
+workspace = true
