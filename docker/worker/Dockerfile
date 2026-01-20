@@ -20,7 +20,7 @@ RUN cargo build --release -p worker
 # Copy binary to an alpine image
 FROM alpine:3.23 AS runner
 RUN apk upgrade --no-cache \
-    && apk add --no-cache tini chromium-chromedriver
+  && apk add --no-cache tini chromium-chromedriver
 COPY --from=builder /backend/target/release/worker .
 
 # Run command

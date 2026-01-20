@@ -12,7 +12,7 @@ COPY --from=planner /backend/recipe.json recipe.json
 
 # Install dependencies for crates (https://pkgs.alpinelinux.org/packages)
 RUN apk add alpine-sdk=1.1-r0 \
-    libressl-dev=4.2.1-r0
+  libressl-dev=4.2.1-r0
 
 # Set environment variable to build sqlx offline
 ENV SQLX_OFFLINE=true
