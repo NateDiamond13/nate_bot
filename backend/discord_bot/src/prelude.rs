@@ -1,5 +1,6 @@
 //! Discord Bot prelude
 
+/// Discord Bot error
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error(transparent)]
@@ -11,11 +12,14 @@ pub enum Error {
     #[error("Could not parse valid command arguments")]
     CommandArgParse,
 
-    #[error("Could not toggle role for user")]
-    ToggleRoleFailure,
+    #[error("Could not find application ID")]
+    InvalidApplicationID,
 
     #[error("Could not find valid voice channel")]
     InvalidVoiceChannel,
+
+    #[error("Could not toggle role for user")]
+    ToggleRoleFailure,
 
     #[error(transparent)]
     IO(#[from] std::io::Error),

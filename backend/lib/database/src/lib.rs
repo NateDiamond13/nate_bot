@@ -1,5 +1,7 @@
 //! Database library to handle connections for Postgres database using [`sqlx`].
 
+/// Database functions for bot settings
+pub mod bot_settings;
 /// Database functions for patch notes
 pub mod patch_notes;
 /// Database functions for patch notes subscriptions

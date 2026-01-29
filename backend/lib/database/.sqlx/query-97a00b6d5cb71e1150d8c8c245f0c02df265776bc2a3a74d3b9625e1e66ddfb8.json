@@ -1,0 +1,43 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO bot_settings (application_id, name, status, activity)\n        VALUES ($1, $2, $3, $4)\n        ON CONFLICT (application_id)\n            DO UPDATE SET\n                status = $3,\n                activity = $4,\n                updated_at = NOW()\n        RETURNING application_id, name, status, activity;",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "application_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "status",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "activity",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "97a00b6d5cb71e1150d8c8c245f0c02df265776bc2a3a74d3b9625e1e66ddfb8"
+}

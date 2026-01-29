@@ -1,29 +1,22 @@
+x-env: &env
+  environment:
+    - AUDIT_ENABLED_SERVERS=${AUDIT_ENABLED_SERVERS}
+    - DATABASE_URL=${DATABASE_URL}
+    - DISCORD_TOKEN=${DISCORD_TOKEN}
+    - LOTTERY_ODDS=${LOTTERY_ODDS}
+    - REACTION_TARGET_IDS=${REACTION_TARGET_IDS}
+    - REACTION_TARGET_ODDS=${REACTION_TARGET_ODDS}
+    - REDIS_URL=${REDIS_URL}
+    - WEBDRIVER_PORT=${WEBDRIVER_PORT}
+
 services:
   discord_bot:
     build:
       context: .
       dockerfile: ./docker/discord_bot/Dockerfile
-    environment:
-      - AUDIT_ENABLED_SERVERS=${AUDIT_ENABLED_SERVERS}
-      - CUSTOM_STATUS=${CUSTOM_STATUS}
-      - DATABASE_URL=${DATABASE_URL}
-      - DISCORD_TOKEN=${DISCORD_TOKEN}
-      - LOTTERY_ODDS=${LOTTERY_ODDS}
-      - REACTION_TARGET_IDS=${REACTION_TARGET_IDS}
-      - REACTION_TARGET_ODDS=${REACTION_TARGET_ODDS}
-      - REDIS_URL=${REDIS_URL}
-      - WEBDRIVER_PORT=${WEBDRIVER_PORT}
+    <<: *env
   worker:
     build:
       context: .
       dockerfile: ./docker/worker/Dockerfile
-    environment:
-      - AUDIT_ENABLED_SERVERS=${AUDIT_ENABLED_SERVERS}
-      - CUSTOM_STATUS=${CUSTOM_STATUS}
-      - DATABASE_URL=${DATABASE_URL}
-      - DISCORD_TOKEN=${DISCORD_TOKEN}
-      - LOTTERY_ODDS=${LOTTERY_ODDS}
-      - REACTION_TARGET_IDS=${REACTION_TARGET_IDS}
-      - REACTION_TARGET_ODDS=${REACTION_TARGET_ODDS}
-      - REDIS_URL=${REDIS_URL}
-      - WEBDRIVER_PORT=${WEBDRIVER_PORT}
+    <<: *env

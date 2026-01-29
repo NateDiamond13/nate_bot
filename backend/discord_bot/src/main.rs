@@ -15,7 +15,7 @@ use events::DiscordEventHandler;
 use poise::serenity_prelude::ClientBuilder;
 use poise::{ApplicationContext, Context, Framework, FrameworkOptions};
 use prelude::{CommandData, Result};
-use serenity::all::{ActivityData, OnlineStatus, Token};
+use serenity::all::Token;
 use serenity::prelude::GatewayIntents;
 use tokio::signal;
 
@@ -78,6 +78,7 @@ async fn run_bot() -> Result<()> {
         | GatewayIntents::GUILD_MODERATION
         | GatewayIntents::GUILD_WEBHOOKS
         | GatewayIntents::GUILD_VOICE_STATES
+        | GatewayIntents::GUILD_PRESENCES
         | GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::GUILD_MESSAGE_REACTIONS
         | GatewayIntents::DIRECT_MESSAGES
@@ -88,8 +89,6 @@ async fn run_bot() -> Result<()> {
     let discord_token = Token::from_str(&env_vars.discord_token)?;
     let mut client = ClientBuilder::new(discord_token, intents)
         .framework(Box::new(framework))
-        .activity(ActivityData::custom(env_vars.custom_status))
-        .status(OnlineStatus::Idle)
         .data::<CommandData>(data)
         .event_handler(Arc::new(DiscordEventHandler))
         .await?;

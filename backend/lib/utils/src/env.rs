@@ -12,8 +12,6 @@ static ENV_VARIABLES: LazyLock<Result<EnvVariables>> = LazyLock::new(load_env);
 pub struct EnvVariables {
     /// List of guild IDs that have auditing enabled
     pub audit_enabled_servers: Vec<u64>,
-    /// Custom status to display for the bot
-    pub custom_status: String,
     /// URL of the application database
     pub database_url: String,
     /// Token to verify the identity of the bot
@@ -49,7 +47,6 @@ fn load_env() -> Result<EnvVariables> {
     }
     Ok(EnvVariables {
         audit_enabled_servers: load_vec_u64("AUDIT_ENABLED_SERVERS")?,
-        custom_status: load_var_string("CUSTOM_STATUS")?,
         database_url: load_var_string_prefixed("DATABASE_URL", "postgres://")?,
         discord_token: load_var_string("DISCORD_TOKEN")?,
         lottery_odds: load_var_u32("LOTTERY_ODDS", 1, u32::MAX)?,

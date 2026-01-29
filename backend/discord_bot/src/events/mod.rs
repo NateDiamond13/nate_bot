@@ -38,7 +38,8 @@ async fn dispatch_helper(ctx: &Context, event: &FullEvent) -> Result<()> {
             roles::handle_reaction_remove(ctx, removed_reaction).await?;
         }
         FullEvent::Ready { data_about_bot, .. } => {
-            ready::handle_ready(ctx, data_about_bot).await?;
+            let data = ctx.data::<CommandData>();
+            ready::handle_ready(ctx, data_about_bot, &data).await?;
         }
         FullEvent::VoiceStateUpdate { old, new, .. } => {
             let data = ctx.data::<CommandData>();
