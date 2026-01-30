@@ -9,6 +9,7 @@ use crate::prelude::{Context, Result};
     category = "Presence",
     subcommands("presence_activity", "presence_status"),
     subcommand_required,
+    guild_only,
     required_permissions = "ADMINISTRATOR"
 )]
 pub async fn presence(_: Context<'_>) -> Result<()> {
