@@ -28,6 +28,9 @@ pub enum Error {
     ParseInt(#[from] std::num::ParseIntError),
 
     #[error(transparent)]
+    Rand(#[from] rand::rngs::SysError),
+
+    #[error(transparent)]
     Regex(#[from] regex::Error),
 
     #[error(transparent)]

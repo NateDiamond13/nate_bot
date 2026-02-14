@@ -1,6 +1,6 @@
 use std::cmp;
 
-use rand::rngs::StdRng;
+use rand::rngs::{StdRng, SysRng};
 use rand::seq::{IteratorRandom, SliceRandom};
 use rand::{SeedableRng, random_range};
 use serenity::all::{CacheHttp, Message};
@@ -33,8 +33,8 @@ pub async fn handle_message(ctx: &Context, message: &Message, data: &CommandData
     let min_count = cmp::min(emojis.len(), REACTION_COUNT_MIN);
     let max_count = cmp::min(emojis.len(), REACTION_COUNT_MAX);
     let emoji_count = random_range(min_count..=max_count);
-    let mut rng = StdRng::from_os_rng();
-    let mut choices = emojis.iter().choose_multiple(&mut rng, emoji_count);
+    let mut rng = StdRng::try_from_rng(&mut SysRng)?;
+    let mut choices = emojis.iter().sample(&mut rng, emoji_count);
     choices.shuffle(&mut rng);
 
     log::info!(
