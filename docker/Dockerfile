@@ -1,5 +1,5 @@
 # Rust alpine base image with cargo-chef (https://hub.docker.com/r/lukemathwalker/cargo-chef)
-FROM lukemathwalker/cargo-chef:0.1.77-rust-1.94.0-alpine3.23 AS chef
+FROM lukemathwalker/cargo-chef:0.1.77-rust-1.94.1-alpine3.23 AS chef
 WORKDIR /backend
 
 # Plan and prepare build recipe
