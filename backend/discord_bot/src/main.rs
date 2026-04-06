@@ -24,6 +24,9 @@ async fn main() -> Result<()> {
     // Register logger
     utils::init_logger();
 
+    // Register crypto provider
+    helpers::crypto::install_default();
+
     // Run the bot
     run_bot().await
 }

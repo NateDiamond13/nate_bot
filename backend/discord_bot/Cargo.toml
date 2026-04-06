@@ -10,6 +10,7 @@ log = { workspace = true }
 poise = { workspace = true }
 rand = { workspace = true }
 regex = { workspace = true }
+rustls = { workspace = true }
 serenity = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
