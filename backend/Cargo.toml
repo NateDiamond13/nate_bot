@@ -46,7 +46,7 @@ sqlx = { version = "=0.8.6", features = [
 test-log = { version = "=0.2.19", features = ["color", "trace"] }
 thirtyfour = "=0.36.1"
 thiserror = "=2.0.18"
-tokio = { version = "=1.51.0", features = [
+tokio = { version = "=1.51.1", features = [
     "macros",
     "process",
     "rt-multi-thread",

@@ -24,9 +24,6 @@ async fn main() -> Result<()> {
     // Register logger
     utils::init_logger();
 
-    // Register crypto provider
-    helpers::crypto::install_default();
-
     // Run the bot
     run_bot().await
 }
@@ -35,6 +32,9 @@ async fn run_bot() -> Result<()> {
     // Load bot token from the environment
     let env_vars = utils::get_config_safe()?;
     let env = env_vars.clone();
+
+    // Register crypto provider
+    helpers::crypto::install_default();
 
     // Set up database connection pool
     let pool = DbPool::new(&env_vars.database_url).await?;
