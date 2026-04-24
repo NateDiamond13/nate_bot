@@ -47,7 +47,7 @@ pub async fn patch_scraper_job(db_pool: &DbPool, env_vars: &EnvVariables) -> Res
                 "Steam Apps update finished successfully for {} app(s)",
                 res.len()
             );
-            alert_games.extend(res.into_iter());
+            alert_games.extend(res);
         }
         Err(err) => log::error!("Steam Apps update finished with error: {err}"),
     }
